@@ -216,9 +216,10 @@ A mensagem original de aprovação (04/09/2026) chegou truncada após o texto do
 [AWAITYING_DECISION] | hardening de segurança P0.3 (#54/#55) | solicitada em: PRE_PILOT_REMEDIATION_PLAN.md §14 (P0.3)
 ```
 
-- **Decisão**: **NEEDS:DECISION** — P0.3 (#54 política de senha, #55 rate-limit) permanece bloqueada por `HG-PR-SEC` (`status:blocked`, `needs:decision`). Implementação não autorizada até decisão humana explícita.
-- **Proposta registrada pelo Orchestrator** (alinha ao `PRE_PILOT_REMEDIATION_PLAN.md` §21 HG-PR-SEC): **política de senha** — mínimo proposto 12 (alternativa 8), rejeição de reuso, bloqueio após n tentativas (justificativa ASVS/NIST); **rate-limit no `POST /auth/login`** — propostas 5 tentativas/15min por conta e 30/5min por IP; escopo server-side, sem UI nova.
-- **Referências**: `PRE_PILOT_REMEDIATION_PLAN.md` §14; Issues #54/#55; `AUTONOMY_POLICY.md` L3.
+- **Decisão**: **APROVADO (2026-09-06)** — valores propostos adotados na íntegra por Rodrigo (owner): política de senha min **12** (max 64, sem composição obrigatória, sem truncamento, espaços ok, rejeitar reuso + blocklist top-1000 opcional v1, enforcement `POST /auth/trocar-senha` + seed) e rate-limit no `POST /auth/login` (**5 falhas/15min por conta** → `429`+backoff; **30/5min por IP**; resposta `401`/`429` genérica anti-enumeração; env `LOGIN_RATE_LIMIT_*`; evento `login_block`).
+- **Justificativa aprovada**: ASVS V2.1/V2.2/V2.5 + NIST SP 800-63B §5 — conforme `PRE_PILOT_REMEDIATION_PLAN.md` §14/§15/§21 HG-PR-SEC.
+- **Estado**: `status:blocked`/`needs:decision` **removidos** das Issues #54/#55 → **IMPLEMENTING autorizado** (P0.3-A ∥ B, agente: pleno).
+- **Referências**: `PRE_PILOT_REMEDIATION_PLAN.md` §14/§15/§21; Issues #54/#55; `AUTONOMY_POLICY.md` L3.
 - **Estado**: OPEN — aguardando `HUMAN_DECISION_REQUIRED` (decisão humana antes de qualquer implementação).
 
 ---
@@ -230,4 +231,4 @@ A mensagem original de aprovação (04/09/2026) chegou truncada após o texto do
 | HG-006 | PaaS/storage pagos (event-driven) | aguardando momento — **não acionado** em 2026-08-30 (HG-008: canal decidido sem custo recorrente) |
 | HG-007 | Credenciais/permissões ausentes (event-driven) | aguardando momento |
 | HG-RETENÇÃO | Retenção de eventos de auditoria | **DEFERRED** — prazo numérico a definir antes de PILOT_READY |
-| HG-PR-SEC | Hardening de segurança P0.3 (senha + rate-limit) | **NEEDS:DECISION** — BLOQUEADA até decisão humana |
+| HG-PR-SEC | Hardening de segurança P0.3 (senha + rate-limit) | **APROVADO (2026-09-06)** — P0.3-A/B liberadas |

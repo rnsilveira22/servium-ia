@@ -81,13 +81,14 @@ Iniciar: `.opencode/command/start-orchestrator.md`. Encerrar: atualizar labels/S
 | 05/09/2026 | P0.2 #52 (CA-03) | Gate 1–5 aprovados (4.5 N/A); QA APPROVED; PO ACCEPTED; merge L2 squash | Orchestrator / Pleno / QA / PO | [PR #77](https://github.com/rnsilveira22/servium/pull/77) `8617afd`; verify db 19 / api 74 | DONE+MERGED; Issue #52 CLOSED |
 | 05/09/2026 | P0.2 #53 (CA-05) | Gate 1–4 + docs CI; merge L2 squash | Orchestrator / Pleno / QA | [PR #78](https://github.com/rnsilveira22/servium/pull/78) `7efd68a`; docs `EVENTOS_AUDITORIA.md` | DONE+MERGED; Issue #53 CLOSED |
 | 05/09/2026 | P0.2 encerramento | Relatório `P0_2_REMEDIATION_CLOSURE_REPORT.md`; labels/doc branch `docs/p02-closure-records` | Orchestrator | `docs/reports/P0_2_REMEDIATION_CLOSURE_REPORT.md` | registros L2 + HG-RETENÇÃO + HG-PR-SEC no HUMAN_DECISIONS_LOG |
+| 06/09/2026 | P0.3 #54/#55 | **HG-PR-SEC APROVADO** (min 12; 5/15min conta, 30/5min IP); labels `status:blocked`/`needs:decision` removidos → liberadas p/ implementação A∥B | Rodrigo (owner) / Orchestrator | Issues #54/#55; `HUMAN_DECISIONS_LOG.md` §HG-PR-SEC | `BLOQUEADA` → `IMPLEMENTING` (agente: pleno) |
 
 ## 12. Decisões pendentes (na abertura de sessão, consolidar a partir das Issues)
 
 <!-- Preenchido a cada sessão. Não apagar histórico. -->
 
 - **HG-RETENÇÃO** (`DEFERRED`): política numérica de retenção de eventos de auditoria — aguarda decisão humana.
-- **HG-PR-SEC** (`NEEDS:DECISION`): P0.3 senha + rate-limit (#54/#55) — bloqueada até decisão.
+- **HG-PR-SEC** (`APROVADO 06/09/2026`): P0.3-A/B (#54 senha min 12, #55 rate-limit 5/15min conta + 30/5min IP) **liberadas** — despacho agente: pleno.
 - **Issue #9** (P0.2): cobertura CA-01→CA-05 completada; fechamento formal aguarda comentário rastreável + decisão do Owner (board com drift Done/P1 vs OPEN/P0).
-- **PR #75** (dependabot): manter ou fechar — decisão humana.
+- **PR #79** (docs de encerramento P0.2): **aguarda merge L3 do humano**.
 - **#73/#72/#58/#59**: bugs/backlog aguardando priorização na próxima onda.

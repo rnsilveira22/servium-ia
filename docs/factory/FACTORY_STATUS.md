@@ -4,7 +4,7 @@
 
 ## Última atualização
 
-2026-09-05 · **P0.2 AUDITORIA CONCLUÍDA** · HEAD `7efd68a` · PRM-P0.2-A (#51, PR #76 `150188f`), PRM-P0.2-B (#52, PR #77 `8617afd`), PRM-P0.2-C (#53, PR #78 `7efd68a`) todos DONE+MERGED · Issues #51/#52/#53 CLOSED · Factory V2 operacional (Orchestrator + estados V2)
+2026-09-06 · **P0.2 AUDITORIA CONCLUÍDA + HG-PR-SEC APROVADO** · HEAD `7efd68a` · PRM-P0.2-A (#51, PR #76 `150188f`), PRM-P0.2-B (#52, PR #77 `8617afd`), PRM-P0.2-C (#53, PR #78 `7efd68a`) todos DONE+MERGED · Issues #51/#52/#53 CLOSED · **P0.3 liberada** (HG-PR-SEC aprovado em 06/09: senha min 12; rate-limit 5/15min conta, 30/5min IP) · Factory V2 operacional (Orchestrator + estados V2)
 
 ### Reconciliado nesta sessão
 
@@ -43,7 +43,7 @@
 | HG-F2-03 | Política de merge por classe | ✅ APROVADO (2026-09-04) |
 | HG-REC-01 | Reconciliação (fechamento #45–#49 + docs) | ✅ APROVADO (2026-09-04) |
 | **HG-RETENÇÃO** | **Retenção de eventos de auditoria** | ⏳ DEFERRED — prazo numérico a definir antes de PILOT_READY |
-| **HG-PR-SEC** | **Hardening de segurança P0.3 (senha + rate-limit)** | 🔒 NEEDS:DECISION — BLOQUEADA até decisão humana |
+| **HG-PR-SEC** | **Hardening de segurança P0.3 (senha + rate-limit)** | ✅ APROVADO (2026-09-06) — valores propostos; P0.3-A/B liberadas |
 
 Registro formal: [`HUMAN_DECISIONS_LOG.md`](HUMAN_DECISIONS_LOG.md).
 
@@ -62,7 +62,7 @@ Registro formal: [`HUMAN_DECISIONS_LOG.md`](HUMAN_DECISIONS_LOG.md).
 | Issue | Item | Prioridade | Status real | Observação |
 |---|---|---|---|---|
 | [#9](https://github.com/rnsilveira22/servium/issues/9) | Auditoria append-only (**P0.2**) | P0 | **DONE no board** / Issue OPEN (aguarda fechamento formal) | CA-01/02 (reconciliação §5), CA-03 (#52), CA-04 (#51), CA-05 (#53) todos entregues; drift do board (Done/P1 vs OPEN/P0) registrado |
-| [#20](https://github.com/rnsilveira22/servium/issues/20) | N5 Auth mínima (**P0.3** hardening) | P0 | OPEN / BLOQUEADA | HG-PR-SEC needs:decision; #54 (senha) e #55 (rate-limit) bloqueados |
+| [#20](https://github.com/rnsilveira22/servium/issues/20) | N5 Auth mínima (**P0.3** hardening) | P0 | OPEN / **LIBERADA** | HG-PR-SEC aprovado (06/09); #54 (senha, min 12) e #55 (rate-limit 5/15min conta, 30/5min IP) desbloqueadas — A∥B, agente: pleno |
 | [#73](https://github.com/rnsilveira22/servium/issues/73) | Bug P0 (funcional) | P0 | OPEN | aguarda próxima onda |
 | [#72](https://github.com/rnsilveira22/servium/issues/72) | Gap P1 | P1 | OPEN | aguarda próxima onda |
 | [#58](https://github.com/rnsilveira22/servium/issues/58) | Backlog P2 | P2 | OPEN | aguarda próxima onda |
@@ -76,7 +76,7 @@ Issues fechadas nesta sessão: #51 (PR #76), #52 (PR #77), #53 (PR #78). Issues 
 | Item | Tipo | Ação necessária |
 |---|---|---|
 | **HG-RETENÇÃO** | Decisão de produto | Definir política numérica de retenção (prazo/volume) para habilitar purge futuro; durante piloto mantém preservação integral |
-| **HG-PR-SEC** (P0.3 #54/#55) | BLOQUEADA | Decidir: proposta curta — *política senha ASVS + rate-limit POST /auth/login*; escopo server-side; sem implementação até decisão |
+| **HG-PR-SEC** | P0.3 (#54/#55) | ✅ RESOLVIDO (2026-09-06) — valores aprovados; A∥B liberadas |
 | **Fechar Issue #9** | Encerramento formal | Comentar cobertura CA-01→CA-05 + fechar (decisão do Owner) |
 | **Drift do board #9** | Governança | Corrigir Status/Priority no board (Done/P1 vs realidade); migrar campo Status p/ estados V2 (web/admin) |
 | **PR #75** (dependabot) | Externo | Decidir manter (deps em 3 dirs) ou fechar antes do piloto |
@@ -84,9 +84,9 @@ Issues fechadas nesta sessão: #51 (PR #76), #52 (PR #77), #53 (PR #78). Issues 
 
 ## Próximos passos
 
-1. Fechar Issue #9 (comentário rastreável + decisão do Owner);
-2. Decidir HG-PR-SEC (P0.3) — desbloquear ou registrar adiamento;
+1. Implementar P0.3: **#54 ∥ #55** (senha + rate-limit, agente: pleno) → #56 (identidade serviço) → #57 (ASVS docs);
+2. Fechar Issue #9 (comentário rastreável + decisão do Owner);
 3. Definir HG-RETENÇÃO (política de retenção);
-4. Avaliar PR #75 (dependabot);
+4. Avaliar PR #79 (docs de encerramento, L3 humano) e PR #75 (dependabot — MERGED 06/09);
 5. Priorizar #73/#72/#58/#59 na próxima onda;
 6. Avaliar desativação da V1 após 2+ ciclos V2 com gates verdes (nunca automática).
