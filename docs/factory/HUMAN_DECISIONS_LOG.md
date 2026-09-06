@@ -196,9 +196,38 @@ A mensagem original de aprovação (04/09/2026) chegou truncada após o texto do
 
 ---
 
+## HG-RETENÇÃO — Retenção de eventos de auditoria (DEFERRED)
+
+```text
+[AWAITING_DECISION] | retenção de dados de auditoria | registrado em: PRE_PILOT_REMEDIATION_PLAN.md §13/§24 e Issue #53 (CA-05-2)
+```
+
+- **Decisão**: **DEFERRED** — o decisor (Rodrigo) determinou em 2026-08-30 que a política numérica de retenção (prazo, volume, purge automático) seria definida posteriormente; durante o MVP/piloto, todos os eventos de auditoria são preservados sem limite.
+- **Decisor**: Rodrigo (owner) · **Data da determinação**: 2026-08-30
+- **Condição**: purge futuro fica **condicionado a esta decisão** — nenhum evento pode ser removido antes da aprovação de política numérica (conforme `PRE_PILOT_REMEDIATION_PLAN.md` §21 HG-RETENÇÃO e §24.3).
+- **Registrado em**: `docs/audit/EVENTOS_AUDITORIA.md` §6; Issue #53 (PRM-P0.2-C); `POST_MVP_BACKLOG_RECONCILIATION.md`.
+- **Estado**: OPEN — aguardando definição de política antes de `PILOT_READY`.
+
+---
+
+## HG-PR-SEC — Hardening de segurança: senha e rate-limit (P0.3, BLOQUEADA)
+
+```text
+[AWAITYING_DECISION] | hardening de segurança P0.3 (#54/#55) | solicitada em: PRE_PILOT_REMEDIATION_PLAN.md §14 (P0.3)
+```
+
+- **Decisão**: **NEEDS:DECISION** — P0.3 (#54 política de senha, #55 rate-limit) permanece bloqueada por `HG-PR-SEC` (`status:blocked`, `needs:decision`). Implementação não autorizada até decisão humana explícita.
+- **Proposta registrada pelo Orchestrator** (alinha ao `PRE_PILOT_REMEDIATION_PLAN.md` §21 HG-PR-SEC): **política de senha** — mínimo proposto 12 (alternativa 8), rejeição de reuso, bloqueio após n tentativas (justificativa ASVS/NIST); **rate-limit no `POST /auth/login`** — propostas 5 tentativas/15min por conta e 30/5min por IP; escopo server-side, sem UI nova.
+- **Referências**: `PRE_PILOT_REMEDIATION_PLAN.md` §14; Issues #54/#55; `AUTONOMY_POLICY.md` L3.
+- **Estado**: OPEN — aguardando `HUMAN_DECISION_REQUIRED` (decisão humana antes de qualquer implementação).
+
+---
+
 ## Pendências
 
 | ID | Assunto | Estado |
 |---|---|---|
 | HG-006 | PaaS/storage pagos (event-driven) | aguardando momento — **não acionado** em 2026-08-30 (HG-008: canal decidido sem custo recorrente) |
 | HG-007 | Credenciais/permissões ausentes (event-driven) | aguardando momento |
+| HG-RETENÇÃO | Retenção de eventos de auditoria | **DEFERRED** — prazo numérico a definir antes de PILOT_READY |
+| HG-PR-SEC | Hardening de segurança P0.3 (senha + rate-limit) | **NEEDS:DECISION** — BLOQUEADA até decisão humana |
