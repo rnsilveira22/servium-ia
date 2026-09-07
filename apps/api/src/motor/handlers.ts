@@ -5,7 +5,7 @@
  */
 import type { Client } from 'pg';
 
-import { enqueue, type Job } from '@servium/db';
+import { enqueue, type Job } from '@servium-ia/db';
 import {
   LIMITES_PADRAO,
   chaveCobranca,

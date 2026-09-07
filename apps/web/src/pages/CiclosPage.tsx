@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client';
-import type { ClienteDTO, ObrigacaoDTO } from '@servium/shared-types';
+import type { ClienteDTO, ObrigacaoDTO } from '@servium-ia/shared-types';
 
 interface CicloResumo {
   id: string;

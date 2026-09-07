@@ -9,7 +9,7 @@
  *   4. registra mensagens_comunicacao + mensagens_gmail + auditoria 'receber'.
  * Toda escrita usa conexão contextual por tenant (RLS), nunca bypass.
  */
-import { app, admin, setTenant } from '@servium/db';
+import { app, admin, setTenant } from '@servium-ia/db';
 import type pg from 'pg';
 
 import type { MensagemRecebida } from '../motor/channel';

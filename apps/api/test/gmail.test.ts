@@ -4,7 +4,7 @@ import type { INestApplication } from '@nestjs/common';
 import supertest from 'supertest';
 import pg from 'pg';
 
-import { ADMIN_URL, APP_URL } from '@servium/db';
+import { ADMIN_URL, APP_URL } from '@servium-ia/db';
 import { buildApp } from '../src/app.factory';
 import { GmailAdapter } from '../src/email/gmail-adapter';
 

@@ -1,7 +1,7 @@
 import { BadRequestException, Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import type { Client } from 'pg';
 
-import { listarEventos, type FiltrosEventos } from '@servium/db';
+import { listarEventos, type FiltrosEventos } from '@servium-ia/db';
 import { RequireAuth, Roles, type AuthedRequest } from '../auth/auth.guard';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

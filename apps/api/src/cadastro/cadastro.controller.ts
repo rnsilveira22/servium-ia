@@ -9,7 +9,7 @@ import type {
   CriarObrigacaoInput,
   ObrigacaoDTO,
   TipoEsperado,
-} from '@servium/shared-types';
+} from '@servium-ia/shared-types';
 import { RequireAuth, type AuthedRequest } from '../auth/auth.guard';
 
 const TIPOS: readonly string[] = ['documento', 'informacao', 'assinatura'];

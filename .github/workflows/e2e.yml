@@ -100,7 +100,7 @@ jobs:
           : > /tmp/web.log
           setsid node apps/api/dist/main.js >/tmp/api.log 2>&1 &
           API_PID=$!
-          setsid npm run dev -w @servium/web -- --port 5173 --host 127.0.0.1 --strictPort >/tmp/web.log 2>&1 &
+          setsid npm run dev -w @servium-ia/web -- --port 5173 --host 127.0.0.1 --strictPort >/tmp/web.log 2>&1 &
           WEB_PID=$!
           cleanup() { kill -- "-$API_PID" 2>/dev/null || true; kill -- "-$WEB_PID" 2>/dev/null || true; }
           trap cleanup EXIT
