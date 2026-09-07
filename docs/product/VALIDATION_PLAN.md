@@ -1,7 +1,7 @@
-# Plano de Validação — ServiumAI MVP
+# Plano de Validação — Servium IA MVP
 
 > **Fase 002 — Discovery do MVP**
-> Plano de validação das hipóteses com escritórios contábeis reais. **Nenhuma entrevista foi realizada até este momento** — este documento define como realizá-las. Responsável pela execução: equipe humana do ServiumAI.
+> Plano de validação das hipóteses com escritórios contábeis reais. **Nenhuma entrevista foi realizada até este momento** — este documento define como realizá-las. Responsável pela execução: equipe humana do Servium IA.
 
 ## Objetivo
 

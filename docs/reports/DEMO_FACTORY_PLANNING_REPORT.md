@@ -9,7 +9,7 @@
 
 ## Resumo
 
-A **Demo Factory** foi planejada e registrada formalmente no backlog da ServiumAI. **Nenhum código funcional foi implementado** — apenas planejamento técnico, definição de escopo/gates e atualização documental, exatamente como solicitado.
+A **Demo Factory** foi planejada e registrada formalmente no backlog da Servium IA. **Nenhum código funcional foi implementado** — apenas planejamento técnico, definição de escopo/gates e atualização documental, exatamente como solicitado.
 
 ## Arquivos alterados
 
@@ -106,7 +106,7 @@ Closes #<issue>
 
 ## User Story
 
-**Como** equipe ServiumAI, **quero** gerar automaticamente vídeos de apresentação
+**Como** equipe Servium IA, **quero** gerar automaticamente vídeos de apresentação
 do MVP usando a aplicação real, **para** demonstrar o Estagiário Digital de forma
 consistente e com revisão humana.
 

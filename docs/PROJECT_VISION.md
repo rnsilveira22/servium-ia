@@ -1,11 +1,11 @@
-# Visão do Projeto — ServiumAI
+# Visão do Projeto — Servium IA
 
 > **Status:** Fundação / Pré-MVP
 > Este documento descreve intenções e hipóteses. Nada aqui representa funcionalidade implementada ou validada.
 
 ## Visão
 
-O ServiumAI existe para permitir que empresas mantenham uma **força de trabalho digital organizada**: funcionários digitais especializados, com funções definidas, ferramentas controladas, limites operacionais claros e supervisão humana, executando atividades operacionais e rotineiras que hoje consomem tempo de equipes humanas.
+O Servium IA existe para permitir que empresas mantenham uma **força de trabalho digital organizada**: funcionários digitais especializados, com funções definidas, ferramentas controladas, limites operacionais claros e supervisão humana, executando atividades operacionais e rotineiras que hoje consomem tempo de equipes humanas.
 
 A proposta não é um chatbot nem uma coleção de automações isoladas. É uma plataforma na qual empresas organizam, supervisionam e auditam trabalho digital como parte da sua operação.
 
@@ -27,7 +27,7 @@ Consequências típicas:
 
 ## Proposta de valor
 
-Para empresas com forte carga operacional, o ServiumAI pretende oferecer funcionários digitais especializados que:
+Para empresas com forte carga operacional, o Servium IA pretende oferecer funcionários digitais especializados que:
 
 - executam rotinas e fluxos operacionais de ponta a ponta;
 - interagem com sistemas e pessoas quando necessário;
@@ -124,7 +124,7 @@ Esta lista é inicial e será detalhada na especificação do MVP.
 
 ## Visão de longo prazo
 
-Que o ServiumAI seja a forma padrão pela qual pequenas e médias empresas constroem sua força de trabalho digital: contratando funções digitais especializadas, organizadas e supervisionadas — começando pela contabilidade e evoluindo para outros segmentos.
+Que o Servium IA seja a forma padrão pela qual pequenas e médias empresas constroem sua força de trabalho digital: contratando funções digitais especializadas, organizadas e supervisionadas — começando pela contabilidade e evoluindo para outros segmentos.
 
 ## Limites iniciais
 

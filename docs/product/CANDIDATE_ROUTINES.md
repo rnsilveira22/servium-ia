@@ -1,4 +1,4 @@
-# Catálogo de Rotinas Candidatas — ServiumAI
+# Catálogo de Rotinas Candidatas — Servium IA
 
 > **Fase 002 — Discovery do MVP**
 > Catálogo preliminar de rotinas operacionais de escritórios contábeis candidatas à automação por Funcionários Digitais.

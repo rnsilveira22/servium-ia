@@ -1,4 +1,4 @@
-# Security Architecture — ServiumAI MVP
+# Security Architecture — Servium IA MVP
 
 > **Fase 003 — Arquitetura do MVP**
 > Threat considerations iniciais — enxuto e proporcional ao piloto, não um threat model completo. Base: NFR-001..005, ADRV-001/007/009, RSK-002/003/004/008.
@@ -17,7 +17,7 @@
 ```mermaid
 flowchart LR
     U["Usuários do escritório"] -->|HTTPS + sessão| APP
-    subgraph APP["ServiumAI (confiança média)"]
+    subgraph APP["Servium IA (confiança média)"]
         CORE["Core + RBAC + RLS"]
     end
     CH["Canal externo"] -->|inbound tratado como dado não confiável| CORE

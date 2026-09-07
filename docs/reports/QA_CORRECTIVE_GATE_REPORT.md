@@ -190,4 +190,4 @@ Não foi possível capturar screenshots (ambiente CLI sem navegador). As valida�
 
 **UI_PILOT_READY_CANDIDATE**
 
-Correções implementadas. Aguarda **LOCAL_ACCEPTANCE** pelo proprietário do ServiumAI.
+Correções implementadas. Aguarda **LOCAL_ACCEPTANCE** pelo proprietário do Servium IA.

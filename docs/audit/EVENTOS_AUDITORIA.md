@@ -1,10 +1,10 @@
 # Mecanismo de auditoria do piloto — Eventos, RLS e evidências
 
-> **Issue:** [#53 — PRM-P0.2-C](https://github.com/rnsilveira22/servium/issues/53) · **Rastreio:** [#9](https://github.com/rnsilveira22/servium/issues/9) CA-05 (auditoria append-only)
+> **Issue:** [#53 — PRM-P0.2-C](https://github.com/rnsilveira22/servium-ia/issues/53) · **Rastreio:** [#9](https://github.com/rnsilveira22/servium-ia/issues/9) CA-05 (auditoria append-only)
 > **Base:** `main@150188f` · **Tipo:** DOC-only — nenhuma alteração de código, migration, trigger ou backfill
-> **Referentes de implementação:** [#51](https://github.com/rnsilveira22/servium/issues/51) (PRM-P0.2-A · leitura) e [#52](https://github.com/rnsilveira22/servium/issues/52) (PRM-P0.2-B · atomicidade), ambos mergeados antes desta base.
+> **Referentes de implementação:** [#51](https://github.com/rnsilveira22/servium-ia/issues/51) (PRM-P0.2-A · leitura) e [#52](https://github.com/rnsilveira22/servium-ia/issues/52) (PRM-P0.2-B · atomicidade), ambos mergeados antes desta base.
 
-Este documento é a referência do que **é auditável hoje** no ServiumAI: a tabela `eventos_auditoria`, os 17 eventos emitidos pelos caminhos atuais, o mecanismo append-only, a delegação de isolamento ao RLS, as leituras disponíveis (PRM-P0.2-A) e a política de retenção (**DEFERIDA** via HG-RETENÇÃO).
+Este documento é a referência do que **é auditável hoje** no Servium IA: a tabela `eventos_auditoria`, os 17 eventos emitidos pelos caminhos atuais, o mecanismo append-only, a delegação de isolamento ao RLS, as leituras disponíveis (PRM-P0.2-A) e a política de retenção (**DEFERIDA** via HG-RETENÇÃO).
 
 ## 1. Objetivo e escopo
 
@@ -150,7 +150,7 @@ Endpoint **`GET /auditoria`** — [`apps/api/src/auditoria/auditoria.controller.
 
 ## 6. Retenção — DEFERIDA (HG-RETENÇÃO)
 
-**`HG-RETENÇÃO DEFERRED (2026-08-30)`** — decisão humana registrada no [plano §13](../reports/PRE_PILOT_REMEDIATION_PLAN.md) (e §21, §24, Anexo A.3) e reapresentada na [Issue #53](https://github.com/rnsilveira22/servium/issues/53):
+**`HG-RETENÇÃO DEFERRED (2026-08-30)`** — decisão humana registrada no [plano §13](../reports/PRE_PILOT_REMEDIATION_PLAN.md) (e §21, §24, Anexo A.3) e reapresentada na [Issue #53](https://github.com/rnsilveira22/servium-ia/issues/53):
 
 - Durante **MVP/piloto**, os eventos de auditoria são **preservados** até a aprovação da política — **nada é purgado automaticamente**.
 - **Não há prazo numérico de retenção** neste documento: definir prazos é decisão de PO/jurídico no gate `HG-RETENÇÃO`.
@@ -194,4 +194,4 @@ A tabela acima referencia os testes de **#51** (CA-04-x) e **#52** (CA-03-x), al
 - [`PRE_PILOT_REMEDIATION_PLAN.md`](../reports/PRE_PILOT_REMEDIATION_PLAN.md) — §11 (PRM-P0.2-A), §12 (PRM-P0.2-B), **§13 (PRM-P0.2-C** — escopo IN/OUT e decisão de retenção), §16 (PRM-P0.3-C), §21 (Human Gates), §24 (próximos passos).
 - [`POST_MVP_BACKLOG_RECONCILIATION.md`](../reports/POST_MVP_BACKLOG_RECONCILIATION.md) — §5 (deep dive da Issue #9) e §10 (recomendações que originaram P0.2).
 - [`DOMAIN_BOUNDARIES.md`](../architecture/DOMAIN_BOUNDARIES.md) — módulo B7 (Audit & Observability): trilha append-only, correlação, destino dos eventos.
-- Issues: [#9](https://github.com/rnsilveira22/servium/issues/9) (épico CA-01..05) · [#51](https://github.com/rnsilveira22/servium/issues/51) (PRM-P0.2-A · leitura) · [#52](https://github.com/rnsilveira22/servium/issues/52) (PRM-P0.2-B · atomicidade) · [#53](https://github.com/rnsilveira22/servium/issues/53) (este documento).
+- Issues: [#9](https://github.com/rnsilveira22/servium-ia/issues/9) (épico CA-01..05) · [#51](https://github.com/rnsilveira22/servium-ia/issues/51) (PRM-P0.2-A · leitura) · [#52](https://github.com/rnsilveira22/servium-ia/issues/52) (PRM-P0.2-B · atomicidade) · [#53](https://github.com/rnsilveira22/servium-ia/issues/53) (este documento).

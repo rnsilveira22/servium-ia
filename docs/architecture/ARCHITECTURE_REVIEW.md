@@ -1,4 +1,4 @@
-# Architecture Review — ServiumAI MVP (Red Team da Fase 003)
+# Architecture Review — Servium IA MVP (Red Team da Fase 003)
 
 > **Fase 003 — Revisão crítica da própria proposta.** Perguntas difíceis feitas à arquitetura proposta (ADRs 001–011, todos `Proposed`), com achados honestos.
 

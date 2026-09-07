@@ -59,7 +59,7 @@
 ## 4. Aplicação do MR (merge)
 
 - `gh` CLI indisponível na máquina; o merge foi aplicado via **`git merge --no-ff feat/f2-orchestrator`** com push para `origin/main`, após autorização humana explícita (MR aprovado).
-- Evidência: `git log` da `main` (commit de merge) e estado do remoto em `github.com/rnsilveira22/servium`.
+- Evidência: `git log` da `main` (commit de merge) e estado do remoto em `github.com/rnsilveira22/servium-ia`.
 
 ## 5. Pendências pós-execucação (exigem `gh`/web — operacional sem CLI)
 

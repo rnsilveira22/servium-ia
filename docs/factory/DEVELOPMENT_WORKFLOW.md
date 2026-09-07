@@ -1,6 +1,6 @@
-# Development Workflow — ServiumAI
+# Development Workflow — Servium IA
 
-> Fluxo oficial e máquina de estados canônica da Factory V2 (aprovada via **HG-F2-02**). Fonte operacional: GitHub Issues + Project `ServiumAI Development` (campo `Status`). Uma única máquina de estados; nunca criar estado paralelo.
+> Fluxo oficial e máquina de estados canônica da Factory V2 (aprovada via **HG-F2-02**). Fonte operacional: GitHub Issues + Project `Servium IA Development` (campo `Status`). Uma única máquina de estados; nunca criar estado paralelo.
 
 ## Máquina de estados canônica (14 estados)
 

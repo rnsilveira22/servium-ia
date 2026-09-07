@@ -2,13 +2,13 @@
 
 **Execução**: opencode/big-pickle  
 **Data**: 2026-08-25  
-**Plataforma**: ServiumAI Software Factory V1  
+**Plataforma**: Servium IA Software Factory V1  
 
 ---
 
 ## Estado Inicial
 
-O frontend (`apps/web`) era um scaffold vazio: 68 linhas, 1 componente (`<h1>ServiumAI</h1>`), sem routing, API client, auth, componentes, páginas, layout ou CSS.
+O frontend (`apps/web`) era um scaffold vazio: 68 linhas, 1 componente (`<h1>Servium IA</h1>`), sem routing, API client, auth, componentes, páginas, layout ou CSS.
 
 ## Gap Analysis
 

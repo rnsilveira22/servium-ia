@@ -1,4 +1,4 @@
-# Autonomy Policy — ServiumAI
+# Autonomy Policy — Servium IA
 
 > Define o que os agentes podem fazer sozinhos (Level 1), com notificação (Level 2) e o que exige decisão humana explícita (Level 3). Aplica-se a toda operação autônoma iniciada por `START_FACTORY` (V1) ou `START_ORCHESTRATOR` (V2).
 >

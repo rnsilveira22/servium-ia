@@ -1,4 +1,4 @@
-# Escopo do MVP — ServiumAI
+# Escopo do MVP — Servium IA
 
 > **Fase 002 — Discovery do MVP**
 > Definição rígida de escopo da primeira entrega validável. Este documento é a referência para o que entra e o que não entra no MVP. Requisitos detalhados: [`FUNCTIONAL_REQUIREMENTS.md`](FUNCTIONAL_REQUIREMENTS.md) e [`NON_FUNCTIONAL_REQUIREMENTS.md`](NON_FUNCTIONAL_REQUIREMENTS.md).

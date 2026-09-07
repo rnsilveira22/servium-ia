@@ -43,10 +43,10 @@ Apenas 4 (progressive materialization):
 
 | Nova | Issue | Título | Papel | Prioridade | Status inicial |
 |---|---|---|---|---|---|
-| N1 | [#16](https://github.com/rnsilveira22/servium/issues/16) | Cadastro mínimo de cliente, obrigação e checklist | Pleno | P1 | Backlog (refinar pós-spike) |
-| N2 | [#15](https://github.com/rnsilveira22/servium/issues/15) | Motor determinístico do ciclo de pendências | Pleno | P0 | Backlog (deps confirmadas pelo Senior pós-SRV-10) |
-| N3 | [#17](https://github.com/rnsilveira22/servium/issues/17) | Fila de exceções e intervenção humana | Pleno | P1 | Backlog |
-| N4 | [#18](https://github.com/rnsilveira22/servium/issues/18) | Comunicação real bidirecional (capability; arquitetura pendente da SRV-10) | Pleno | P1 | Backlog (**se pago/provedor → HG-006**) |
+| N1 | [#16](https://github.com/rnsilveira22/servium-ia/issues/16) | Cadastro mínimo de cliente, obrigação e checklist | Pleno | P1 | Backlog (refinar pós-spike) |
+| N2 | [#15](https://github.com/rnsilveira22/servium-ia/issues/15) | Motor determinístico do ciclo de pendências | Pleno | P0 | Backlog (deps confirmadas pelo Senior pós-SRV-10) |
+| N3 | [#17](https://github.com/rnsilveira22/servium-ia/issues/17) | Fila de exceções e intervenção humana | Pleno | P1 | Backlog |
+| N4 | [#18](https://github.com/rnsilveira22/servium-ia/issues/18) | Comunicação real bidirecional (capability; arquitetura pendente da SRV-10) | Pleno | P1 | Backlog (**se pago/provedor → HG-006**) |
 
 Épico `EPIC-MVP01`: agrupado pela opção `EPIC-003` do campo Epic do Project + label `epic:mvp01` (a API do GitHub não permite criar opções de campo programaticamente — limitação registrada).
 

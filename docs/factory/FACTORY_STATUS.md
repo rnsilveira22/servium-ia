@@ -1,4 +1,4 @@
-# Factory Status — ServiumAI
+# Factory Status — Servium IA
 
 > Snapshot vivo do estado da factory. Atualizado ao fim de cada sessão (`FACTORY_RUNBOOK.md` §5). Histórico completo vive no git/Issues — este arquivo é o ponto de partida da próxima sessão.
 
@@ -51,23 +51,23 @@ Registro formal: [`HUMAN_DECISIONS_LOG.md`](HUMAN_DECISIONS_LOG.md).
 
 | Data | Ação | Item | Evidência | Resultado |
 |---|---|---|---|---|
-| 05/09/2026 | merge PR normal squash | #51 | [PR #76](https://github.com/rnsilveira22/servium/pull/76) `150188f` | ok |
-| 05/09/2026 | merge PR normal squash | #52 | [PR #77](https://github.com/rnsilveira22/servium/pull/77) `8617afd` | ok |
-| 05/09/2026 | merge PR normal squash (docs) | #53 | [PR #78](https://github.com/rnsilveira22/servium/pull/78) `7efd68a` | ok |
+| 05/09/2026 | merge PR normal squash | #51 | [PR #76](https://github.com/rnsilveira22/servium-ia/pull/76) `150188f` | ok |
+| 05/09/2026 | merge PR normal squash | #52 | [PR #77](https://github.com/rnsilveira22/servium-ia/pull/77) `8617afd` | ok |
+| 05/09/2026 | merge PR normal squash (docs) | #53 | [PR #78](https://github.com/rnsilveira22/servium-ia/pull/78) `7efd68a` | ok |
 
-## Fila efetiva (Project `ServiumAI Development`)
+## Fila efetiva (Project `Servium IA Development`)
 
 > **PRE-PUSH VALIDATION GATE: ACTIVE** — docs → `npm run lint:docs`; código → `npm ci` + `npm run db:up` + `npm run verify`. Falha local ⇒ sem push.
 
 | Issue | Item | Prioridade | Status real | Observação |
 |---|---|---|---|---|
-| [#9](https://github.com/rnsilveira22/servium/issues/9) | Auditoria append-only (**P0.2**) | P0 | **DONE no board** / Issue OPEN (aguarda fechamento formal) | CA-01/02 (reconciliação §5), CA-03 (#52), CA-04 (#51), CA-05 (#53) todos entregues; drift do board (Done/P1 vs OPEN/P0) registrado |
-| [#20](https://github.com/rnsilveira22/servium/issues/20) | N5 Auth mínima (**P0.3** hardening) | P0 | OPEN / **LIBERADA** | HG-PR-SEC aprovado (06/09); #54 (senha, min 12) e #55 (rate-limit 5/15min conta, 30/5min IP) desbloqueadas — A∥B, agente: pleno |
-| [#73](https://github.com/rnsilveira22/servium/issues/73) | Bug P0 (funcional) | P0 | OPEN | aguarda próxima onda |
-| [#72](https://github.com/rnsilveira22/servium/issues/72) | Gap P1 | P1 | OPEN | aguarda próxima onda |
-| [#58](https://github.com/rnsilveira22/servium/issues/58) | Backlog P2 | P2 | OPEN | aguarda próxima onda |
-| [#59](https://github.com/rnsilveira22/servium/issues/59) | Backlog P2 | P2 | OPEN | aguarda próxima onda |
-| [#75](https://github.com/rnsilveira22/servium/pull/75) | dependabot: bump nodemailer/qs | — | PR OPEN (base main) | decisão humana: manter ou fechar |
+| [#9](https://github.com/rnsilveira22/servium-ia/issues/9) | Auditoria append-only (**P0.2**) | P0 | **DONE no board** / Issue OPEN (aguarda fechamento formal) | CA-01/02 (reconciliação §5), CA-03 (#52), CA-04 (#51), CA-05 (#53) todos entregues; drift do board (Done/P1 vs OPEN/P0) registrado |
+| [#20](https://github.com/rnsilveira22/servium-ia/issues/20) | N5 Auth mínima (**P0.3** hardening) | P0 | OPEN / **LIBERADA** | HG-PR-SEC aprovado (06/09); #54 (senha, min 12) e #55 (rate-limit 5/15min conta, 30/5min IP) desbloqueadas — A∥B, agente: pleno |
+| [#73](https://github.com/rnsilveira22/servium-ia/issues/73) | Bug P0 (funcional) | P0 | OPEN | aguarda próxima onda |
+| [#72](https://github.com/rnsilveira22/servium-ia/issues/72) | Gap P1 | P1 | OPEN | aguarda próxima onda |
+| [#58](https://github.com/rnsilveira22/servium-ia/issues/58) | Backlog P2 | P2 | OPEN | aguarda próxima onda |
+| [#59](https://github.com/rnsilveira22/servium-ia/issues/59) | Backlog P2 | P2 | OPEN | aguarda próxima onda |
+| [#75](https://github.com/rnsilveira22/servium-ia/pull/75) | dependabot: bump nodemailer/qs | — | PR OPEN (base main) | decisão humana: manter ou fechar |
 
 Issues fechadas nesta sessão: #51 (PR #76), #52 (PR #77), #53 (PR #78). Issues fechadas sessão anterior: #45–#49 (HG-REC-01), #50 (PR #66).
 

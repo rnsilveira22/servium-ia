@@ -1,10 +1,10 @@
-# Glossário — ServiumAI
+# Glossário — Servium IA
 
 > Vocabulário oficial do projeto. Os termos representam **conceitos de domínio**, não necessariamente entidades de banco de dados, classes ou tabelas. Definições são preliminares e evoluirão com a especificação do MVP.
 
 | Termo | Definição preliminar |
 |---|---|
-| **ServiumAI** | Plataforma B2B de funcionários digitais especializados. Marca comercial do produto. |
+| **Servium IA** | Plataforma B2B de funcionários digitais especializados. Marca comercial do produto. |
 | **servium** | Nome técnico do projeto/repositório. |
 | **Tenant** | Cliente da plataforma. Unidade de isolamento lógico de dados e configuração. |
 | **Organização** | Empresa cliente dentro da plataforma; corresponde, na prática, a um tenant (distinção formal será definida na especificação). |

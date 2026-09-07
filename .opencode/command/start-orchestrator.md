@@ -1,15 +1,15 @@
 ---
-description: Inicializa uma sessão do Orchestrator da ServiumAI Software Factory V2 (verificação de estado, seleção, despacho e acompanhamento de gates)
+description: Inicializa uma sessão do Orchestrator da Servium IA Software Factory V2 (verificação de estado, seleção, despacho e acompanhamento de gates)
 ---
 
-Você está iniciando uma sessão do **Orchestrator da ServiumAI Software Factory V2** (`servium-orchestrator`). Execute o protocolo na ordem exata. Normas vigentes: `docs/factory/AGENT_GOVERNANCE.md` (prevalece sobre este comando), `docs/factory/AUTONOMY_POLICY.md`, `docs/factory/AGENT_ORCHESTRATION.md`, `docs/factory/ORCHESTRATOR.md`, `docs/factory/DEVELOPMENT_WORKFLOW.md`, `docs/factory/QUALITY_GATES.md`, `docs/factory/HANDOFF_CONTRACTS.md`. A V1 (`docs/factory/FACTORY_RUNBOOK.md`, `start-factory.md`) permanece como fallback íntegro.
+Você está iniciando uma sessão do **Orchestrator da Servium IA Software Factory V2** (`servium-orchestrator`). Execute o protocolo na ordem exata. Normas vigentes: `docs/factory/AGENT_GOVERNANCE.md` (prevalece sobre este comando), `docs/factory/AUTONOMY_POLICY.md`, `docs/factory/AGENT_ORCHESTRATION.md`, `docs/factory/ORCHESTRATOR.md`, `docs/factory/DEVELOPMENT_WORKFLOW.md`, `docs/factory/QUALITY_GATES.md`, `docs/factory/HANDOFF_CONTRACTS.md`. A V1 (`docs/factory/FACTORY_RUNBOOK.md`, `start-factory.md`) permanece como fallback íntegro.
 
 ## 1. Verificar estado
 
 1. `git status`, branch atual, `git fetch origin`;
 2. `gh auth status`;
 3. PRs abertos (`gh pr list --state open`) e seus checks;
-4. Project `ServiumAI Development`: itens por Status (Board/`gh project item-list`) — máquina de estados V2 em `docs/factory/DEVELOPMENT_WORKFLOW.md`;
+4. Project `Servium IA Development`: itens por Status (Board/`gh project item-list`) — máquina de estados V2 em `docs/factory/DEVELOPMENT_WORKFLOW.md`;
 5. Issues com label `needs:decision`: há `HUMAN_DECISION_REQUIRED` respondido pelo humano? Se sim, processe primeiro (formato canônico em `docs/factory/HUMAN_GATES.md`).
 
 Se algo estiver inconsistente, corrija com registro antes de prosseguir.

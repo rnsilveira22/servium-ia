@@ -1,4 +1,4 @@
-# Backlog Inicial — ServiumAI (canônico)
+# Backlog Inicial — Servium IA (canônico)
 
 > **APROVADO COM AJUSTES (HG-003 · 2026-08-22).** Direção de produto aprovada por Rodrigo a partir da proposta do `servium-po` (elaborada com base em `BACKLOG_OVERVIEW.md`, `MVP_SCOPE.md`, `FUNCTIONAL_REQUIREMENTS.md` e `ADR_REVIEW_REPORT.md`). Registro formal: [`../factory/HUMAN_DECISIONS_LOG.md`](../factory/HUMAN_DECISIONS_LOG.md).
 >
@@ -43,19 +43,19 @@ Objetivo: transformar repositório documental em monorepo executável sem violar
 
 | # | História | Issue | Épico | Notas |
 |---|---|---|---|---|
-| 0.1 | Skeleton monorepo TS (API NestJS + SPA React + pacote de tipos compartilhados) | [#3](https://github.com/rnsilveira22/servium/issues/3) | EPIC-004 | Concretiza ADR-001/002/003 |
-| 0.2 | Pipeline CI evoluído: lint + build + testes (unit/integração) obrigatórios no Gate 4 | [#4](https://github.com/rnsilveira22/servium/issues/4) | EPIC-004 | Depende de 0.1; sem duplicar docs-ci |
-| 0.3 | Ambiente local padronizado (Postgres via container; adaptadores fake por padrão) | [#5](https://github.com/rnsilveira22/servium/issues/5) | EPIC-004 | Zero serviço pago nesta onda |
+| 0.1 | Skeleton monorepo TS (API NestJS + SPA React + pacote de tipos compartilhados) | [#3](https://github.com/rnsilveira22/servium-ia/issues/3) | EPIC-004 | Concretiza ADR-001/002/003 |
+| 0.2 | Pipeline CI evoluído: lint + build + testes (unit/integração) obrigatórios no Gate 4 | [#4](https://github.com/rnsilveira22/servium-ia/issues/4) | EPIC-004 | Depende de 0.1; sem duplicar docs-ci |
+| 0.3 | Ambiente local padronizado (Postgres via container; adaptadores fake por padrão) | [#5](https://github.com/rnsilveira22/servium-ia/issues/5) | EPIC-004 | Zero serviço pago nesta onda |
 
 ## Onda 1 — Fundações de dados e confiança *(materializada)*
 
 | # | História | Issue | Épico | Notas |
 |---|---|---|---|---|
-| 1.1 | Modelo de dados inicial + migrations versionadas | [#6](https://github.com/rnsilveira22/servium/issues/6) | EPIC-006 | ADR-004; depende de Onda 0 |
-| 1.2 | Isolamento multi-tenant: `tenant_id` + RLS deny-by-default + suíte de testes de vazamento | [#7](https://github.com/rnsilveira22/servium/issues/7) | EPIC-004 | **Condição vinculante do ACCEPT do ADR-005**; depende de 1.1 + 0.2 |
-| 1.3 | Framework de jobs persistidos (SKIP LOCKED, retry/backoff, idempotency keys) + outbox condicional | [#8](https://github.com/rnsilveira22/servium/issues/8) | EPIC-006 | **Ajuste HG-003**: outbox só com necessidade demonstrada; conflito material com ADR-006 → `needs:adr` |
-| 1.4 | Trilha de auditoria append-only (eventos de negócio e de agente) | [#9](https://github.com/rnsilveira22/servium/issues/9) | EPIC-009 | ADRV-002; permanece na Onda 1 (HG-003 nº 6) |
-| 1.5 | Spike: avaliar vertical slice mínimo de cadastro de clientes p/ validar fundação multi-tenant | [#10](https://github.com/rnsilveira22/servium/issues/10) | EPIC-006 | **Ajuste HG-003 nº 5**: PO+Senior; não antecipa a Onda 3 |
+| 1.1 | Modelo de dados inicial + migrations versionadas | [#6](https://github.com/rnsilveira22/servium-ia/issues/6) | EPIC-006 | ADR-004; depende de Onda 0 |
+| 1.2 | Isolamento multi-tenant: `tenant_id` + RLS deny-by-default + suíte de testes de vazamento | [#7](https://github.com/rnsilveira22/servium-ia/issues/7) | EPIC-004 | **Condição vinculante do ACCEPT do ADR-005**; depende de 1.1 + 0.2 |
+| 1.3 | Framework de jobs persistidos (SKIP LOCKED, retry/backoff, idempotency keys) + outbox condicional | [#8](https://github.com/rnsilveira22/servium-ia/issues/8) | EPIC-006 | **Ajuste HG-003**: outbox só com necessidade demonstrada; conflito material com ADR-006 → `needs:adr` |
+| 1.4 | Trilha de auditoria append-only (eventos de negócio e de agente) | [#9](https://github.com/rnsilveira22/servium-ia/issues/9) | EPIC-009 | ADRV-002; permanece na Onda 1 (HG-003 nº 6) |
+| 1.5 | Spike: avaliar vertical slice mínimo de cadastro de clientes p/ validar fundação multi-tenant | [#10](https://github.com/rnsilveira22/servium-ia/issues/10) | EPIC-006 | **Ajuste HG-003 nº 5**: PO+Senior; não antecipa a Onda 3 |
 
 ## Onda 2 — Identidade e acesso *(planejada)*
 

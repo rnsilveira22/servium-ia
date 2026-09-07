@@ -1,4 +1,4 @@
-# Human Gates — ServiumAI
+# Human Gates — Servium IA
 
 > Catálogo de pontos de decisão humana obrigatória, formato canônico de `HUMAN_DECISION_REQUIRED` e política de default-decision. Decisor: Rodrigo (owner).
 

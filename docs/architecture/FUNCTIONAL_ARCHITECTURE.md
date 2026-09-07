@@ -1,4 +1,4 @@
-# Arquitetura Funcional do MVP — ServiumAI
+# Arquitetura Funcional do MVP — Servium IA
 
 > **Fase 003 — Arquitetura do MVP e Seleção de Stack** · Etapa A
 > Define as capacidades necessárias ao MVP (Assistente Digital de Pendências Documentais), suas responsabilidades, dependências e boundaries — **sem transformá-las em serviços, containers ou bancos**. Uma capacidade não equivale a um deployment.
@@ -11,7 +11,7 @@ Descrever **o que o sistema faz** (capacidades e responsabilidades) antes de dec
 
 ## Contexto
 
-O ServiumAI MVP opera para um escritório contábil piloto: mantém checklists documentais por cliente/obrigação, identifica pendências a cada ciclo, cobra clientes finais dentro de limites configurados, recebe e valida documentos, escala exceções a humanos e registra tudo de forma auditável. Um único tipo de Funcionário Digital existe no MVP, modelado como configuração + comportamento, não como código fixo.
+O Servium IA MVP opera para um escritório contábil piloto: mantém checklists documentais por cliente/obrigação, identifica pendências a cada ciclo, cobra clientes finais dentro de limites configurados, recebe e valida documentos, escala exceções a humanos e registra tudo de forma auditável. Um único tipo de Funcionário Digital existe no MVP, modelado como configuração + comportamento, não como código fixo.
 
 ## Capacidades
 

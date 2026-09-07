@@ -1,4 +1,4 @@
-# Factory Runbook — ServiumAI
+# Factory Runbook — Servium IA
 
 > Manual operacional de uma sessão autônoma da factory. O comando `START_FACTORY` (`.opencode/command/start-factory.md`) referencia este runbook. Fontes normativas: `AGENT_GOVERNANCE.md`, `AUTONOMY_POLICY.md`, `AGENT_ORCHESTRATION.md`.
 >

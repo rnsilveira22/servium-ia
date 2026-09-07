@@ -1,6 +1,6 @@
-# ServiumAI
+# Servium IA
 
-**ServiumAI** é uma plataforma B2B de **funcionários digitais especializados**: força de trabalho digital organizada, com funções definidas, permissões controladas e supervisão humana, criada para assumir atividades operacionais e rotineiras de empresas — começando por escritórios de contabilidade.
+**Servium IA** é uma plataforma B2B de **funcionários digitais especializados**: força de trabalho digital organizada, com funções definidas, permissões controladas e supervisão humana, criada para assumir atividades operacionais e rotineiras de empresas — começando por escritórios de contabilidade.
 
 > **Status: MVP-01 em remediação pré-piloto — P0.1 resolvido/margeado · restam P0.2/P0.3**
 >

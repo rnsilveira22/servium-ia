@@ -1,4 +1,4 @@
-# Métricas de Sucesso do MVP — ServiumAI
+# Métricas de Sucesso do MVP — Servium IA
 
 > **Fase 002 — Discovery do MVP**
 > Como saberemos se o piloto funcionou. **Nenhuma meta numérica é definida arbitrariamente nesta fase**: sem baseline real, metas seriam invenção. Cada métrica segue o padrão `Baseline: a medir` → `Meta: a definir após baseline`.
