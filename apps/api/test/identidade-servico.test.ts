@@ -1,18 +1,26 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { randomUUID } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
+import type { INestApplication } from '@nestjs/common';
+import supertest from 'supertest';
+import { hash } from '@node-rs/argon2';
 
 import { ADMIN_URL, APP_URL, enqueue } from '@servium-ia/db';
 import pg from 'pg';
 import { FakeChannel } from '../src/motor/channel';
 import { createMotorWorker } from '../src/runtime/worker';
 import { resolveServiceId, requireServiceId } from '../src/runtime/service-id';
+import { buildApp } from '../src/app.factory';
 
 const TEN = 'aaaa0000-0000-0000-0000-00000000c601';
 const SLUG = 'tenant-servico-test';
 const SERVICE_ID = '11111111-2222-3333-4444-555555555555';
+const OP_EMAIL = 'op@servico-test.local';
+const OP_SENHA = 'senha-' + randomBytes(8).toString('hex');
 let admin: pg.Client;
 let ctx: pg.Client;
 
+let app: INestApplication;
+let req: supertest.Agent;
 let canal: FakeChannel;
 let worker: ReturnType<typeof createMotorWorker>;
 let cicloId: string;
@@ -64,13 +72,25 @@ beforeAll(async () => {
   );
   obrigId = obl[0]!.id;
 
+  // operador para o teste CA-C-2 (caminho HTTP real deve gravar 'operador')
+  await admin.query(
+    `INSERT INTO operadores (tenant_id, nome, email, senha_hash, papel)
+     VALUES ($1,'Operador',$2,$3,'operador')`,
+    [TEN, OP_EMAIL, await hash(OP_SENHA)]
+  );
+
   ctx = new pg.Client({ connectionString: APP_URL });
   await ctx.connect();
   await ctx.query("SELECT set_config($1,$2,false)", ['app.tenant_id', TEN]);
+
+  app = await buildApp(true);
+  await app.init();
+  req = supertest(app.getHttpServer());
 });
 
 afterAll(async () => {
   await worker?.stop();
+  await app?.close();
   await limpar();
   void admin.end();
   void ctx.end();
@@ -147,13 +167,31 @@ describe('PRM-P0.3-C · identidade de serviço do FD (Issue #56)', () => {
     expect(acoes).toEqual(['ativar', 'cobrar', 'cobrar']);
   }, 40_000);
 
-  it('CA-C-2: chamadas HTTP (operador/admin) registram eventos com actor_type=operador (sem regressão)', async () => {
-    const { rows } = await admin.query(
-      "SELECT count(*)::int AS n FROM eventos_auditoria WHERE tenant_id=$1 AND actor_type='operador'",
+  it('CA-C-2: caminho HTTP real (POST /auth/login) grava evento com actor_type=operador (sem vazamento do override)', async () => {
+    const r = await req.post('/auth/login').send({ slug: SLUG, email: OP_EMAIL, senha: OP_SENHA });
+    expect(r.status).toBe(200);
+    expect(r.body.papel).toBe('operador');
+    const cookie = r.headers['set-cookie'][0].split(';')[0];
+
+    // rota autenticada para garantir ação do operador na trilha
+    expect((await req.get('/auth/me').set('Cookie', cookie)).status).toBe(200);
+
+    const { rows: loginOp } = await admin.query(
+      `SELECT actor_type, actor_id, acao FROM eventos_auditoria
+        WHERE tenant_id=$1 AND entidade='auth' AND acao='login_sucesso' AND actor_type='operador'
+        ORDER BY criado_em DESC LIMIT 1`,
       [TEN]
     );
-    // Nenhum evento do worker desta suíte é operador; o contraste garante que
-    // o override de serviço não vazou para o caminho HTTP (auditado na #51).
-    expect(rows[0]!.n).toBe(0);
+    expect(loginOp[0]).toMatchObject({ actor_type: 'operador', acao: 'login_sucesso' });
+    expect(loginOp[0].actor_id).not.toBe(SERVICE_ID);
+
+    // contraste com o caminho do FD: nenhum evento deste tenant veio do servico
+    // no fluxo HTTP — o override do worker não contaminou a trilha de operador.
+    const { rows: onlyServico } = await admin.query(
+      `SELECT count(*)::int AS n FROM eventos_auditoria
+        WHERE tenant_id=$1 AND actor_type='operador' AND actor_id=$2`,
+      [TEN, SERVICE_ID]
+    );
+    expect(onlyServico[0].n).toBe(0);
   });
 });
