@@ -1,4 +1,4 @@
-# Arquitetura — ServiumAI
+# Arquitetura — Servium IA
 
 > **Fase 003 concluída e ADRs aceitos (HG-002 · 2026-08-22).** A arquitetura do MVP (monólito modular + stack definida) está documentada abaixo e registrada em ADRs com status `Accepted`. Condições dos aceites e registro da decisão: [`../factory/HUMAN_DECISIONS_LOG.md`](../factory/HUMAN_DECISIONS_LOG.md).
 >

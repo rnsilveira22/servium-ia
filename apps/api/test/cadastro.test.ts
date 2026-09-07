@@ -4,7 +4,7 @@ import type { INestApplication } from '@nestjs/common';
 import supertest from 'supertest';
 import { hash } from '@node-rs/argon2';
 
-import { ADMIN_URL } from '@servium/db';
+import { ADMIN_URL } from '@servium-ia/db';
 import { buildApp } from '../src/app.factory';
 
 // Tenants EXCLUSIVOS deste arquivo (paralelismo vitest — lição SRV-7)

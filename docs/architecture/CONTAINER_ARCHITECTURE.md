@@ -1,4 +1,4 @@
-# Container Architecture — ServiumAI MVP
+# Container Architecture — Servium IA MVP
 
 > **Fase 003 — Arquitetura do MVP** · Visão inspirada em C4 — nível **Container** (unidades lógicas de software, não Docker). Derivada de [`DOMAIN_BOUNDARIES.md`](DOMAIN_BOUNDARIES.md) e dos drivers ([`ARCHITECTURE_DRIVERS.md`](ARCHITECTURE_DRIVERS.md)).
 

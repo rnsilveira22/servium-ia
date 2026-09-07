@@ -4,7 +4,7 @@ import type { INestApplication } from '@nestjs/common';
 import supertest from 'supertest';
 import pg from 'pg';
 
-import { ADMIN_URL, APP_URL, claimJobs, completeJob, enqueue } from '@servium/db';
+import { ADMIN_URL, APP_URL, claimJobs, completeJob, enqueue } from '@servium-ia/db';
 import { FakeChannel } from '../src/motor/channel';
 import { registrarMotorHandlers } from '../src/motor/handlers';
 import { buildApp } from '../src/app.factory';

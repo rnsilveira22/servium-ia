@@ -1,4 +1,4 @@
-# Roadmap — ServiumAI
+# Roadmap — Servium IA
 
 > Roadmap por **fases e objetivos**, sem datas arbitrárias. Fases avançam por critérios de prontidão, não por calendário.
 

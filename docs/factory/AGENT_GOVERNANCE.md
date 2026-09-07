@@ -1,4 +1,4 @@
-# Agent Governance — ServiumAI
+# Agent Governance — Servium IA
 
 > Regras de governança para a equipe de agentes. Complementa `docs/AI_CONTEXT.md` (regras de repositório) e prevalece sobre preferências individuais de qualquer agente.
 

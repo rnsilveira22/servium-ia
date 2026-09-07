@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, SetMetadata } from '@nestjs/common';
 import type { Request } from 'express';
 import { Client } from 'pg';
-import { APP_URL, ADMIN_URL } from '@servium/db';
+import { APP_URL, ADMIN_URL } from '@servium-ia/db';
 
 export const ROLES_KEY = 'papeis';
 

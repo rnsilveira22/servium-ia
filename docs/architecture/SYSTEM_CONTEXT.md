@@ -1,6 +1,6 @@
-# System Context — ServiumAI MVP
+# System Context — Servium IA MVP
 
-> **Fase 003 — Arquitetura do MVP** · Visão inspirada em C4 — nível **System Context**: o ServiumAI como um todo, seus usuários e sistemas externos.
+> **Fase 003 — Arquitetura do MVP** · Visão inspirada em C4 — nível **System Context**: o Servium IA como um todo, seus usuários e sistemas externos.
 
 ## Diagrama
 
@@ -16,7 +16,7 @@ flowchart LR
     end
     CF["Cliente final do escritório"]
 
-    S["ServiumAI<br/>Assistente Digital de<br/>Pendências Documentais"]
+    S["Servium IA<br/>Assistente Digital de<br/>Pendências Documentais"]
 
     CH["Canal de comunicação<br/>(provedor de e-mail;<br/>outros canais futuros)"]
     ST["Armazenamento documental<br/>(object storage)"]
@@ -33,7 +33,7 @@ flowchart LR
 
 ## Atores e sistemas
 
-| Elemento | Tipo | Interação com o ServiumAI |
+| Elemento | Tipo | Interação com o Servium IA |
 |---|---|---|
 | Responsável pela rotina | Pessoa (usuária principal) | Configura checklists/templates/limites; ativa ciclos; trata exceções; acompanha painel |
 | Sócio/Gestor | Pessoa | Aprova adoção e limites; acompanha indicadores agregados |

@@ -1,4 +1,4 @@
-# AI Usage Boundaries — ServiumAI MVP
+# AI Usage Boundaries — Servium IA MVP
 
 > **Fase 003 — Arquitetura do MVP**
 > Pergunta central: *o primeiro Funcionário Digital realmente precisa de LLM em todas as etapas?* **Não.** Este documento classifica cada função do MVP e delimita onde IA agrega valor — princípio: **não usar LLM onde uma regra determinística é suficiente** (ADRV-013, ADR-010).

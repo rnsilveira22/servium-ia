@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SERVICE_NAME } from '@servium/shared-types';
+import { SERVICE_NAME } from '@servium-ia/shared-types';
 import { AppController } from './app.controller';
 
 describe('AppController', () => {

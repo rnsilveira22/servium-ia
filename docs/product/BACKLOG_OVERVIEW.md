@@ -1,4 +1,4 @@
-# Backlog Macro — ServiumAI
+# Backlog Macro — Servium IA
 
 > **Fase 002 — Discovery do MVP**
 > Backlog macro por **épicos conceituais**. Não são tarefas técnicas nem histórias detalhadas — a decomposição ocorrerá após a definição arquitetural (Fase 003). Ordem indica sequenciamento preliminar, não compromisso de prazo.

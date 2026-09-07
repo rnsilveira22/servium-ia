@@ -22,7 +22,7 @@ export const API_PORT = 3400 + Math.floor(Math.random() * 900);
 export async function garantirBuildApi(): Promise<void> {
   if (existsSync(join(REPO_ROOT, 'apps/api/dist/main.js'))) return;
   const { execFileSync } = await import('node:child_process');
-  execFileSync('npm', ['run', 'build', '-w', '@servium/api'], { cwd: REPO_ROOT, stdio: 'inherit' });
+  execFileSync('npm', ['run', 'build', '-w', '@servium-ia/api'], { cwd: REPO_ROOT, stdio: 'inherit' });
 }
 
 export interface Processo {

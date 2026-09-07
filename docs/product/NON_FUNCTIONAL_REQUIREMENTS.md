@@ -1,4 +1,4 @@
-# Requisitos Não Funcionais do MVP — ServiumAI
+# Requisitos Não Funcionais do MVP — Servium IA
 
 > **Fase 002 — Discovery do MVP**
 > NFRs preliminares, derivados dos princípios ([`../PRODUCT_PRINCIPLES.md`](../PRODUCT_PRINCIPLES.md)) e das preocupações arquiteturais ([`../architecture/README.md`](../architecture/README.md)).

@@ -8,7 +8,7 @@
 
 ## A. EXECUTIVE SUMMARY
 
-Integração remota finalizada: PR #2 da Software Factory aberto e com CI verde; Project `ServiumAI Development` criado, vinculado ao repositório e configurado com os 12 estados do workflow + 6 campos customizados + views Board/Table; taxonomia completa de labels aplicada (18 labels); templates de Issue/PR validados (ativam após merge); rulesets bloqueados pelo plano GitHub (Free/privado) — registrado sem contorno. Item de teste do Project criado, validado e removido. Qualidade: um bug real de workflow foi detectado pela execução no GitHub e corrigido durante esta execução.
+Integração remota finalizada: PR #2 da Software Factory aberto e com CI verde; Project `Servium IA Development` criado, vinculado ao repositório e configurado com os 12 estados do workflow + 6 campos customizados + views Board/Table; taxonomia completa de labels aplicada (18 labels); templates de Issue/PR validados (ativam após merge); rulesets bloqueados pelo plano GitHub (Free/privado) — registrado sem contorno. Item de teste do Project criado, validado e removido. Qualidade: um bug real de workflow foi detectado pela execução no GitHub e corrigido durante esta execução.
 
 ## B. GITHUB AUTHENTICATION
 
@@ -21,8 +21,8 @@ Integração remota finalizada: PR #2 da Software Factory aberto e com CI verde;
 
 | Item | Valor |
 |---|---|
-| Owner / repo | `rnsilveira22/servium` |
-| URL | <https://github.com/rnsilveira22/servium> |
+| Owner / repo | `rnsilveira22/servium-ia` |
+| URL | <https://github.com/rnsilveira22/servium-ia> |
 | Branch padrão | `main` |
 | Branch da Factory | `chore/software-factory-v1` |
 | Visibilidade | privado |
@@ -33,8 +33,8 @@ Integração remota finalizada: PR #2 da Software Factory aberto e com CI verde;
 | Item | Valor |
 |---|---|
 | Número | **#2** |
-| Título | `chore: establish ServiumAI Software Factory V1` |
-| URL | <https://github.com/rnsilveira22/servium/pull/2> |
+| Título | `chore: establish Servium IA Software Factory V1` |
+| URL | <https://github.com/rnsilveira22/servium-ia/pull/2> |
 | Base ← head | `main` ← `chore/software-factory-v1` |
 | Estado | OPEN — **não mergeado** (fora do escopo) |
 | Checks | `Lint (arquivos alterados)` ✅ pass · `Relatório de dívida de lint` ✅ pass |
@@ -45,10 +45,10 @@ Commits adicionais desta execução: normalização de formatação markdown leg
 
 | Item | Valor |
 |---|---|
-| Nome | **ServiumAI Development** |
+| Nome | **Servium IA Development** |
 | Número / ID | #2 / `PVT_kwHOAiychM4BhKaU` |
 | URL | <https://github.com/users/rnsilveira22/projects/2> |
-| Repositório vinculado | `rnsilveira22/servium` ✅ |
+| Repositório vinculado | `rnsilveira22/servium-ia` ✅ |
 | Itens | 0 (teste controlado removido) |
 
 Pré-existente avaliado e preservado sem alteração: Project #1 (`@rnsilveira22's untitled project`, vazio, campos padrão genéricos) — incompatível com a governança; não duplicado nem destruído.

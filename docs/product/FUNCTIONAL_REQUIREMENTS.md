@@ -1,4 +1,4 @@
-# Requisitos Funcionais do MVP — ServiumAI
+# Requisitos Funcionais do MVP — Servium IA
 
 > **Fase 002 — Discovery do MVP**
 > Requisitos funcionais preliminares do primeiro MVP (Assistente Digital de Pendências Documentais). Priorização MoSCoW: **Must** (obrigatório) / **Should** (importante) / **Could** (desejável) / **Won't** (explicitamente fora desta versão).

@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { Client } from 'pg';
-import { APP_URL } from '@servium/db';
+import { APP_URL } from '@servium-ia/db';
 import { getCounts } from './metrics.service';
 
 @Controller('health')

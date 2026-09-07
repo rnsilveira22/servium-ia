@@ -4,7 +4,7 @@ import { randomBytes } from 'node:crypto';
 import { hash } from '@node-rs/argon2';
 import { Client } from 'pg';
 
-import { APP_URL, ADMIN_URL, validarPoliticaSenha, mensagemPoliticaSenha } from '@servium/db';
+import { APP_URL, ADMIN_URL, validarPoliticaSenha, mensagemPoliticaSenha } from '@servium-ia/db';
 import { RequireAuth, Roles, hashToken, type AuthedRequest, type RequestSession } from './auth.guard';
 
 const SESSION_TTL_HOURS = 12;

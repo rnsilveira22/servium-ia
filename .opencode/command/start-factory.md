@@ -1,15 +1,15 @@
 ---
-description: Inicializa uma sessão autônoma da ServiumAI Software Factory (verificação de estado, seleção de trabalho e execução por agente)
+description: Inicializa uma sessão autônoma da Servium IA Software Factory (verificação de estado, seleção de trabalho e execução por agente)
 ---
 
-Você está iniciando uma sessão da **ServiumAI Software Factory**. Execute o protocolo abaixo na ordem exata. Normas vigentes: `docs/factory/AGENT_GOVERNANCE.md` (prevalece sobre este comando), `docs/factory/AUTONOMY_POLICY.md`, `docs/factory/AGENT_ORCHESTRATION.md`, `docs/factory/FACTORY_RUNBOOK.md`.
+Você está iniciando uma sessão da **Servium IA Software Factory**. Execute o protocolo abaixo na ordem exata. Normas vigentes: `docs/factory/AGENT_GOVERNANCE.md` (prevalece sobre este comando), `docs/factory/AUTONOMY_POLICY.md`, `docs/factory/AGENT_ORCHESTRATION.md`, `docs/factory/FACTORY_RUNBOOK.md`.
 
 ## 1. Verificar estado
 
 1. `git status`, branch atual, `git fetch origin`;
 2. `gh auth status`;
 3. PRs abertos (`gh pr list --state open`) e seus checks;
-4. Project `ServiumAI Development`: itens por Status (Board/`gh project item-list`);
+4. Project `Servium IA Development`: itens por Status (Board/`gh project item-list`);
 5. Issues com label `needs:decision`: há `HUMAN_DECISION_REQUIRED` respondido pelo humano? Se sim, processe a decisão primeiro (formato em `docs/factory/HUMAN_GATES.md`).
 
 Se algo estiver inconsistente, corrija com registro antes de prosseguir.

@@ -1,4 +1,4 @@
-# MVP Discovery — ServiumAI
+# MVP Discovery — Servium IA
 
 > **Fase 002 — Discovery e Especificação do MVP**
 > Este é o documento central da fase. Tudo aqui é **hipótese de discovery** até ser validado com escritórios contábeis reais.
@@ -7,7 +7,7 @@
 
 ## Contexto
 
-O ServiumAI é uma plataforma B2B de funcionários digitais especializados. A Fase 001 estabeleceu visão, princípios e governança (ver [`../PROJECT_VISION.md`](../PROJECT_VISION.md)). Esta fase transforma essa visão ampla em uma hipótese de MVP específica, testável e especificada o suficiente para orientar a definição arquitetural (Fase 003).
+O Servium IA é uma plataforma B2B de funcionários digitais especializados. A Fase 001 estabeleceu visão, princípios e governança (ver [`../PROJECT_VISION.md`](../PROJECT_VISION.md)). Esta fase transforma essa visão ampla em uma hipótese de MVP específica, testável e especificada o suficiente para orientar a definição arquitetural (Fase 003).
 
 Estado atual: não há código, stack ou integrações. Não há cliente piloto definido. Não há entrevistas realizadas.
 

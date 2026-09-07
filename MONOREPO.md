@@ -1,6 +1,6 @@
 # Monorepo — Visão Técnica
 
-> Estrutura executável do ServiumAI (conforme ADR-001, ADR-002, ADR-003 — `Accepted`).
+> Estrutura executável do Servium IA (conforme ADR-001, ADR-002, ADR-003 — `Accepted`).
 
 ## Layout
 

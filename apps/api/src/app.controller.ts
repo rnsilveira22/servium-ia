@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { SERVICE_NAME, SERVICE_VERSION, ServiceInfo } from '@servium/shared-types';
+import { SERVICE_NAME, SERVICE_VERSION, ServiceInfo } from '@servium-ia/shared-types';
 
 @Controller()
 export class AppController {

@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { api } from '../api/client';
-import type { ObrigacaoDTO, ClienteDTO, ChecklistTemplateDTO } from '@servium/shared-types';
+import type { ObrigacaoDTO, ClienteDTO, ChecklistTemplateDTO } from '@servium-ia/shared-types';
 
 export function ObrigacoesPage() {
   const [obrigacoes, setObrigacoes] = useState<ObrigacaoDTO[]>([]);

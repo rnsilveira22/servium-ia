@@ -1,4 +1,4 @@
-# Riscos e Hipóteses — ServiumAI MVP
+# Riscos e Hipóteses — Servium IA MVP
 
 > **Fase 002 — Discovery do MVP**
 > Dois registros distintos: **hipóteses** (HYP) — premissas que precisam de evidência; **riscos** (RSK) — eventos que podem comprometer o MVP. IDs estáveis.

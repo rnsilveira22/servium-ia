@@ -14,9 +14,9 @@ A Story **#9 — Auditoria append-only (P0.2)** teve seus cinco critérios de ac
 |---|---|---|---|---|---|
 | CA-01 | Inventário de fontes de evento | Reconciliação (§5) | — | — | mergeado anteriormente |
 | CA-02 | Garantir fluxo de evento com dados mono | Reconciliação (§5) | — | — | mergeado anteriormente |
-| CA-03 | Emission atômica (evento+fato no mesmo commit) | **#52** PRM-P0.2-B | [#77](https://github.com/rnsilveira22/servium/pull/77) | `8617afd` | DONE+MERGED |
-| CA-04 | Leitura consultável (append + leitura) | **#51** PRM-P0.2-A | [#76](https://github.com/rnsilveira22/servium/pull/76) | `150188f` | DONE+MERGED |
-| CA-05 | Documentação do mecanismo de auditoria | **#53** PRM-P0.2-C | [#78](https://github.com/rnsilveira22/servium/pull/78) | `7efd68a` | DONE+MERGED |
+| CA-03 | Emission atômica (evento+fato no mesmo commit) | **#52** PRM-P0.2-B | [#77](https://github.com/rnsilveira22/servium-ia/pull/77) | `8617afd` | DONE+MERGED |
+| CA-04 | Leitura consultável (append + leitura) | **#51** PRM-P0.2-A | [#76](https://github.com/rnsilveira22/servium-ia/pull/76) | `150188f` | DONE+MERGED |
+| CA-05 | Documentação do mecanismo de auditoria | **#53** PRM-P0.2-C | [#78](https://github.com/rnsilveira22/servium-ia/pull/78) | `7efd68a` | DONE+MERGED |
 
 ## Resumo
 

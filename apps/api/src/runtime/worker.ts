@@ -4,7 +4,7 @@
  * dedicado do piloto: claim atômico por SKIP LOCKED, execução contextual por
  * tenant (RLS) e retry/backoff — regras do motor em handler.ts intactas.
  */
-import { PollWorker, type JobHandler } from '@servium/db';
+import { PollWorker, type JobHandler } from '@servium-ia/db';
 
 import { registrarMotorHandlers, type MotorDeps } from '../motor/handlers';
 

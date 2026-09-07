@@ -1,4 +1,4 @@
-# Primeiro Funcionário Digital — ServiumAI
+# Primeiro Funcionário Digital — Servium IA
 
 > **Fase 002 — Discovery do MVP**
 > Hipótese de especificação do primeiro Funcionário Digital. Selecionado pelos critérios de [`CANDIDATE_ROUTINES.md`](CANDIDATE_ROUTINES.md) (rotina RC-01). Tudo aqui é proposta sujeita a validação ([`VALIDATION_PLAN.md`](VALIDATION_PLAN.md)).

@@ -1,4 +1,4 @@
-# Human Decisions Log — ServiumAI
+# Human Decisions Log — Servium IA
 
 > Registro formal e imutável das decisões humanas (human gates). Cada entrada preserva a autorização, a evidência da execução e as condições vinculadas. Formato das solicitações: `HUMAN_GATES.md`. Fonte viva de pendências: `FACTORY_STATUS.md`.
 
@@ -17,7 +17,7 @@
 > HG-001: APROVADO — Opção A. Autorizo o merge da PR #2 (Software Factory V1) na main.
 
 - **Execução**: revalidação pré-merge (`state=OPEN`, `mergeable=MERGEABLE`, `mergeStateStatus=CLEAN`, ambos os checks do docs-ci verdes); merge via GitHub (`gh pr merge --merge`), sem force merge; `main` local atualizada após o merge.
-- **Evidência**: PR [#2](https://github.com/rnsilveira22/servium/pull/2) · commit de conteúdo `af1ab64` · SHA do merge registrado no repositório.
+- **Evidência**: PR [#2](https://github.com/rnsilveira22/servium-ia/pull/2) · commit de conteúdo `af1ab64` · SHA do merge registrado no repositório.
 - **Resultado**: factory passa a operar sobre `main`.
 
 ## HG-002 — Pacote de ADRs estruturais (001..011)
@@ -52,7 +52,7 @@
 - **Decisor**: Rodrigo (owner) · **Data**: 2026-08-22
 - **Autorização registrada**:
 
-> HG-003: APROVADO — Opção B (aprovação com ajustes). A proposta inicial de backlog do ServiumAI está aprovada como direção de produto, com as seguintes determinações: […] Ondas 0–7 aprovadas como roadmap inicial, não como autorização irrestrita; PO autorizado a materializar somente as histórias das Ondas 0 e 1; Ondas 2–7 permanecem backlog planejado.
+> HG-003: APROVADO — Opção B (aprovação com ajustes). A proposta inicial de backlog do Servium IA está aprovada como direção de produto, com as seguintes determinações: […] Ondas 0–7 aprovadas como roadmap inicial, não como autorização irrestrita; PO autorizado a materializar somente as histórias das Ondas 0 e 1; Ondas 2–7 permanecem backlog planejado.
 
 - **Determinações vinculantes** (íntegra na Issue/comunicação da decisão):
   1. Ondas 0–7 = roadmap inicial, **não** autorização irrestrita;
@@ -65,7 +65,7 @@
   8. Aprovação NÃO autoriza: contratação de serviços, escolha de provedor pago, deploy em produção, mudança arquitetural, mudança de visibilidade PRIVATE, expansão de escopo, bypass de Human Gates;
   9. Onda 5: canal concreto condicionado à validação (e-mail não é definitivo sem evidência);
   10. História 6.3: LLM opcional, fora do caminho crítico, deterministic-first (ADR-010).
-- **Execução**: proposta transformada em backlog canônico (`docs/product/INITIAL_BACKLOG.md`) com ajustes incorporados; Issues reais criadas apenas para as Ondas 0–1 (**#3–#10**, 8 itens) no Project `ServiumAI Development`, com campos Epic/Priority/Item Type/Responsible Role/Status, labels, dependências, critérios de aceite, DoR e DoD; campo `Epic` adicionado ao Project.
+- **Execução**: proposta transformada em backlog canônico (`docs/product/INITIAL_BACKLOG.md`) com ajustes incorporados; Issues reais criadas apenas para as Ondas 0–1 (**#3–#10**, 8 itens) no Project `Servium IA Development`, com campos Epic/Priority/Item Type/Responsible Role/Status, labels, dependências, critérios de aceite, DoR e DoD; campo `Epic` adicionado ao Project.
 - **Resultado**: fila da factory populada; implementação só inicia após validação das Issues contra a governança e o DoR.
 
 ---
@@ -132,7 +132,7 @@
   - local/CI/E2E → **Fake SMTP via Mailpit**;
   - ambos atrás da porta `CommunicationChannel` (ADR-008);
   - Mailpit será tratado após o **runtime operacional** (P0.1) estar corretamente wireado.
-- **Referência formal**: [`POST_MVP_BACKLOG_RECONCILIATION.md`](../reports/POST_MVP_BACKLOG_RECONCILIATION.md) §0 (decisão Q2) e §4 (matriz SRV-10); Issue #18 / PR [#34](https://github.com/rnsilveira22/servium/pull/34).
+- **Referência formal**: [`POST_MVP_BACKLOG_RECONCILIATION.md`](../reports/POST_MVP_BACKLOG_RECONCILIATION.md) §0 (decisão Q2) e §4 (matriz SRV-10); Issue #18 / PR [#34](https://github.com/rnsilveira22/servium-ia/pull/34).
 - **Resultado**: o plano de comunicação do piloto fica rastreado; ausência de registro anterior no log fica corrigida preservando o histórico.
 
 ---
@@ -204,7 +204,7 @@ A mensagem original de aprovação (04/09/2026) chegou truncada após o texto do
 [AUTONOMY] L3 | human gate de segurança | deferida em 2026-08-30, reaberta e aprovada em 2026-09-06
 ```
 
-- **Decisão**: **APROVADO** — valores vinculantes da política de senha da [Issue #54](https://github.com/rnsilveira22/servium/issues/54) (PRM-P0.3-A):
+- **Decisão**: **APROVADO** — valores vinculantes da política de senha da [Issue #54](https://github.com/rnsilveira22/servium-ia/issues/54) (PRM-P0.3-A):
   1. comprimento mínimo **12** (NIST SP 800-63B A2.1, postura B2B), máximo **64**;
   2. **sem** exigência de composição obrigatória (maiúscula/símbolo) — NIST desaconselha;
   3. **sem truncamento**; **espaços permitidos**;

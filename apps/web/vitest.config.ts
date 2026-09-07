@@ -7,7 +7,7 @@ export default defineConfig({
   test: { environment: 'node' },
   resolve: {
     alias: {
-      '@servium/shared-types': fileURLToPath(
+      '@servium-ia/shared-types': fileURLToPath(
         new URL('../../packages/shared-types/src/index.ts', import.meta.url),
       ),
     },

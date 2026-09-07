@@ -6,7 +6,7 @@
 
 **Arquitetura de testes (decidida, NÃO implementada):** piloto/produção = Gmail API + OAuth 2.0 · local/CI/E2E = Fake SMTP via **Mailpit** · ambos atrás da porta `CommunicationChannel` (ADR-008). Mailpit será tratado após o runtime operacional estar corretamente wireado (P0.1).
 
-**Responsável pela auditoria/reconciliação:** plataforma **opencode**, modelo **`opencode/big-pickle`** · sessão 2026-08-30 · base `main` @ `e04d1e6` · origin `rnsilveira22/servium` (leitura; sem alteração em Issues/Project Board/labels/milestones/commits de código).
+**Responsável pela auditoria/reconciliação:** plataforma **opencode**, modelo **`opencode/big-pickle`** · sessão 2026-08-30 · base `main` @ `e04d1e6` · origin `rnsilveira22/servium-ia` (leitura; sem alteração em Issues/Project Board/labels/milestones/commits de código).
 
 **Método:** auditoria por evidências (ordem de confiança: código → testes → migrations → CI → PR mergeado → docs → comentários GitHub → status da Issue). Nenhuma afirmação usa o status do boneco "closed" como prova.
 
@@ -231,7 +231,7 @@ Alvo mais impactante para corrigir antes do piloto: **README, AI_CONTEXT, FACTOR
 
 ## 11. Evidências anexas (referências-chave)
 
-- PRs merged: `#12 26b0db5` · `#14 dfed2eb` · `#21 106ed9e` · `#25 7d5c4ae` · `#27 6bda68b` · `#28 8c6d225` · `#30 d9e7379` · `#31 9ca83b1` · `#32 4a15015` · `#33 c7fad11` · `#34 c7f4060` · `#35 5626dd9` · `#37 132979c` · `#40 17e838a` · `#41 02b4213` · `#43 e04d1e6` (todos `rnsilveira22/servium`).
+- PRs merged: `#12 26b0db5` · `#14 dfed2eb` · `#21 106ed9e` · `#25 7d5c4ae` · `#27 6bda68b` · `#28 8c6d225` · `#30 d9e7379` · `#31 9ca83b1` · `#32 4a15015` · `#33 c7fad11` · `#34 c7f4060` · `#35 5626dd9` · `#37 132979c` · `#40 17e838a` · `#41 02b4213` · `#43 e04d1e6` (todos `rnsilveira22/servium-ia`).
 - Migrations: `packages/db/migrations/0001…0009`.
 - Testes: `packages/db/tests/{schema,rls-suite,rls,audit,queue}.test.ts` · `apps/api/test/{auth,cadastro,excecoes,motor,gmail,observability}.test.ts` · `apps/e2e` 29/29.
 - CI: `.github/workflows/{ci,docs-ci,e2e}.yml`; runs E2E `33323875084`, `33324884924`.

@@ -1,10 +1,10 @@
-# GitHub Workflow — ServiumAI
+# GitHub Workflow — Servium IA
 
 > Como o GitHub sustenta gestão, rastreabilidade e governança. Pré-requisitos de ferramenta: `git` (SSH) + `gh` CLI autenticado para operações administrativas.
 
 ## Repositório
 
-- `origin`: `git@github.com:rnsilveira22/servium.git`
+- `origin`: `git@github.com:rnsilveira22/servium-ia.git`
 - Branch principal: `main`
 - Fonte da verdade operacional: Issues deste repositório.
 
@@ -62,7 +62,7 @@ Fonte única das histórias — sem backlog paralelo. Templates disponíveis: Hi
 | Agente | `agent:po`, `agent:orchestrator`, `agent:senior`, `agent:pleno`, `agent:qa` |
 | Processo | `status:blocked`, `needs:adr`, `needs:decision` |
 
-## Project `ServiumAI Development`
+## Project `Servium IA Development`
 
 Campos: `Status`, `Priority`, `Type`, `Epic`, `Responsible Role`, `QA Status`, `PO Acceptance`, `Risk`.
 
@@ -86,7 +86,7 @@ Quando habilitável (requer `gh` autenticado com permissão admin): exigir PR + 
 
 Configuração efetivada (ver `GITHUB_INTEGRATION_REPORT.md`):
 
-- **Project**: [`ServiumAI Development`](https://github.com/users/rnsilveira22/projects/2) criado e vinculado ao repositório — campo `Status` com os 12 estados legados do workflow (migração para os **14 estados V2** pendente — ver "Status" acima), campos `Priority`, `Item Type` (`Type` é nome reservado do GitHub Projects), `Responsible Role`, `QA Status`, `PO Acceptance` e `Risk`; views `Board` e `Table`.
+- **Project**: [`Servium IA Development`](https://github.com/users/rnsilveira22/projects/2) criado e vinculado ao repositório — campo `Status` com os 12 estados legados do workflow (migração para os **14 estados V2** pendente — ver "Status" acima), campos `Priority`, `Item Type` (`Type` é nome reservado do GitHub Projects), `Responsible Role`, `QA Status`, `PO Acceptance` e `Risk`; views `Board` e `Table`.
 - **Labels**: taxonomia completa aplicada (`type:*`, `priority:*`, `agent:*`, `status:blocked`, `needs:adr`, `needs:decision`). Labels padrão legadas mantidas sem uso.
 - **PR template e Issue templates**: versionados nesta branch; tornam-se ativos no GitHub após o merge em `main` (o GitHub lê templates da branch padrão).
 - **Rulesets/proteção da `main`**: `BLOCKED_BY_GITHUB_PLAN` — repositório privado no plano Free não suporta rulesets nem branch protection. Não configurar required checks enquanto o CI for acionado por filtro de paths.

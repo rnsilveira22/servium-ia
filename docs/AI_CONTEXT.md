@@ -1,10 +1,10 @@
-# Contexto para Agentes de IA — ServiumAI
+# Contexto para Agentes de IA — Servium IA
 
 > Este documento orienta agentes de IA (e novos colaboradores) que trabalhem neste repositório. Leia-o integralmente antes de qualquer alteração.
 
 ## Projeto
 
-**ServiumAI** — plataforma B2B de funcionários digitais especializados.
+**Servium IA** — plataforma B2B de funcionários digitais especializados.
 
 ## Missão
 
@@ -22,7 +22,7 @@ Escritórios de contabilidade brasileiros. **Vertical inicial, não limitação 
 
 ## Fonte da verdade
 
-O próprio repositório `rnsilveira22/servium`. Materiais antigos no ambiente local **não** fazem parte deste projeto e não devem ser considerados como referência.
+O próprio repositório `rnsilveira22/servium-ia`. Materiais antigos no ambiente local **não** fazem parte deste projeto e não devem ser considerados como referência.
 
 ## Regras para agentes
 
