@@ -16,6 +16,8 @@ export interface MotorWorkerOptions {
   reapOlderThanMinutes?: number;
   /** Isolamento opcional por tenant (testes/multi-instância). */
   tenantFilter?: string;
+  /** Identidade de serviço do Funcionário Digital (PRM-P0.3-C). */
+  serviceId?: string;
 }
 
 /** Compõe o worker do motor com os handlers reais e um canal injetado. */
@@ -23,6 +25,7 @@ export function createMotorWorker(opts: MotorWorkerOptions): PollWorker {
   const deps: MotorDeps = {
     channel: opts.channel,
     remetentePadrao: process.env.MAIL_FROM ?? 'assistente@servium.local',
+    serviceId: opts.serviceId,
   };
   const worker = new PollWorker({
     pollMs: opts.pollMs,

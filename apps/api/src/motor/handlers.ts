@@ -19,22 +19,39 @@ import type { CommunicationChannel } from './channel';
 export interface MotorDeps {
   channel: CommunicationChannel;
   remetentePadrao?: string;
+  /** Identidade de serviço do Funcionário Digital (PRM-P0.3-C). */
+  serviceId?: string;
 }
 
 type Handler = (job: Job, ctx: Client) => Promise<void>;
 
+/**
+ * PRM-P0.3-C · Registra evento de auditoria. Quando um `serviceId` é fornecido
+ * (job originado no worker/runtime em nome do Funcionário Digital), o evento
+ * é atribuído a `actor_type='servico'` + `actor_id=serviceId`, distinguindo do
+ * `sistema` (infra). Sem `serviceId`, mantém `actor_type='sistema'` (default).
+ */
 async function auditar(
   ctx: Client,
   tenantId: string,
   entidade: string,
   entidadeId: string,
   acao: string,
-  detalhes: Record<string, unknown> = {}
+  detalhes: Record<string, unknown> = {},
+  serviceId?: string
 ): Promise<void> {
   await ctx.query(
-    `INSERT INTO eventos_auditoria (tenant_id, actor_type, entidade, entidade_id, acao, detalhes)
-     VALUES ($1,'sistema',$2,$3,$4,$5)`,
-    [tenantId, entidade, entidadeId, acao, JSON.stringify(detalhes)]
+    `INSERT INTO eventos_auditoria (tenant_id, actor_type, actor_id, entidade, entidade_id, acao, detalhes)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+    [
+      tenantId,
+      serviceId ? 'servico' : 'sistema',
+      serviceId ?? null,
+      entidade,
+      entidadeId,
+      acao,
+      JSON.stringify(detalhes),
+    ]
   );
 }
 
@@ -44,7 +61,7 @@ function limitesDe(raw: unknown): LimitesConfig {
 
 /** CA-01 · ativação: materializa itens do checklist no ciclo (idempotente). */
 export const ativarCiclo =
-  (): Handler =>
+  (serviceId?: string): Handler =>
   async (job, ctx) => {
     const cicloId = String(job.payload.ciclo_id);
     const { rows: alvo } = await ctx.query<{ template_id: string | null }>(
@@ -53,7 +70,7 @@ export const ativarCiclo =
     );
     if (!alvo[0]) return; // ciclo inexistente/encerrado ⇒ nada a fazer
     if (!alvo[0].template_id) {
-      await auditar(ctx, job.tenant_id, 'ciclo', cicloId, 'ativacao_sem_template', {});
+      await auditar(ctx, job.tenant_id, 'ciclo', cicloId, 'ativacao_sem_template', {}, serviceId);
       return;
     }
     // guarda de idempotência: itens já existentes não são recriados
@@ -66,7 +83,7 @@ export const ativarCiclo =
          SELECT $1,$2,id FROM itens_template WHERE tenant_id=$1 AND template_id=$3 ORDER BY ordem`,
         [job.tenant_id, cicloId, alvo[0].template_id]
       );
-      await auditar(ctx, job.tenant_id, 'ciclo', cicloId, 'ativar', {});
+      await auditar(ctx, job.tenant_id, 'ciclo', cicloId, 'ativar', {}, serviceId);
       // auto-encadeia a varredura DENTRO da transação: ação+evento+efeito como unidade (sem job órfão)
       await enqueue(ctx, { tipo: 'ciclo.tick', payload: { ciclo_id: cicloId }, idempotencyKey: `tick:${cicloId}:pos-ativar` });
       await ctx.query('COMMIT');
@@ -117,7 +134,7 @@ export const cobrarItem =
     );
 
     if (decisao.acao === 'nada' || decisao.acao === 'aguardar') {
-      await auditar(ctx, job.tenant_id, 'item_ciclo', itemId, 'decisao', { acao: decisao.acao, motivo: decisao.motivo });
+      await auditar(ctx, job.tenant_id, 'item_ciclo', itemId, 'decisao', { acao: decisao.acao, motivo: decisao.motivo }, deps.serviceId);
       return;
     }
 
@@ -140,7 +157,7 @@ export const cobrarItem =
            VALUES ($1,$2,'escalada_limite',$3,$4)`,
           [job.tenant_id, itemId, decisao.motivo, JSON.stringify({ tentativas: item.tentativas })]
         );
-        await auditar(ctx, job.tenant_id, 'item_ciclo', itemId, 'escalar', { motivo: decisao.motivo });
+        await auditar(ctx, job.tenant_id, 'item_ciclo', itemId, 'escalar', { motivo: decisao.motivo }, deps.serviceId);
         await ctx.query('COMMIT');
       } catch (err) {
         await ctx.query('ROLLBACK');
@@ -203,7 +220,7 @@ export const cobrarItem =
           tokenCorrelacao,
         ]
       );
-      await auditar(ctx, job.tenant_id, 'item_ciclo', itemId, 'cobrar', { rodada: item.tentativas + 1 });
+      await auditar(ctx, job.tenant_id, 'item_ciclo', itemId, 'cobrar', { rodada: item.tentativas + 1 }, deps.serviceId);
       await ctx.query('COMMIT');
     } catch (err) {
       await ctx.query('ROLLBACK');
@@ -212,7 +229,7 @@ export const cobrarItem =
   };
 
 /** Varredura periódica (CA-05): enfileira cobranças elegíveis — chaves determinísticas. */
-export const tickCiclos = (): Handler => async (job, ctx) => {
+export const tickCiclos = (serviceId?: string): Handler => async (job, ctx) => {
   void job;
   const { rows: elegiveis } = await ctx.query<{ id: string; estado: EstadoItem; tentativas: number; config: unknown }>(
     `SELECT i.id, i.estado, i.tentativas, c.config
@@ -248,7 +265,7 @@ export const tickCiclos = (): Handler => async (job, ctx) => {
               SELECT 1 FROM itens_ciclo WHERE ciclo_id=$1 AND estado NOT IN ('resolvido','cancelado','excecao'))`,
         [job.payload.ciclo_id]
       );
-      if (rowCount) await auditar(ctx, job.tenant_id, 'ciclo', job.payload.ciclo_id, 'encerrar', {});
+      if (rowCount) await auditar(ctx, job.tenant_id, 'ciclo', job.payload.ciclo_id, 'encerrar', {}, serviceId);
       await ctx.query('COMMIT');
     } catch (err) {
       await ctx.query('ROLLBACK');
@@ -259,7 +276,7 @@ export const tickCiclos = (): Handler => async (job, ctx) => {
 
 /** CA-06 · encerramento: todos os itens em estado final ⇒ ciclo encerrado. */
 export const encerrarCiclo =
-  (): Handler =>
+  (serviceId?: string): Handler =>
   async (job, ctx) => {
     const cicloId = String(job.payload.ciclo_id);
     const { rows } = await ctx.query<{ abertos: string }>(
@@ -275,7 +292,7 @@ export const encerrarCiclo =
           WHERE id=$1 AND estado='aberto' RETURNING id`,
         [cicloId]
       );
-      if (upd.rowCount) await auditar(ctx, job.tenant_id, 'ciclo', cicloId, 'encerrar', {});
+      if (upd.rowCount) await auditar(ctx, job.tenant_id, 'ciclo', cicloId, 'encerrar', {}, serviceId);
       await ctx.query('COMMIT');
     } catch (err) {
       await ctx.query('ROLLBACK');
@@ -285,9 +302,9 @@ export const encerrarCiclo =
 
 export function registrarMotorHandlers(deps: MotorDeps): Map<string, Handler> {
   return new Map([
-    ['ciclo.ativar', ativarCiclo()],
+    ['ciclo.ativar', ativarCiclo(deps.serviceId)],
     ['item.cobrar', cobrarItem(deps)],
-    ['ciclo.tick', tickCiclos()],
-    ['ciclo.encerrar', encerrarCiclo()],
+    ['ciclo.tick', tickCiclos(deps.serviceId)],
+    ['ciclo.encerrar', encerrarCiclo(deps.serviceId)],
   ]);
 }
