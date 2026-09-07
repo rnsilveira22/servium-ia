@@ -63,6 +63,12 @@ function mensagemErro(err: unknown): string {
   return 'Não foi possível carregar o ciclo. Tente novamente.';
 }
 
+const ESTADO_LABEL: Record<string, string> = {
+  aberto: 'Aberto',
+  encerrado: 'Encerrado',
+  cancelado: 'Cancelado',
+};
+
 export function CicloDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { sessao } = useAuth();
@@ -72,8 +78,11 @@ export function CicloDetailPage() {
   const [excecoes, setExcecoes] = useState<Excecao[]>([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState('');
+  const [aviso, setAviso] = useState('');
   const [actionLoading, setActionLoading] = useState('');
   const [confirmAction, setConfirmAction] = useState<{ tipo: 'resolvido' | 'cancelado'; itemId: string } | null>(null);
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [motivoCancel, setMotivoCancel] = useState('');
 
   useEffect(() => {
     if (!id) return;
@@ -81,6 +90,8 @@ export function CicloDetailPage() {
     setCiclo(null);
     setExcecoes([]);
     setErro('');
+    setAviso('');
+    setCancelOpen(false);
     Promise.all([
       api<CicloDetalhe>(`/ciclos/${id}`),
       api<Excecao[]>(`/ciclos/${id}/excecoes`).catch(() => [] as Excecao[]),
@@ -124,6 +135,27 @@ export function CicloDetailPage() {
     }
   };
 
+  const handleCancelar = async () => {
+    if (!ciclo) return;
+    setErro('');
+    setAviso('');
+    setActionLoading('ciclo');
+    try {
+      await api(`/ciclos/${ciclo.id}/cancelar`, {
+        method: 'POST',
+        body: motivoCancel.trim() ? { motivo: motivoCancel.trim() } : {},
+      });
+      setCiclo((prev) => (prev ? { ...prev, estado: 'cancelado', encerrado_em: new Date().toISOString() } : prev));
+      setAviso('Ciclo cancelado. O Funcionário Digital não enviará novas comunicações.');
+      setCancelOpen(false);
+      setMotivoCancel('');
+    } catch (err) {
+      setErro(err instanceof Error ? err.message : 'Erro ao cancelar o ciclo');
+    } finally {
+      setActionLoading('');
+    }
+  };
+
   if (loading) return <div className="page-loading">Carregando...</div>;
 
   if (erro && !ciclo) return <div className="container"><div className="alert alert-error">{erro}</div><Link to="/ciclos" className="link">&larr; Ciclos</Link></div>;
@@ -138,6 +170,7 @@ export function CicloDetailPage() {
       </div>
 
       {erro && <div className="alert alert-error">{erro}</div>}
+      {aviso && <div className="alert alert-success">{aviso}</div>}
 
       {ciclo && (
         <>
@@ -155,7 +188,19 @@ export function CicloDetailPage() {
                 </tr>
                 <tr>
                   <td className="text-muted">Status</td>
-                  <td><span className={`badge badge-${ciclo.estado}`}>{ciclo.estado}</span></td>
+                  <td>
+                    <span className={`badge badge-${ciclo.estado}`}>{ESTADO_LABEL[ciclo.estado] ?? ciclo.estado}</span>
+                    {ciclo.estado === 'aberto' && (
+                      <button
+                        className="btn btn-danger btn-sm"
+                        style={{ marginLeft: '0.75rem' }}
+                        disabled={actionLoading === 'ciclo'}
+                        onClick={() => setCancelOpen(true)}
+                      >
+                        {actionLoading === 'ciclo' ? 'Cancelando...' : 'Cancelar ciclo'}
+                      </button>
+                    )}
+                  </td>
                 </tr>
                 <tr>
                   <td className="text-muted">Ativado em</td>
@@ -264,21 +309,21 @@ export function CicloDetailPage() {
                           <div style={{ display: 'flex', gap: '0.5rem' }}>
                             <button
                               className="btn btn-primary btn-sm"
-                              disabled={actionLoading === exc.item_id}
+                              disabled={actionLoading === exc.item_id || ciclo.estado !== 'aberto'}
                               onClick={() => setConfirmAction({ tipo: 'resolvido', itemId: exc.item_id })}
                             >
                               Resolver
                             </button>
                             <button
                               className="btn btn-danger btn-sm"
-                              disabled={actionLoading === exc.item_id}
+                              disabled={actionLoading === exc.item_id || ciclo.estado !== 'aberto'}
                               onClick={() => setConfirmAction({ tipo: 'cancelado', itemId: exc.item_id })}
                             >
                               Cancelar
                             </button>
                             <button
                               className="btn btn-sm"
-                              disabled={actionLoading === exc.item_id}
+                              disabled={actionLoading === exc.item_id || ciclo.estado !== 'aberto'}
                               onClick={() => handleReenviar(exc.item_id)}
                             >
                               Reenviar
@@ -313,6 +358,36 @@ export function CicloDetailPage() {
                 onClick={() => handleDecidir(confirmAction.itemId, confirmAction.tipo)}
               >
                 {actionLoading ? 'Processando...' : 'Confirmar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {cancelOpen && (
+        <div className="modal-overlay" onClick={() => setCancelOpen(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Cancelar ciclo</h3>
+            <p>
+              Tem certeza que deseja <strong>cancelar</strong> este ciclo? O Funcionário Digital
+              não enviará novas comunicações e os itens existentes serão preservados para consulta.
+            </p>
+            <div className="form-group">
+              <label htmlFor="motivo-cancelar">Motivo (opcional)</label>
+              <textarea
+                id="motivo-cancelar"
+                rows={3}
+                value={motivoCancel}
+                onChange={(e) => setMotivoCancel(e.target.value)}
+                placeholder="Ex.: ciclo ativado para a obrigação errada"
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+              <button className="btn btn-sm" disabled={!!actionLoading} onClick={() => setCancelOpen(false)}>
+                Voltar
+              </button>
+              <button className="btn btn-danger btn-sm" disabled={!!actionLoading} onClick={() => handleCancelar()}>
+                {actionLoading === 'ciclo' ? 'Cancelando...' : 'Confirmar cancelamento'}
               </button>
             </div>
           </div>

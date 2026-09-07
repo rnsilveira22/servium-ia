@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { CicloDetailPage } from './CicloDetailPage';
 
@@ -60,13 +60,15 @@ function instalarFetch(
   bloqueiaCiclos = false,
 ): void {
   vi.spyOn(globalThis, 'fetch').mockImplementation(
-    async (input: RequestInfo | URL) => {
+    async (input: RequestInfo | URL, init?: RequestInit) => {
       const url = String(input);
+      const metodo = init?.method ?? 'GET';
       const resposta = (body: unknown, status = 200) =>
         new Response(JSON.stringify(body), {
           status,
           headers: { 'Content-Type': 'application/json' },
         });
+      if (url.includes('/cancelar') && metodo === 'POST') return resposta({ ok: true, cancelado: true });
       if (url.includes('/excecoes')) return resposta(excecoes);
       if (url.includes('/ciclos/')) {
         if (bloqueiaCiclos) return new Promise(() => {});
@@ -154,5 +156,32 @@ describe('CicloDetailPage · detalhe legível', () => {
     expect(screen.getByText('Cliente não respondeu')).toBeTruthy();
     expect(screen.getByText('Resolver')).toBeTruthy();
     expect(screen.getByText('Reenviar')).toBeTruthy();
+  });
+
+  it('#73: exibe botão "Cancelar ciclo" quando aberto e cancela com confirmação + feedback', async () => {
+    instalarFetch({ status: 200, body: DETALHE });
+    renderizar();
+    const botao = await screen.findByRole('button', { name: 'Cancelar ciclo' });
+    expect(botao).toBeTruthy();
+
+    botao.click();
+    expect(await screen.findByRole('heading', { name: 'Cancelar ciclo' })).toBeTruthy();
+
+    const confirmar = screen.getByRole('button', { name: 'Confirmar cancelamento' });
+    confirmar.click();
+
+    expect(await screen.findByText(/ciclo cancelado/i)).toBeTruthy();
+    await screen.findByText('Cancelado');
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Cancelar ciclo' })).toBeNull());
+  });
+
+  it('#73: não exibe "Cancelar ciclo" e desabilita ações quando cancelado', async () => {
+    const cancelado = { ...DETALHE, estado: 'cancelado', encerrado_em: '2026-08-30T12:00:00Z' };
+    instalarFetch({ status: 200, body: cancelado }, [EXCECAO]);
+    renderizar();
+    expect(await screen.findByText('Cancelado')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Cancelar ciclo' })).toBeNull();
+    expect((screen.getByText('Resolver') as HTMLButtonElement).closest('button')?.disabled).toBe(true);
+    expect((screen.getByText('Reenviar') as HTMLButtonElement).closest('button')?.disabled).toBe(true);
   });
 });
