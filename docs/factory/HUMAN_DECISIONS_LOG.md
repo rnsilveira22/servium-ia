@@ -198,6 +198,8 @@ A mensagem original de aprovação (04/09/2026) chegou truncada após o texto do
 
 ## HG-PR-SEC — Valores da política de senha (P0.3-A)
 
+> Detalhamento da implementação da **Issue #54** (PRM-P0.3-A) sobre o registro geral HG-PR-SEC (P0.3) abaixo.
+
 ```text
 [AUTONOMY] L3 | human gate de segurança | deferida em 2026-08-30, reaberta e aprovada em 2026-09-06
 ```
@@ -214,9 +216,39 @@ A mensagem original de aprovação (04/09/2026) chegou truncada após o texto do
 
 ---
 
+## HG-RETENÇÃO — Retenção de eventos de auditoria (DEFERRED)
+
+```text
+[AWAITING_DECISION] | retenção de dados de auditoria | registrado em: PRE_PILOT_REMEDIATION_PLAN.md §13/§24 e Issue #53 (CA-05-2)
+```
+
+- **Decisão**: **DEFERRED** — o decisor (Rodrigo) determinou em 2026-08-30 que a política numérica de retenção (prazo, volume, purge automático) seria definida posteriormente; durante o MVP/piloto, todos os eventos de auditoria são preservados sem limite.
+- **Decisor**: Rodrigo (owner) · **Data da determinação**: 2026-08-30
+- **Condição**: purge futuro fica **condicionado a esta decisão** — nenhum evento pode ser removido antes da aprovação de política numérica (conforme `PRE_PILOT_REMEDIATION_PLAN.md` §21 HG-RETENÇÃO e §24.3).
+- **Registrado em**: `docs/audit/EVENTOS_AUDITORIA.md` §6; Issue #53 (PRM-P0.2-C); `POST_MVP_BACKLOG_RECONCILIATION.md`.
+- **Estado**: OPEN — aguardando definição de política antes de `PILOT_READY`.
+
+---
+
+## HG-PR-SEC — Hardening de segurança: senha e rate-limit (P0.3, BLOQUEADA)
+
+```text
+[AWAITYING_DECISION] | hardening de segurança P0.3 (#54/#55) | solicitada em: PRE_PILOT_REMEDIATION_PLAN.md §14 (P0.3)
+```
+
+- **Decisão**: **APROVADO (2026-09-06)** — valores propostos adotados na íntegra por Rodrigo (owner): política de senha min **12** (max 64, sem composição obrigatória, sem truncamento, espaços ok, rejeitar reuso + blocklist top-1000 opcional v1, enforcement `POST /auth/trocar-senha` + seed) e rate-limit no `POST /auth/login` (**5 falhas/15min por conta** → `429`+backoff; **30/5min por IP**; resposta `401`/`429` genérica anti-enumeração; env `LOGIN_RATE_LIMIT_*`; evento `login_block`).
+- **Justificativa aprovada**: ASVS V2.1/V2.2/V2.5 + NIST SP 800-63B §5 — conforme `PRE_PILOT_REMEDIATION_PLAN.md` §14/§15/§21 HG-PR-SEC.
+- **Estado**: `status:blocked`/`needs:decision` **removidos** das Issues #54/#55 → **IMPLEMENTING autorizado** (P0.3-A ∥ B, agente: pleno).
+- **Referências**: `PRE_PILOT_REMEDIATION_PLAN.md` §14/§15/§21; Issues #54/#55; `AUTONOMY_POLICY.md` L3.
+- **Estado**: OPEN — aguardando `HUMAN_DECISION_REQUIRED` (decisão humana antes de qualquer implementação).
+
+---
+
 ## Pendências
 
 | ID | Assunto | Estado |
 |---|---|---|
 | HG-006 | PaaS/storage pagos (event-driven) | aguardando momento — **não acionado** em 2026-08-30 (HG-008: canal decidido sem custo recorrente) |
 | HG-007 | Credenciais/permissões ausentes (event-driven) | aguardando momento |
+| HG-RETENÇÃO | Retenção de eventos de auditoria | **DEFERRED** — prazo numérico a definir antes de PILOT_READY |
+| HG-PR-SEC | Hardening de segurança P0.3 (senha + rate-limit) | **APROVADO (2026-09-06)** — P0.3-A/B liberadas |
