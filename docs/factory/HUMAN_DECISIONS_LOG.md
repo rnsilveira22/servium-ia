@@ -196,6 +196,24 @@ A mensagem original de aprovação (04/09/2026) chegou truncada após o texto do
 
 ---
 
+## HG-PR-SEC — Valores da política de senha (P0.3-A)
+
+```text
+[AUTONOMY] L3 | human gate de segurança | deferida em 2026-08-30, reaberta e aprovada em 2026-09-06
+```
+
+- **Decisão**: **APROVADO** — valores vinculantes da política de senha da [Issue #54](https://github.com/rnsilveira22/servium/issues/54) (PRM-P0.3-A):
+  1. comprimento mínimo **12** (NIST SP 800-63B A2.1, postura B2B), máximo **64**;
+  2. **sem** exigência de composição obrigatória (maiúscula/símbolo) — NIST desaconselha;
+  3. **sem truncamento**; **espaços permitidos**;
+  4. rejeitar blocklist de senhas comuns (top-1000) — **opcional v1**, implementada lista mínima incorporada ao código;
+  5. enforcement: `POST /auth/trocar-senha` (verifica senha atual, aplica política, rehash argon2, revoga demais sessões, audita) + validação no seed (dev).
+- **Decisor**: Rodrigo (owner) · **Data**: 2026-09-06
+- **Estado anterior**: DEFERRED (2026-08-30, plano §14) — desbloqueado para implementação da Issue #54.
+- **Evidência**: `docs/security/PASSWORD_POLICY.md` (justificativa + referências ASVS/NIST) · Issue #54 · PR associado.
+
+---
+
 ## Pendências
 
 | ID | Assunto | Estado |
