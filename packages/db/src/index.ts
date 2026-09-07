@@ -10,3 +10,10 @@ export { listarEventos, type FiltrosEventos, type EventoAuditoriaDTO } from './a
 export * from './queue.js';
 export { PollWorker } from './worker.js';
 export type { JobHandler, PollWorkerOptions, WorkerLog } from './worker.js';
+export {
+  SENHA_MIN,
+  SENHA_MAX,
+  validarPoliticaSenha,
+  mensagemPoliticaSenha,
+  type ResultadoValidacao,
+} from './security/password-policy.js';

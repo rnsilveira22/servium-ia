@@ -4,7 +4,7 @@
 > **Base:** `main@150188f` · **Tipo:** DOC-only — nenhuma alteração de código, migration, trigger ou backfill
 > **Referentes de implementação:** [#51](https://github.com/rnsilveira22/servium/issues/51) (PRM-P0.2-A · leitura) e [#52](https://github.com/rnsilveira22/servium/issues/52) (PRM-P0.2-B · atomicidade), ambos mergeados antes desta base.
 
-Este documento é a referência do que **é auditável hoje** no ServiumAI: a tabela `eventos_auditoria`, os 15 eventos emitidos pelos caminhos atuais, o mecanismo append-only, a delegação de isolamento ao RLS, as leituras disponíveis (PRM-P0.2-A) e a política de retenção (**DEFERIDA** via HG-RETENÇÃO).
+Este documento é a referência do que **é auditável hoje** no ServiumAI: a tabela `eventos_auditoria`, os 17 eventos emitidos pelos caminhos atuais, o mecanismo append-only, a delegação de isolamento ao RLS, as leituras disponíveis (PRM-P0.2-A) e a política de retenção (**DEFERIDA** via HG-RETENÇÃO).
 
 ## 1. Objetivo e escopo
 
@@ -85,7 +85,7 @@ Sustenta o keyset `(criado_em DESC, id DESC)` usado por `listarEventos` (§5). F
 
 O valor `servico` já é aceito pelo `CHECK` do schema (`0002:123`) e previsto pelo DTO ([`packages/db/src/audit.ts:33-42`](../../packages/db/src/audit.ts)), mas **não é emitido por nenhum caminho** em `main@150188f` — em [PRM-P0.3-C](../reports/PRE_PILOT_REMEDIATION_PLAN.md) o worker passará a gravar com identidade de serviço estável.
 
-## 3. Inventário de eventos (15 ações)
+## 3. Inventário de eventos (17 ações)
 
 > Conferido por `grep -rn "INSERT INTO eventos_auditoria" apps packages` em `main@150188f`: **6 arquivos de produção** com 8 pontos de escrita (helper `auditar` em `auth` tem dois métodos; `ciclos.controller.ts` tem dois pontos). As 15 ações abaixo correspondem 1:1 a linhas de código reais; `ativar` e `encerrar` têm **dois sítios de emissão** cada. **Leitura NÃO gera evento.**
 
@@ -105,6 +105,8 @@ O valor `servico` já é aceito pelo `CHECK` do schema (`0002:123`) e previsto p
 | `login_sucesso` | `apps/api/src/auth/auth.controller.ts:63` (`AuthController.login`) | credenciais válidas (conexão **admin** pré-auth) | `{}`; `entidade=auth`, `entidade_id=operador` | `operador` |
 | `login_falha` | `apps/api/src/auth/auth.controller.ts:48` (`AuthController.login`) | senha inválida (conexão **admin** pré-auth) | `{ motivo: 'senha_invalida' }`; `entidade=auth` | `operador` |
 | `logout` | `apps/api/src/auth/auth.controller.ts:77` (`AuthController.logout`) | `POST /auth/logout` autenticado; sessão revogada | `{}`; `entidade=auth` | `operador` |
+| `trocar_senha` | `apps/api/src/auth/auth.controller.ts` (`AuthController.trocarSenha`) | `POST /auth/trocar-senha` autenticado; hash atualizado, demais sessões revogadas | `{}`; `entidade=auth`, `entidade_id=operador` | `operador` |
+| `trocar_senha_falha` | `apps/api/src/auth/auth.controller.ts` (`AuthController.trocarSenha`) | `POST /auth/trocar-senha`; senha atual incorreta (`motivo: 'senha_invalida'`) ou nova senha fora da política (`motivo: 'politica_violada'`, `motivo_detalhe` com o código) | `{ motivo, motivo_detalhe? }`; `entidade=auth` | `operador` |
 | `criar` (cliente) | `apps/api/src/cadastro/cadastro.controller.ts:58` (`CadastroController.criarCliente`) | `POST /clientes` — auditoria **pós-COMMIT** (autocommit, não atômica) | `{ nome }`; `entidade=cliente` | `operador` |
 | `criar` (obrigação) | `apps/api/src/cadastro/cadastro.controller.ts:90` (`CadastroController.criarObrigacao`) | `POST /obrigacoes` — auditoria **pós-COMMIT** (não atômica) | `{ descricao }`; `entidade=obrigacao` | `operador` |
 | `criar` (checklist_template) | `apps/api/src/cadastro/cadastro.controller.ts:164` (`CadastroController.criarTemplate`) | `POST /checklist-templates`; template+itens em transação, mas a auditoria roda **depois do COMMIT** (não atômica) | `{ nome, itens }`; `entidade=checklist_template` | `operador` |
@@ -142,7 +144,7 @@ Endpoint **`GET /auditoria`** — [`apps/api/src/auditoria/auditoria.controller.
 
 - **Leituras** (listar clientes/ciclos/obrigações/templates, `GET /auditoria`): por design, leitura não gera evento (registrado no plano §11, `PRE_PILOT_REMEDIATION_PLAN.md`).
 - **Login com tenant desconhecido** (`AuthController.login` quando o `SELECT` não retorna operador): sem FK válida não há evento; o sinal vai ao log da aplicação (anti-enumeração — resposta idêntica).
-- **`trocar_senha` / `login_block`** (rate limit): não existem — pertencem a [PRM-P0.3-A/B](../reports/PRE_PILOT_REMEDIATION_PLAN.md), bloqueadas por HG-PR-SEC.
+- **`login_block`** (rate limit): não existe — pertence à Issue #55 ([PRM-P0.3-B](../reports/PRE_PILOT_REMEDIATION_PLAN.md)), dependente do mesmo gate.
 - **Conteúdo das comunicações:** o envio em si não é auditado como evento; a ação `cobrar` (rodada) e o recebimento `receber` (token/message_id) rastreiam o fluxo, sem corpo da mensagem.
 - **Scheduler/ticks re-enfileirados** sem ação de negócio não geram evento (só `decisao` quando o motor decide não agir).
 
@@ -171,6 +173,7 @@ Endpoint **`GET /auditoria`** — [`apps/api/src/auditoria/auditoria.controller.
 | CA-04-4 · append-only preservado | `packages/db/tests/audit.test.ts:14-39` | CA-04-4 (#51) |
 | ordenação/keyset | `packages/db/tests/audit-lista.test.ts:127-146` (DESC + empate de `criado_em`); `:148-187` (páginas não repetem/perdem linha); endpoint `apps/api/test/auditoria.test.ts:201-219` | CA-04 (#51) |
 | filtros/limite/validação | `packages/db/tests/audit-lista.test.ts:189-208` (filtros combináveis); `:210-223` (`tem_mais`; clamp [1,200]); `apps/api/test/auditoria.test.ts:184-199` (400 para entrada inválida — previne 22P02) | CA-04 (#51) |
+| `trocar_senha` / `trocar_senha_falha` | `apps/api/test/trocar-senha.test.ts` — sucesso 204 + auditoria; falhas auditadas (`senha_invalida`, `politica_violada`); senha atualizada e demais sessões revogadas | CA-A-1 (#54) |
 
 A tabela acima referencia os testes de **#51** (CA-04-x) e **#52** (CA-03-x), além dos testes históricos de CA-01/CA-02 — satisfazendo o CA-05-3 ("documenta provas de CA-01/CA-02/CA-03/CA-04"). Rastreio completo dos critérios da Issue #9: CA-01/CA-02 satisfeitos por `#25`/`#27` (reconciliação §5), CA-03 fechado por #52, CA-04 por #51 e CA-05 por este documento.
 

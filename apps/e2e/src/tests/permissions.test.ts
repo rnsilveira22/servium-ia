@@ -6,7 +6,7 @@ import type { WebDriver } from 'selenium-webdriver';
 import { ENV } from '../config/env.js';
 
 const OPERATOR_EMAIL = process.env.E2E_OPERATOR_EMAIL ?? 'oper@dev.local';
-const OPERATOR_PASSWORD = process.env.E2E_OPERATOR_PASSWORD ?? 'oper123';
+const OPERATOR_PASSWORD = process.env.E2E_OPERATOR_PASSWORD ?? 'oper-dev-corp-2026';
 const ADMIN_ENDPOINT = `${ENV.API_URL}/auth/gmail/tokens`;
 
 let driver: WebDriver;

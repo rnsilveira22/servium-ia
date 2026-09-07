@@ -4,5 +4,5 @@ export const ENV = {
   HEADLESS: process.env.HEADLESS !== '0',
   SLUG: process.env.E2E_SLUG ?? 'dev-corp',
   EMAIL: process.env.E2E_EMAIL ?? 'admin@dev.local',
-  PASSWORD: process.env.E2E_PASSWORD ?? 'admin123',
+  PASSWORD: process.env.E2E_PASSWORD ?? 'admin-dev-corp-2026',
 };

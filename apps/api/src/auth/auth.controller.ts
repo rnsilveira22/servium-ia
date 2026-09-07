@@ -1,10 +1,10 @@
-import { Body, Controller, Get, HttpCode, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Req, Res, UnauthorizedException, BadRequestException, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
 import { randomBytes } from 'node:crypto';
 import { hash } from '@node-rs/argon2';
 import { Client } from 'pg';
 
-import { APP_URL, ADMIN_URL } from '@servium/db';
+import { APP_URL, ADMIN_URL, validarPoliticaSenha, mensagemPoliticaSenha } from '@servium/db';
 import { RequireAuth, Roles, hashToken, type AuthedRequest, type RequestSession } from './auth.guard';
 
 const SESSION_TTL_HOURS = 12;
@@ -77,6 +77,58 @@ export class AuthController {
     await this.auditarVia(client, req.sessao!, 'logout', {});
     res.setHeader('Set-Cookie', cookieFor('', 0));
     void client.end();
+  }
+
+  @UseGuards(RequireAuth)
+  @Post('trocar-senha')
+  @HttpCode(204)
+  async trocarSenha(
+    @Body() body: { senha_atual?: string; nova_senha?: string },
+    @Req() req: AuthedRequest
+  ) {
+    const { senha_atual, nova_senha } = body ?? {};
+    if (!senha_atual || !nova_senha) {
+      throw new BadRequestException('senha_atual e nova_senha são obrigatórias');
+    }
+
+    const client = req.pg as Client;
+    const s = req.sessao!;
+
+    const { rows } = await client.query('SELECT senha_hash FROM operadores WHERE id = $1', [s.operadorId]);
+    if (rows.length === 0) throw new UnauthorizedException();
+
+    // Usuário autenticado ⇒ mensagens específicas são aceitáveis (ASVS V2.1).
+    const { verify } = await import('@node-rs/argon2');
+    const ok = await verify(rows[0].senha_hash, senha_atual).catch(() => false);
+    if (!ok) {
+      await this.auditarVia(client, s, 'trocar_senha_falha', { motivo: 'senha_invalida' });
+      throw new BadRequestException('Senha atual incorreta');
+    }
+
+    const politica = validarPoliticaSenha(nova_senha);
+    if (!politica.ok) {
+      await this.auditarVia(client, s, 'trocar_senha_falha', {
+        motivo: 'politica_violada',
+        motivo_detalhe: politica.motivo,
+      });
+      throw new BadRequestException(mensagemPoliticaSenha(politica.motivo!));
+    }
+
+    const novoHash = await hash(nova_senha); // argon2id — mesma lib do login
+    try {
+      await client.query('BEGIN');
+      await client.query('UPDATE operadores SET senha_hash = $1 WHERE id = $2', [novoHash, s.operadorId]);
+      // Revoga as demais sessões do operador, preservando a sessão corrente (ASVS V3.1).
+      await client.query(
+        'UPDATE sessoes SET revogado_em = now() WHERE operador_id = $1 AND id <> $2',
+        [s.operadorId, s.sessaoId]
+      );
+      await this.auditarVia(client, s, 'trocar_senha', {});
+      await client.query('COMMIT');
+    } catch (err) {
+      await client.query('ROLLBACK').catch(() => undefined);
+      throw err;
+    }
   }
 
   @UseGuards(RequireAuth)
