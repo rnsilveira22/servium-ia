@@ -4,27 +4,25 @@
 
 ## Última atualização
 
-2026-09-07 · **P0.3-C (#56) revisado (ciclo 2) — QA_REJECTED corrigido, IMPLEMENTING** · HEAD `69e0950` · PRM-P0.3-A (#54 política de senha, PR #80 `6313cab`), PRM-P0.3-B (#55 rate-limit, PR #81 `69e0950`) DONE+MERGED · **PRM-P0.3-C (#56 Identidade de serviço do FD, `actor_type='servico'`) implementada em worktree (branch `feat/56-identidade-servico`) — QA reprovou PR #89; defeitos corrigidos nesta sessão (ciclo 2)** · regressão P0 `nodemailer@10` (Issue #83) detectada e corrigida (PR #84 `7b96fd6`, merge L2 squash) · Especificação oficial do MVP v1.0 registrada (PR #82 docs, L3 humano) · Factory V2 operacional (Orchestrator + estados V2)
+2026-09-07 · **P0.3-C (#56) e #73 merged via L2** · PRM-P0.3-A (#54 política de senha, PR #80 `6313cab`), PRM-P0.3-B (#55 rate-limit, PR #81 `69e0950`) DONE+MERGED · **PRM-P0.3-C (#56 Identidade de serviço do FD, `actor_type='servico'`) QA APROVADO (ciclo 2) → merge L2 squash (PR #89, `Closes #56`)** · **#73 (bug P0 — cancelar ciclo ativado) QA APROVADO → merge L2 squash (PR #91, `Closes #73`)** · regressão P0 `nodemailer@10` (Issue #83) detectada e corrigida (PR #84 `7b96fd6`, merge L2 squash) · Especificação oficial do MVP v1.0 registrada (PR #82 docs, L3 humano) · Factory V2 operacional (Orchestrator + estados V2)
 
 ### Reconciliado nesta sessão
 
-- **P0.3-C (#56) revisitada (ciclo 2, estado IMPLEMENTING)**: QA reprovou o PR #89 (Issue #56) com 1 defeito MAJOR + 2 MINOR. Corrigido no worktree (`feat/56-identidade-servico`):
-  - **MAJOR**: entry point canônico `apps/api/src/runtime/main.ts` (`npm run runtime`) criava o worker sem `serviceId` e sem `requireServiceId()` → eventos do FD caiam em `actor_type='sistema'` no caminho de produção (CA-C-1) e o bootstrap não falhava sem o env (CA-C-3). Corrigido injetando `serviceId: requireServiceId()` em `createMotorWorker` e `RecebedorPeriodico` (mesmo padrão do `worker-main.ts`).
-  - **MINOR-1**: `auditar()` do `RecebedorPeriodico` (recebimento.ts) gravava `'sistema'` hardcoded. **Decisão: propagar `serviceId`** — o recebimento de respostas do cliente (PRM-P0.1-E) é trabalho do FD e agora grava `actor_type='servico'` + `actor_id=serviceId` no evento `receber`, com default `sistema` quando ausente (retrocompatível).
-  - **MINOR-2**: teste CA-C-2 refinado — passou de `count=0` para request HTTP real (`POST /auth/login` de sucesso de um operador → auditoria `actor_type='operador'` + contraste de não-vazamento do override para a trilha HTTP).
+- **P0.3-C (#56) implementada e merged via L2 (PR #89)**: QA APROVADO (ciclo 2) → squash merge L2 do PR `feat/56-identidade-servico` na main. Correções pós-QA aplicadas: (i) MAJOR — entry point canônico `apps/api/src/runtime/main.ts` injeta `serviceId: requireServiceId()` (CA-C-1/CA-C-3 no caminho de produção); (ii) MINOR-1 — `RecebedorPeriodico` propaga `serviceId` (evento `receber` com `actor_type='servico'`, default `sistema` retrocompatível); (iii) MINOR-2 — teste CA-C-2 refinado com request HTTP real.
+- **#73 (bug P0) cancelamento de ciclo implementado e merged via L2 (PR #91)**: QA APROVADO → squash merge L2 do PR `fix/73-cancelar-ciclo` na main. Entregue: endpoint `POST /ciclos/:cicloId/cancelar` (idempotente, RLS), guarda `c.estado='aberto'` em `cobrarItem`/`reenviarItem`, UI (botão Cancelar + confirmação + motivo + badge Cancelado + ações desabilitadas), testes API (8) + web + E2E Selenium verdes.
 - **P0.2 docs encerrados**: PR #79 (`53ed958`) merged pelo humano (Owner) — encerramento formal da auditoria (#9).
 - **P0.3 entregue**: HG-PR-SEC aprovado (06/09) desbloqueou #54/#55 (∥, agente: pleno). #54 → PR #80 (`6313cab`, merged pelo humano 06/09, Issue CLOSED nesta sessão com evidência). #55 → PR #81 (`69e0950`, merge L2 squash nesta sessão, Issue CLOSED via `Closes #55`).
 - **Regressão P0 `nodemailer@10` (#83)**: bump do dependabot (#75) removeu o namespace de tipos `nodemailer.Transporter` → build `@servium/api` falhava (TS2503) e `main` vermelha desde `6313cab`. Causa mascarada por `node_modules` local desatualizado (6.10.1 vs lockfile 10.0.0). Corrigido no PR #84 (`7b96fd6`, 1 arquivo), merge L2 squash.
 - **Spec oficial do MVP v1.0** (experiência visual/UX) registrada em `docs/product/MVP_EXPERIENCE_SPEC_v1.md` via PR #82 (docs, L3 humano).
 - **HG-RETENÇÃO** permanece `DEFERRED` (política numérica pendente).
-- **L2 merges registrados**: #76 (`150188f`), #77 (`8617afd`), #78 (`7efd68a`); nesta sessão #84 (`7b96fd6`), #81 (`69e0950`).
+- **L2 merges registrados**: #76 (`150188f`), #77 (`8617afd`), #78 (`7efd68a`); sessões anteriores #84 (`7b96fd6`), #81 (`69e0950`); **esta sessão #89 (P0.3-C #56) e #91 (bug #73)**.
 
 ## Estado geral
 
 | Dimensão | Estado |
 |---|---|
 | Branch de trabalho | `main` sincronizada (`69e0950`) |
-| Estado do MVP-01 | **P0.1 resolvido** (PRs #61–#66) + **P0.2 resolvido** (PRs #76/#77/#78) + **P0.3-A/B resolvido** (#54/#55, PRs #80/#81) + **P0.3-C (#56) implementado (IMPLEMENTING — ciclo 2, revisitado pós-QA)** — resta P0.3-D (#57) |
+| Estado do MVP-01 | **P0.1 resolvido** (PRs #61–#66) + **P0.2 resolvido** (PRs #76/#77/#78) + **P0.3-A/B resolvido** (#54/#55, PRs #80/#81) + **P0.3-C (#56) MERGED (PR #89)** + **Bug P0 #73 MERGED (PR #91)** — resta P0.3-D (#57) |
 | Software Factory | **V2 OPERACIONAL** — Orchestrator + estados V2 aprovados (HG-F2-01/02/03) |
 | Meta canônica | [`../product/MVP_01_VERTICAL_SLICE.md`](../product/MVP_01_VERTICAL_SLICE.md) — primeiro Funcionário Digital em operação assistida no piloto |
 | ADRs 001..011 | `Accepted` (HG-002); ADR-008 `CommunicationChannel` preservado (HG-008) |
@@ -63,6 +61,8 @@ Registro formal: [`HUMAN_DECISIONS_LOG.md`](HUMAN_DECISIONS_LOG.md).
 | 06/09/2026 | merge PR (humano `rnsilveira22`) | #9 / #54 | [PR #79](https://github.com/rnsilveira22/servium/pull/79) `53ed958`; [PR #80](https://github.com/rnsilveira22/servium/pull/80) `6313cab` | ok |
 | 06/09/2026 | merge PR normal squash | #83 (P0-regressão `nodemailer@10`) | [PR #84](https://github.com/rnsilveira22/servium/pull/84) `7b96fd6` | ok |
 | 06/09/2026 | merge PR normal squash | #55 | [PR #81](https://github.com/rnsilveira22/servium/pull/81) `69e0950` | ok |
+| 07/09/2026 | merge PR normal squash | #56 (P0.3-C) | [PR #89](https://github.com/rnsilveira22/servium/pull/89) `Closes #56` | ok |
+| 07/09/2026 | merge PR normal squash | #73 (bug P0) | [PR #91](https://github.com/rnsilveira22/servium/pull/91) `Closes #73` | ok |
 
 ## Fila efetiva (Project `Servium IA Development`)
 
@@ -71,15 +71,15 @@ Registro formal: [`HUMAN_DECISIONS_LOG.md`](HUMAN_DECISIONS_LOG.md).
 | Issue | Item | Prioridade | Status real | Observação |
 |---|---|---|---|---|
 | [#9](https://github.com/rnsilveira22/servium/issues/9) | Auditoria append-only (**P0.2**) | P0 | **DONE no board** / Issue OPEN (aguarda fechamento formal) | CA-01/02 (reconciliação §5), CA-03 (#52), CA-04 (#51), CA-05 (#53) todos entregues; PR #79 merged humanamente; drift do board (Done/P1 vs OPEN/P0) registrado |
-| [#20](https://github.com/rnsilveira22/servium/issues/20) | N5 Auth mínima (**P0.3** hardening) | P0 | OPEN | HG-PR-SEC aprovado (06/09); **#54 (senha) e #55 (rate-limit) entregues e CLOSED** (PRs #80/#81); **#56 (identidade serviço, P0.3-C) implementada — IMPLEMENTING (ciclo 2, revisitado pós-QA do PR #89)**; resta #57 (ASVS docs, P0.3-D) |
-| [#56](https://github.com/rnsilveira22/servium/issues/56) | **PRM-P0.3-C · Identidade de serviço do FD (`actor_type='servico'`)** | P0 | **IMPLEMENTING** (branch `feat/56-identidade-servico`, worktree) | CA-C-1/2/3 implementados e testados: runtime canônico (`main.ts`) agora injeta `serviceId: requireServiceId()` (CA-C-1/CA-C-3 no caminho real); recebimento propaga `serviceId` (evento `receber` com `actor_type='servico'`); CA-C-2 refinado com request HTTP real (`login_sucesso` ⇒ `actor_type='operador'`); evidência em `apps/api/test/identidade-servico.test.ts` · QA reprovou PR #89; **CI fix ciclo 2: `runtime-e2e` e workflow `ci.yml` agora setam `SERVIUM_SERVICE_ID` estável no spawn do runtime (o `main.ts` canônico exige a env — CA-C-3), runbook local atualizado; correções locais pendentes de push/PR pelo Orchestrator** |
-| [#73](https://github.com/rnsilveira22/servium/issues/73) | Bug P0 (funcional) | P0 | OPEN | aguarda próxima onda |
+| [#20](https://github.com/rnsilveira22/servium/issues/20) | N5 Auth mínima (**P0.3** hardening) | P0 | OPEN | HG-PR-SEC aprovado (06/09); **#54 (senha) e #55 (rate-limit) entregues e CLOSED** (PRs #80/#81); **#56 (identidade serviço, P0.3-C) merged via L2 (PR #89)** — resta #57 (ASVS docs, P0.3-D) |
+| [#56](https://github.com/rnsilveira22/servium/issues/56) | **PRM-P0.3-C · Identidade de serviço do FD (`actor_type='servico'`)** | P0 | **MERGED** (PR #89, squash L2) | CA-C-1/2/3 implementados e testados: runtime canônico (`main.ts`) injeta `serviceId: requireServiceId()`; recebimento propaga `serviceId` (evento `receber` com `actor_type='servico'`); CA-C-2 refinado com request HTTP real (`login_sucesso` ⇒ `actor_type='operador'`); evidência em `apps/api/test/identidade-servico.test.ts` · **QA APROVADO (ciclo 2) → merge L2 ** + `Closes #56` |
+| [#73](https://github.com/rnsilveira22/servium/issues/73) | Bug P0 (funcional) | P0 | **MERGED** (PR #91, squash L2) | Cancelar ciclo ativo (#73): endpoint `POST /ciclos/:cicloId/cancelar` (+ `cancelar-ciclo.ts`), guarda `c.estado='aberto'` em `cobrarItem`, bloqueia `reenviarItem` em ciclo não aberto, UI (botão Cancelar + confirmação + motivo + badge Cancelado + ações desabilitadas). Testes API (8), web e E2E Selenium verdes (CI) · **QA APROVADO → merge L2** + `Closes #73` |
 | [#72](https://github.com/rnsilveira22/servium/issues/72) | Gap P1 | P1 | OPEN | aguarda próxima onda |
 | [#58](https://github.com/rnsilveira22/servium/issues/58) | Backlog P2 | P2 | OPEN | aguarda próxima onda |
 | [#59](https://github.com/rnsilveira22/servium/issues/59) | Backlog P2 | P2 | OPEN | aguarda próxima onda |
 | [#83](https://github.com/rnsilveira22/servium/issues/83) | **P0-regressão `nodemailer@10`** | P0 | **CLOSED** (PR #84 `7b96fd6`) | detectada nesta sessão; causava CI vermelho na main |
 
-Issues fechadas nesta sessão: #54 (PR #80), #55 (PR #81), #83 (PR #84). Issues fechadas sessão anterior: #51 (PR #76), #52 (PR #77), #53 (PR #78), #45–#49 (HG-REC-01), #50 (PR #66).
+Issues fechadas nesta sessão: **#56 (PR #89), #73 (PR #91)** — além de #54 (PR #80), #55 (PR #81), #83 (PR #84) em sessões anteriores. Issues fechadas sessão anterior: #51 (PR #76), #52 (PR #77), #53 (PR #78), #45–#49 (HG-REC-01), #50 (PR #66).
 
 ## Bloqueios / aguardando humano
 
@@ -89,14 +89,14 @@ Issues fechadas nesta sessão: #54 (PR #80), #55 (PR #81), #83 (PR #84). Issues 
 | **Fechar Issue #9** | Encerramento formal | Comentar cobertura CA-01→CA-05 + fechar (decisão do Owner); corrigir drift do board (Done/P1 vs OPEN/P0) |
 | **Drift do board #9** | Governança | Corrigir Status/Priority no board; migrar campo Status p/ estados V2 (web/admin) |
 | **PR #82** (spec MVP v1.0) | L3 humano | Merge/ajustes da Especificação Oficial do MVP v1.0 (`docs/product/MVP_EXPERIENCE_SPEC_v1.md`) |
-| **P0.3-D** (#57) | Implementação | Mapeamento ASVS 4.0.3 → após aprovação da onda (#56 em IMPLEMENTING, correções pós-QA prontas para push/PR) |
+| **P0.3-D** (#57) | Implementação | Mapeamento ASVS 4.0.3 (docs) — PR #90 aguarda L3 humano |
 | Deploy/piloto no cliente real | Gate próprio | Após `PILOT_READY` |
 
 ## Próximos passos
 
-1. **P0.3 restante**: #56 (identidade de serviço, P0.3-C) corrigida pós-QA em **IMPLEMENTING** (ciclo 2) → push/PR do PR #89 (Orchestrator) → re-QA → #57 (mapeamento ASVS docs, P0.3-D);
+1. **P0.3 restante**: #57 (mapeamento ASVS docs, P0.3-D — PR #90 aguarda L3 humano);
 2. **Especificação MVP v1.0 (PR #82)**: merge humano + autorizar Fase 1 (auditoria da UI atual) e Fase 2 (Blueprint UX/UI) como proposta;
 3. Fechar Issue #9 (comentário rastreável + decisão do Owner); corrigir drift do board;
 4. Definir HG-RETENÇÃO (política de retenção);
-5. Priorizar #73/#72/#58/#59 na próxima onda;
+5. Priorizar #72/#58/#59 na próxima onda;
 6. Avaliar desativação da V1 após 2+ ciclos V2 com gates verdes (nunca automática).

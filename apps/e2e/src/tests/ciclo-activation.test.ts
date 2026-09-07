@@ -86,4 +86,39 @@ describe('Local Acceptance — ativação de ciclo pela UI', () => {
     expect(await cicloDetailPage.currentUrl()).toContain('/ciclos/');
     await takeScreenshot(driver, `ciclo-detalhe-${sufixo}`);
   }, 60_000);
+
+  it('#73: operador cancela ciclo ativo pelo detalhe (UI) e vê status Cancelado', async () => {
+    const sufixo = Date.now();
+    const clienteNome = `E2E Canc Cliente ${sufixo}`;
+    const descricao = `E2E Canc Obrigacao ${sufixo}`;
+
+    await loginPage.loginAsAuthed(ENV.SLUG, ENV.EMAIL, ENV.PASSWORD);
+    await layoutPage.waitForAuthenticated();
+
+    const clienteStatus = await apiFetch('/clientes', 'POST', { nome: clienteNome });
+    expect(clienteStatus).toBe(201);
+
+    await layoutPage.clickNav('Obrigacoes');
+    await obrigacoesPage.clickNovaObrigacao();
+    await obrigacoesPage.waitForClienteOption(clienteNome);
+    await obrigacoesPage.selectCliente(clienteNome);
+    await obrigacoesPage.fillDescricao(descricao);
+    await obrigacoesPage.submit();
+    await obrigacoesPage.waitingRow(descricao);
+    await obrigacoesPage.activateCicloOnRow(descricao);
+    await obrigacoesPage.getSuccessMessage();
+
+    await layoutPage.clickNav('Ciclos');
+    await ciclosPage.open();
+    await cicloDetailPage.openByRow(clienteNome, descricao);
+
+    expect(await cicloDetailPage.statusLabel()).toBe('Aberto');
+    expect(await cicloDetailPage.hasCancelarCicloButton()).toBe(true);
+
+    await cicloDetailPage.cancelarCiclo('ativado por engano (E2E)');
+    await takeScreenshot(driver, `ciclo-cancelado-${sufixo}`);
+
+    expect(await cicloDetailPage.statusLabel()).toBe('Cancelado');
+    expect(await cicloDetailPage.hasCancelarCicloButton()).toBe(false);
+  }, 60_000);
 });

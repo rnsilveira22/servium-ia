@@ -120,7 +120,7 @@ export const cobrarItem =
          JOIN obrigacoes o ON o.id = c.obrigacao_id
          LEFT JOIN itens_template it ON it.id = i.item_template_id
          JOIN clientes cli ON cli.id = o.cliente_id
-        WHERE i.id=$1`,
+        WHERE i.id=$1 AND c.estado='aberto'`,
       [itemId]
     );
     const item = dados[0];

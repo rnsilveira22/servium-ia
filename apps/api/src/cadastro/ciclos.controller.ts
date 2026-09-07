@@ -3,6 +3,7 @@ import type { Client } from 'pg';
 
 import { enqueue } from '@servium-ia/db';
 import { RequireAuth, Roles, type AuthedRequest } from '../auth/auth.guard';
+import { cancelarCiclo as cancelarCicloTxn, type ResultadoCancelar } from './cancelar-ciclo';
 import { decidirItem as decidirItemTxn, type DesfechoItem } from './decidir-item';
 
 @Controller('ciclos')
@@ -155,6 +156,26 @@ export class CiclosController {
     return rows;
   }
 
+  /** #73 · cancelar ciclo ativo (idempotente; auditoria em 'cancelar'). */
+  @Post(':cicloId/cancelar')
+  @Roles('admin', 'operador')
+  async cancelar(
+    @Req() req: AuthedRequest,
+    @Param('cicloId') cicloId: string,
+    @Body() body: { motivo?: string }
+  ): Promise<{ ok: boolean; cancelado: boolean }> {
+    const pg = this.pg(req);
+    const { rows: existe } = await pg.query('SELECT 1 FROM ciclos WHERE id=$1', [cicloId]);
+    if (existe.length === 0) throw new NotFoundException('ciclo não encontrado');
+    const resultado: ResultadoCancelar = await cancelarCicloTxn(
+      pg,
+      { tenantId: req.sessao!.tenantId, operadorId: req.sessao!.operadorId },
+      cicloId,
+      body?.motivo
+    );
+    return { ok: true, cancelado: resultado.cancelado };
+  }
+
   /** Intervenção humana nº2/3: resolver/cancelar item em exceção. */
   @Post('itens/:itemId/decidir')
   @Roles('admin')
@@ -177,7 +198,9 @@ export class CiclosController {
   async reenviarItem(@Req() req: AuthedRequest, @Param('itemId') itemId: string) {
     const client = this.pg(req);
     const { rows: item } = await client.query<{ ciclo_id: string }>(
-      `SELECT ciclo_id FROM itens_ciclo WHERE id=$1 AND estado='excecao'`,
+      `SELECT i.ciclo_id
+         FROM itens_ciclo i JOIN ciclos c ON c.id=i.ciclo_id
+        WHERE i.id=$1 AND i.estado='excecao' AND c.estado='aberto'`,
       [itemId]
     );
     if (item.length === 0) throw new BadRequestException('item não está em exceção');

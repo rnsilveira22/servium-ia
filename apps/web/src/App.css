@@ -241,6 +241,11 @@ body {
   color: #475569;
 }
 
+.badge-cancelado {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
 .badge-alert {
   background: #fee2e2;
   color: #991b1b;
