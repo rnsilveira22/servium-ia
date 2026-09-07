@@ -56,6 +56,7 @@ npm install                          # dependências do monorepo
 # API + runtime (processos separados, cada um no seu terminal):
 npm run dev:api                      # NestJS  → http://localhost:3000 (POST /ciclos)
 
+SERVIUM_SERVICE_ID=11111111-2222-3333-4444-555555555555 \
 COMMUNICATION_ADAPTER=mailpit \
 MAILPIT_API_URL=http://localhost:8025 \
 npm run runtime                      # scheduler + worker + recebedor (assistente@servium.local)

@@ -54,6 +54,7 @@ beforeAll(async () => {
       SCHEDULER_TICK_INTERVAL_MS: '1000',
       SCHEDULER_WINDOW_MS: '1000',
       RECEBER_INTERVAL_MS: '1000',
+      SERVIUM_SERVICE_ID: '11111111-2222-3333-4444-555555555555',
     },
     'runtime'
   );
