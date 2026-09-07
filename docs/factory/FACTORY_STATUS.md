@@ -8,6 +8,7 @@
 
 ### Reconciliado nesta sessão
 
+- **#73 em implementação** (gate local-acceptance, agente pleno, worktree dedicado `fix/73-cancelar-ciclo` @ `c35e672`): ciclo ativo agora pode ser cancelado (endpoint + motor + UI + testes). Detalhes na linha da fila efetiva; commits locais sem push/PR (entregue ao Orchestrator p/ Gate 3).
 - **P0.2 docs encerrados**: PR #79 (`53ed958`) merged pelo humano (Owner) — encerramento formal da auditoria (#9).
 - **P0.3 entregue**: HG-PR-SEC aprovado (06/09) desbloqueou #54/#55 (∥, agente: pleno). #54 → PR #80 (`6313cab`, merged pelo humano 06/09, Issue CLOSED nesta sessão com evidência). #55 → PR #81 (`69e0950`, merge L2 squash nesta sessão, Issue CLOSED via `Closes #55`).
 - **Regressão P0 `nodemailer@10` (#83)**: bump do dependabot (#75) removeu o namespace de tipos `nodemailer.Transporter` → build `@servium/api` falhava (TS2503) e `main` vermelha desde `6313cab`. Causa mascarada por `node_modules` local desatualizado (6.10.1 vs lockfile 10.0.0). Corrigido no PR #84 (`7b96fd6`, 1 arquivo), merge L2 squash.
@@ -68,7 +69,7 @@ Registro formal: [`HUMAN_DECISIONS_LOG.md`](HUMAN_DECISIONS_LOG.md).
 |---|---|---|---|---|
 | [#9](https://github.com/rnsilveira22/servium/issues/9) | Auditoria append-only (**P0.2**) | P0 | **DONE no board** / Issue OPEN (aguarda fechamento formal) | CA-01/02 (reconciliação §5), CA-03 (#52), CA-04 (#51), CA-05 (#53) todos entregues; PR #79 merged humanamente; drift do board (Done/P1 vs OPEN/P0) registrado |
 | [#20](https://github.com/rnsilveira22/servium/issues/20) | N5 Auth mínima (**P0.3** hardening) | P0 | OPEN | HG-PR-SEC aprovado (06/09); **#54 (senha) e #55 (rate-limit) entregues e CLOSED** (PRs #80/#81) — restam #56 (identidade serviço, P0.3-C) e #57 (ASVS docs, P0.3-D) |
-| [#73](https://github.com/rnsilveira22/servium/issues/73) | Bug P0 (funcional) | P0 | OPEN | aguarda próxima onda |
+| [#73](https://github.com/rnsilveira22/servium/issues/73) | Bug P0 (funcional) | P0 | **IMPLEMENTING** (worktree `fix/73-cancelar-ciclo` @ c35e672) | Cancelar ciclo ativo (#73): endpoint `POST /ciclos/:cicloId/cancelar` (+ `cancelar-ciclo.ts`), guarda `c.estado='aberto'` em `cobrarItem`, bloqueia `reenviarItem` em ciclo não aberto, UI (botão Cancelar + confirmação + motivo + badge Cancelado + ações desabilitadas). Testes API (8) e web (2) verdes; E2E Selenium pronto mas pendente de CI (chromedriver ausente local; `npm install` proibido). Sem commit/push/PR ainda |
 | [#72](https://github.com/rnsilveira22/servium/issues/72) | Gap P1 | P1 | OPEN | aguarda próxima onda |
 | [#58](https://github.com/rnsilveira22/servium/issues/58) | Backlog P2 | P2 | OPEN | aguarda próxima onda |
 | [#59](https://github.com/rnsilveira22/servium/issues/59) | Backlog P2 | P2 | OPEN | aguarda próxima onda |
