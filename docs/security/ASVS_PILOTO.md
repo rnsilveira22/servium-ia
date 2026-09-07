@@ -51,15 +51,20 @@
 | V2.1.2 | Senhas de pelo menos **64 caracteres** são permitidas (sem teto arbitrário abaixo de 64) | `implementado` | `apps/api/test/trocar-senha.test.ts:93-95` (`aceita exatamente 64`) / `password-policy.ts:12,41-43` | Limite máximo = 64, sem truncamento. |
 | V2.1.3 | **Sem truncamento** de senha | `implementado` | `apps/api/test/trocar-senha.test.ts:87-95` / `password-policy.ts:35-43` | Contagem por code points (`[...s].length`); verifica antes de hashear. |
 | V2.1.4 | **Qualquer carácter Unicode imprimível** permitido em senhas | `implementado` | `apps/api/test/trocar-senha.test.ts:79-81` (espaços) + política sem restrição de charset | NIST não exige composição; blocklist normaliza acentos (`password-policy.ts:45-52`). |
-| V2.1.7 | Rejeitar senhas triviais/substituídas/calendar/pattern (blocklist) | `implementado` | `apps/api/test/trocar-senha.test.ts:97-103` / `password-policy.ts:19-27,50-52` | Blocklist v1 incorporada; expansão futura via breach list (NIST §A.2.1). |
+| V2.1.7 | Senhas submetidas no **registro/login/troca** verificadas contra lista de senhas **comprometidas/comuns (blocklist)** | `implementado` | `apps/api/test/trocar-senha.test.ts:97-103` / `password-policy.ts:19-27,50-52` | ASVS 4.0.3: V2.1.7 é a checagem de senhas vazadas/dicionário (top-N); implementação via blocklist local + normalização (NIST §5.1.1.2). Expansão futura via breach list. |
+| V2.1.10 | **Sem** requisitos de **rotação periódica** de credencial nem **histórico de senha** obrigatório | `implementado` | `docs/security/PASSWORD_POLICY.md` (valores) + `packages/db/src/security/password-policy.ts:1-9` (sem lógica de rotação/expiração) | Controle negativo: atendido pela **ausência deliberada** de rotação/histórico (ASVS 4.0.3 V2.1.10 / NIST §5.1.1.2). Sem teste comportamental dedicado — evidência via código + política (sem evidência automatizada de "não-ação"; nota honesta). |
 | V2.2.1 | Controles anti-automação no login (rate limiting) | `implementado` | `apps/api/test/rate-limit.test.ts:64-84` (bloqueio por conta + `login_block`) e `rate-limit.test.ts:141-150` (por IP) | Política: `docs/security/RATE_LIMIT_POLICY.md` (5/15min conta, 30/5min IP). `login-rate-limit.interceptor.ts:47-49`. |
 | V2.2.3 | Medir a recusa de autenticar contra ataques de **força bruta** (configurável) | `implementado` | `apps/api/test/rate-limit.test.ts:96-104` (janela expira → volta legitimo) | Fixed-window in-memory; expira sozinha (CA-B-3). |
 | V2.3.1 | Senhas iniciais/activation codes gerados com segurança e fora de banda | `lacuna` | — | Não há fluxo de "senha inicial/ativação" via API; seed local valida política mas não há envio out-of-band. **Rastreado (CA-D-1).** |
-| V2.5.3 | Hash de senha com **argon2id** (memória/CPU hard, salt único) | `implementado` | `apps/api/test/auth.test.ts:56-62` (`hash argon2id não é reversível`) / `auth.controller.ts:45-46,117` | Uso de `@node-rs/argon2` (argon2id), não reversível. |
+| V2.5.3 | Hash de senha com **argon2id** (memória/CPU hard, salt único) | `implementado` | `apps/api/test/auth.test.ts:56-62` (`hash argon2id não é reversível`) / `apps/api/src/auth/auth.controller.ts:117` (rehash na troca; import `hash` em `:4`) | Uso de `@node-rs/argon2` (argon2id), não reversível. |
 | V2.5.4 | **Mensagem idêntica** para conta inexistente × senha errada (anti-enumeração) | `implementado` | `apps/api/test/auth.test.ts:74-79` (`login com email inexistente e senha errada são indistinguíveis`) / `auth.controller.ts:38-50` | Resposta `401` genérica nos dois casos. |
 | V2.5.6 | Controle de **mudança/recuperação de senha** que exige confirmação da senha atual | `implementado` | `apps/api/test/trocar-senha.test.ts:127-137` (`senha atual incorreta ⇒ 400`) / `auth.controller.ts:101-106` | Exige `senha_atual` válida; audita `trocar_senha_falha`. |
 | V2.5.7 | Revogar/expirar sessões após troca de senha | `implementado` | `apps/api/test/trocar-senha.test.ts:167-187` (`revoga as demais sessões...`) / `auth.controller.ts:120-125` | Revoga demais sessões, preservando a corrente. |
 | V2.8.1 | Todas as páginas de autenticação estão **livres de clickjacking** (framing/X-Frame) | `lacuna` | — | SPA/API sem `X-Frame-Options`/CSP/`frame-ancestors` configurados. **Rastreado (CA-D-1).** |
+
+> **Confirmação de IDs (V2.1.x)** — revisada contra a especificação oficial **OWASP ASVS 4.0.3** (`github.com/OWASP/ASVS`, tag `v4.0.3`, cap. V2.1):
+> `V2.1.2` = permitir senhas ≥ 64 e negar > 128 (comprimento máx.); `V2.1.7` = **checagem de senhas comprometidas/dicionário (blocklist)**;
+> `V2.1.10` = **sem rotação periódica/histórico obrigatório**. A blocklist fica portanto em `V2.1.7`, não em `V2.1.10`.
 
 ---
 
@@ -67,9 +72,9 @@
 
 | Requisito ASVS 4.0.3 | Descrição | Status | Evidência automatizada (teste/arquivo:linha) | Notas |
 |---|---|---|---|---|
-| V3.1.1 | Token de sessão **nunca revelado** em URL/log/erro | `implementado` | Sessão via cookie `sid` httpOnly, nunca em URL (`auth.controller.ts:12-15`, `64`); token hashead (SHA-256) antes de persistir (`auth.guard.ts:106-109`) | Hash do token armazenado em `sessoes.token_hash` — token em si só no cookie. |
+| V3.1.1 | Token de sessão **nunca revelado** em URL/log/erro | `implementado` | Sessão via cookie `sid` httpOnly, nunca em URL (`apps/api/src/auth/auth.controller.ts:12-15`); token hasheado (SHA-256) antes de persistir em `sessoes.token_hash` via `hashToken` (`apps/api/src/auth/auth.guard.ts:106-109`, aplicado em `auth.controller.ts:59`) | Hash do token armazenado em `sessoes.token_hash` — token em si só no cookie. |
 | V3.1.2 | Logout **invalida imediatamente** o token server-side | `implementado` | `apps/api/test/auth.test.ts:109-113` (`logout revoga imediatamente`) / `auth.controller.ts:74-80` | `revogado_em = now()`. |
-| V3.1.3 | Sessão encerrada por **inatividade** (timeout) | `implementado` | TTL de expiração `sessoes.expira_em` validado por requisição (`auth.guard.ts:50-51`) | `SESSION_TTL_HOURS = 12` (`auth.controller.ts:10`); sem evidência de teste de expiração **automática por inatividade** dedicado → **parcial** (TTL sim; pausa de atividade não testada). |
+| V3.1.3 | Sessão encerrada por **inatividade** (timeout) | `implementado` | TTL de expiração `sessoes.expira_em` validado por requisição (`apps/api/src/auth/auth.guard.ts:50` — `AND s.expira_em > now()`, bloco de validação `:46-51`) | `SESSION_TTL_HOURS = 12` (`auth.controller.ts:10`); sem evidência de teste de expiração **automática por inatividade** dedicado → **parcial** (TTL sim; pausa de atividade não testada). |
 | V3.1.5 | Sessão armazena apenas **referência opaca** (não dados da sessão no cookie) | `implementado` | Cookie só carrega `sid` opaco; dados resolvidos no DB por `token_hash` (`auth.guard.ts:45-53`) | Sem JWT/claim; estado server-side. |
 | V3.2.1 | Token de sessão com **≥ 120 bits de entropia** | `implementado` | `auth.controller.ts:52` (`randomBytes(32)` = 256 bits CSPRNG) | 256 bits ≥ 120. |
 | V3.2.3 | Token gerado com **CSPRNG** | `implementado` | `auth.controller.ts:52` (`node:crypto.randomBytes` — CSPRNG) | — |
@@ -147,11 +152,11 @@ CORS estrito: aplicação usa **allow list explícita** configurável (`CORS_ORI
 
 | Capítulo | Total mapeado | Implementado | Parcial | Lacuna | n/d |
 |---|---|---|---|---|---|
-| V2 — Autenticação | 13 | 11 | 0 | 2 | 0 |
+| V2 — Autenticação | 14 | 12 | 0 | 2 | 0 |
 | V3 — Sessão | 10 | 8 | 2 | 0 | 0 |
 | V4 — Controle de acesso | 7 | 6 | 1 | 0 | 0 |
 | V5 — Validação / sanitização | 9 | 5 | 2 | 1 | 1 |
-| **Total** | **39** | **30** | **5** | **3** | **1** |
+| **Total** | **40** | **31** | **5** | **3** | **1** |
 
 > Totais somam linhas da tabela; `n/d` (não se aplica no piloto atual) é informativo e não entra no cálculo
 > de lacunas. Recalcule a partir das linhas sempre que o doc evoluir.
