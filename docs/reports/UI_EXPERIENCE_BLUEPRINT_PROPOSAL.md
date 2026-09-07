@@ -66,6 +66,7 @@ App
 ### 1.4 Topbar global (novo componente de AppShell)
 
 Hoje cada página tem o próprio `<h1>` (`Layout.tsx:45-46` não há header global). O Blueprint propõe um **Topbar** fixo no AppShell com:
+
 - **Badge de identidade do agente** (persistente, colapsável em mobile) — vínculo direto com o §2.
 - Título da rota atual + breadcrumb simples (`Ciclos › Ciclo X`).
 - Menu mobile (hambúrguer que de fato abre/fecha a sidebar — corrige o gap da Fase 1 §7).
@@ -188,6 +189,7 @@ ESTAGIÁRIA DIGITAL
 ```
 
 **Fonte de dado real:**
+
 - `excecoes.contexto` (jsonb) — já existe e hoje **não é renderizado** (`CicloDetailPage.tsx:25`, Fase 1 §8).
 - `excecoes.tipo`, `excecoes.motivo`, `itens_ciclo.tentativas`.
 - `mensagens_comunicacao` para o histórico de comunicação (evidência).
@@ -220,6 +222,7 @@ Aplicar os **tokens oficiais já definidos** (`apps/web/src/styles/brand-tokens.
 | `--servium-white` | `#ffffff` |
 
 **Extensões de design system (proposta, à confirmar por Rodrigo):**
+
 - **Escala de tons** derivada dos tokens (10 passos de primária/neutra) para atender contraste WCAG.
 - **Tipografia:** fonte de marca (ex.: Inter / fonte da diretriz da marca) — ainda **premissa** (não há fonte especificada hoje; `App.css:27-28` usa stack de sistema).
 - **Elevação/sombras** em cards (Fase 1 §4 — hoje sem sombra).
@@ -236,6 +239,7 @@ Criar `apps/web/src/components` com módulo base reutilizável, eliminando a dup
 ### 5.3 Acessibilidade (resolve Fase 1 §6 — crítico)
 
 Transversal a todo o Blueprint (spec §21):
+
 - `aria-*`/`role`/`tabIndex` em toda a UI (hoje zero — `Fase 1 §6`).
 - `<label htmlFor>` + `<input id>` em todos os formulários.
 - Modais com foco trap, `aria-modal`, ESC.
