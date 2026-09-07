@@ -4,6 +4,7 @@
  * implementação concreta com SMTP + REST do Mailpit (nunca usa Gmail real).
  */
 import nodemailer from 'nodemailer';
+import type { Transporter } from 'nodemailer';
 
 import type { CommunicationChannel, MensagemSaida, ResultadoEnvio } from '../motor/channel';
 import type { ChannelProvider } from './channel';
@@ -16,7 +17,7 @@ export interface MailpitConfig {
 }
 
 export class MailpitAdapter implements CommunicationChannel {
-  private transporter: nodemailer.Transporter;
+  private transporter: Transporter;
 
   constructor(private cfg: MailpitConfig) {
     this.transporter = nodemailer.createTransport({
