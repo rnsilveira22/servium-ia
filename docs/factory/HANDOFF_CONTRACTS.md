@@ -1,4 +1,4 @@
-# Handoff Contracts — ServiumAI (V2)
+# Handoff Contracts — Servium IA (V2)
 
 > Contratos de troca entre agentes, intermediados pelo **Orchestrator** (hub). Um handoff incompleto devolve a história ao estado anterior. A V1 (`FACTORY_RUNBOOK.md`) permanece como fallback; estados V2 por `DEVELOPMENT_WORKFLOW.md`.
 

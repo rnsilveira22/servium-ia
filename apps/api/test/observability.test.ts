@@ -3,7 +3,7 @@ import type { INestApplication } from '@nestjs/common';
 import supertest from 'supertest';
 import { Client } from 'pg';
 
-import { ADMIN_URL } from '@servium/db';
+import { ADMIN_URL } from '@servium-ia/db';
 import { buildApp } from '../src/app.factory';
 
 const TEN = '77777777-7777-7777-7777-777777777777';

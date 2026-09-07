@@ -1,4 +1,4 @@
-# Drivers Arquiteturais do MVP — ServiumAI
+# Drivers Arquiteturais do MVP — Servium IA
 
 > **Fase 003 — Arquitetura do MVP** · Etapa C
 > Drivers extraídos diretamente dos requisitos e registros existentes — nada aqui é inventado. Cada driver indica origem rastreável (FR/NFR/RSK/HYP/princípio) e as decisões que afeta.

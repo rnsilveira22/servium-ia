@@ -51,7 +51,7 @@ demo/
 
 ## Fluxo demonstrativo planejado
 
-1. Abrir a ServiumAI;
+1. Abrir a Servium IA;
 2. Login com usuário de demonstração;
 3. Apresentar o dashboard;
 4. Localizar ou cadastrar cliente fictício;
@@ -86,7 +86,7 @@ demo/
 - [ ] CA-01: gera vídeo MP4 completo do fluxo em ambiente isolado;
 - [ ] CA-02: usa exclusivamente dados fictícios;
 - [ ] CA-03: narração pt-BR e legendas sincronizadas presentes;
-- [ ] CA-04: identidade visual ServiumAI aplicada;
+- [ ] CA-04: identidade visual Servium IA aplicada;
 - [ ] CA-05: nenhuma credencial/dado pessoal visível;
 - [ ] CA-06: executável localmente sem CI;
 - [ ] CA-07: vídeo publicado como artefato para revisão humana;
@@ -102,7 +102,7 @@ demo/
 | 2 | Testes E2E aprovados | QA = APPROVED |
 | 3 | Fluxo principal estabilizado | Sem bugs críticos |
 | 4 | Dados fictícios de demonstração definidos | Fixtures aprovadas |
-| 5 | Identidade visual disponível | ServiumAI brand ✅ (já disponível) |
+| 5 | Identidade visual disponível | Servium IA brand ✅ (já disponível) |
 | 6 | Autorização humana explícita de Rodrigo | Human Gate HG-0? |
 
 ## Riscos

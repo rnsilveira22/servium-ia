@@ -1,6 +1,6 @@
 ---
 name: História (Story)
-about: História de usuário do backlog ServiumAI (formato obrigatório do PO)
+about: História de usuário do backlog Servium IA (formato obrigatório do PO)
 title: "[SRV] "
 labels: ["type:story"]
 ---

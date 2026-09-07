@@ -2,7 +2,7 @@ import { createServer, type Server } from 'node:http';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import pg from 'pg';
 
-import { ADMIN_URL, APP_URL } from '@servium/db';
+import { ADMIN_URL, APP_URL } from '@servium-ia/db';
 import { correlacionarRecebidas, extrairToken, parseToken, buscarMensagensDoMailpit } from '../src/runtime/recebimento';
 
 const TEN = 'eeee0000-0000-0000-0000-000000000001';

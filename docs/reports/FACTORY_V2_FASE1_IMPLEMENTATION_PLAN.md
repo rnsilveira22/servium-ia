@@ -59,7 +59,7 @@ HUMAN REVIEW (novo gate) ──► PO_ACCEPTED ──► DONE ◄─────
 
 **Entradas:** Issue com DoR (PO_APPROVED) + contexto/AC/dependências/restrições.
 **Saídas:** pacote para Senior (`TECH_READY` coberto), estados movidos, handoffs validados, relatório de orquestração.
-**Persistência de estado:** **única** — GitHub Issues + Project `ServiumAI Development` (campo `Status`). Nenhuma estado paralelo em arquivo ou memória.
+**Persistência de estado:** **única** — GitHub Issues + Project `Servium IA Development` (campo `Status`). Nenhuma estado paralelo em arquivo ou memória.
 **Tratamento de falhas/bloqueios:** STOP conditions (B.6) → `BLOCKED`/`AWAITING_DECISION` com comentário canônico de causa + condição de desbloqueio.
 **Fallback V1:** o protocolo `START_FACTORY` original permanece íntegro e utilizável sempre; o ORCH opera como camada superior sobre a mesma máquina de estados.
 

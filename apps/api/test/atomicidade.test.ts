@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import pg from 'pg';
 
-import { ADMIN_URL, APP_URL, type Job } from '@servium/db';
+import { ADMIN_URL, APP_URL, type Job } from '@servium-ia/db';
 import { decidirItem } from '../src/cadastro/decidir-item';
 import { FakeChannel } from '../src/motor/channel';
 import { registrarMotorHandlers } from '../src/motor/handlers';

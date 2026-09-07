@@ -1,4 +1,4 @@
-# Agent Orchestration — ServiumAI
+# Agent Orchestration — Servium IA
 
 > Contrato de orquestração da equipe de agentes (Factory V2 com Orchestrator). Define ordem, gatilhos, entradas/saídas, transições de estado, política de retry, bloqueadores, escalonamento, condições de parada, filas de trabalho, limites de WIP e política de merge.
 >
@@ -58,7 +58,7 @@ Máquina de estados V2 (14 estados) e mapa no campo `Status` do Project: ver `DE
 
 ## 5. Filas de trabalho
 
-Fonte única: Issues + Project `ServiumAI Development`. Não existe backlog paralelo.
+Fonte única: Issues + Project `Servium IA Development`. Não existe backlog paralelo.
 
 - **Fila Orchestrator**: despachos pendentes, handoffs a validar, transições a executar, bloqueios a escalar.
 - **Fila PO**: itens em `OPEN` sem DoR; propostas de épico aguardando aprovação.

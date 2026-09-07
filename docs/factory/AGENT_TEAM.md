@@ -1,4 +1,4 @@
-# Agent Team — ServiumAI
+# Agent Team — Servium IA
 
 > Equipe de agentes da Software Factory (V1 + Orchestrator V2). Ambiente de execução: OpenCode (`.opencode/agent/`). Gestão: GitHub Issues/Projects. Princípios: `docs/AI_CONTEXT.md` e `AGENT_GOVERNANCE.md`.
 

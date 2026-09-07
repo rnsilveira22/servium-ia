@@ -36,7 +36,7 @@ export class EmailController {
 
     // Conexão admin para gravar tokens (tenant_id validado pelo state)
     const { Client } = await import('pg');
-    const { ADMIN_URL } = await import('@servium/db');
+    const { ADMIN_URL } = await import('@servium-ia/db');
     const admin = new Client({ connectionString: ADMIN_URL });
     await admin.connect();
     try {

@@ -1,5 +1,5 @@
 {
-  "name": "@servium/api",
+  "name": "@servium-ia/api",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -15,8 +15,8 @@
     "@nestjs/core": "^11.0.11",
     "@nestjs/platform-express": "^11.0.11",
     "@node-rs/argon2": "^2.1.0",
-    "@servium/db": "0.1.0",
-    "@servium/shared-types": "0.1.0",
+    "@servium-ia/db": "0.1.0",
+    "@servium-ia/shared-types": "0.1.0",
     "googleapis": "^176.0.0",
     "nodemailer": "^10.0.0",
     "reflect-metadata": "^0.2.2",

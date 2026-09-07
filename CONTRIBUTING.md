@@ -1,4 +1,4 @@
-# Contribuição — ServiumAI
+# Contribuição — Servium IA
 
 > Política leve de branches e commits para o estágio atual do projeto. Será evoluída conforme a equipe cresce — sem Git Flow pesado.
 

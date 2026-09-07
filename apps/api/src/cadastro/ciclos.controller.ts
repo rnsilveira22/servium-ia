@@ -1,7 +1,7 @@
 import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Req, UseGuards } from '@nestjs/common';
 import type { Client } from 'pg';
 
-import { enqueue } from '@servium/db';
+import { enqueue } from '@servium-ia/db';
 import { RequireAuth, Roles, type AuthedRequest } from '../auth/auth.guard';
 import { decidirItem as decidirItemTxn, type DesfechoItem } from './decidir-item';
 

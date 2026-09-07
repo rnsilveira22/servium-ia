@@ -1,4 +1,4 @@
-# Domain Boundaries do MVP — ServiumAI
+# Domain Boundaries do MVP — Servium IA
 
 > **Fase 003 — Arquitetura do MVP** · Etapa B
 > Agrupamentos coerentes de responsabilidades (módulos candidatos dentro do estilo arquitetural proposto em ADR-001). Não é DDD formal nem modelagem física: **nenhuma tabela, schema ou API é definida aqui**.

@@ -1,4 +1,4 @@
-# Princípios de Produto e Engenharia — ServiumAI
+# Princípios de Produto e Engenharia — Servium IA
 
 > Estes princípios orientam decisões de produto e engenharia. Devem ser respeitados por qualquer pessoa ou agente que trabalhe no projeto. Conflitos entre princípios devem ser resolvidos explicitamente e, quando relevantes, registrados em ADR.
 

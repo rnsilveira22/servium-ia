@@ -11,7 +11,7 @@ import type { Request } from 'express';
 import { Client } from 'pg';
 import { Observable, catchError, from, mergeMap, tap, throwError } from 'rxjs';
 
-import { ADMIN_URL } from '@servium/db';
+import { ADMIN_URL } from '@servium-ia/db';
 import { StructuredLogger } from '../common/logger.service';
 import { LoginRateLimitService, clienteIp } from './rate-limit.service';
 

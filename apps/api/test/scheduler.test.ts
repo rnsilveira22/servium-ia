@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import pg from 'pg';
 
-import { ADMIN_URL } from '@servium/db';
+import { ADMIN_URL } from '@servium-ia/db';
 import { MotorScheduler } from '../src/runtime/scheduler';
 
 const TEN_A = 'cccc0000-0000-0000-0000-000000000001';

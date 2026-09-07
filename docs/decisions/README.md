@@ -1,4 +1,4 @@
-# Decisões de Arquitetura (ADRs) — ServiumAI
+# Decisões de Arquitetura (ADRs) — Servium IA
 
 Este diretório registra as **Architecture Decision Records** do projeto: decisões arquiteturais relevantes, seu contexto e suas consequências.
 

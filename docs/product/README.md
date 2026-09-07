@@ -1,4 +1,4 @@
-# Produto — ServiumAI
+# Produto — Servium IA
 
 > Documentação de produto: discovery, especificação e requisitos do MVP.
 

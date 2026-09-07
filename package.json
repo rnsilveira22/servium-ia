@@ -1,8 +1,8 @@
 {
-  "name": "servium",
+  "name": "servium-ia",
   "private": true,
   "version": "0.1.0",
-  "description": "ServiumAI — monorepo (API NestJS + SPA React + tipos compartilhados)",
+  "description": "Servium IA — monorepo (API NestJS + SPA React + tipos compartilhados)",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -11,20 +11,20 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "npm run build -w @servium/shared-types && npm run build -w @servium/db && npm run build -w @servium/api && npm run build -w @servium/web",
-    "test": "npm run test -w @servium/shared-types && npm run test -w @servium/db && npm run test -w @servium/api && npm run test -w @servium/web && npm run test -w @servium/runtime-e2e",
+    "build": "npm run build -w @servium-ia/shared-types && npm run build -w @servium-ia/db && npm run build -w @servium-ia/api && npm run build -w @servium-ia/web",
+    "test": "npm run test -w @servium-ia/shared-types && npm run test -w @servium-ia/db && npm run test -w @servium-ia/api && npm run test -w @servium-ia/web && npm run test -w @servium-ia/runtime-e2e",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit -p apps/web",
     "verify": "npm run lint && npm run build && npm run typecheck && npm run test",
     "lint:docs": "markdownlint-cli2 \"docs/**/*.md\" \"*.md\"",
-    "migrate": "npm run migrate -w @servium/db",
+    "migrate": "npm run migrate -w @servium-ia/db",
     "db:up": "docker compose up -d --wait",
     "db:down": "docker compose down",
     "db:reset": "docker compose down -v && docker compose up -d --wait",
-    "dev:api": "npm run start:dev -w @servium/api",
-    "dev:web": "npm run dev -w @servium/web",
+    "dev:api": "npm run start:dev -w @servium-ia/api",
+    "dev:web": "npm run dev -w @servium-ia/web",
     "dev": "npm run dev:api & npm run dev:web",
-    "runtime": "npm run runtime -w @servium/api",
+    "runtime": "npm run runtime -w @servium-ia/api",
     "seed": "node --import tsx/esm scripts/seed.mjs"
   },
   "devDependencies": {

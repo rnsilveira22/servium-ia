@@ -1,4 +1,4 @@
-# Avaliação de Stack — ServiumAI MVP
+# Avaliação de Stack — Servium IA MVP
 
 > **Fase 003 — Arquitetura do MVP** · Etapa E
 > Comparação orientada pelos drivers ([`ARCHITECTURE_DRIVERS.md`](ARCHITECTURE_DRIVERS.md)). Notas 1–5 **sempre com justificativa**; a decisão pondera os drivers, não a soma bruta. Tudo aqui é **Recommended/Proposed** — nada `Accepted` sem aprovação humana.

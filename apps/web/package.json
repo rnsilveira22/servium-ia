@@ -1,5 +1,5 @@
 {
-  "name": "@servium/web",
+  "name": "@servium-ia/web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@servium/shared-types": "0.1.0",
+    "@servium-ia/shared-types": "0.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.18.2"

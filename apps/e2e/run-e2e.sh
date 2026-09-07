@@ -30,14 +30,14 @@ echo ">>> 3/6 Seed (admin + operador)"
 npm run seed >/dev/null
 
 echo ">>> 4/6 Build da API"
-npm run build -w @servium/api >/dev/null
+npm run build -w @servium-ia/api >/dev/null
 
 echo ">>> 5/6 API (:3000) + Web (:5173) em background"
 : > "$API_LOG"
 : > "$WEB_LOG"
 setsid node apps/api/dist/main.js >"$API_LOG" 2>&1 &
 API_PID=$!
-setsid npm run dev -w @servium/web -- --port 5173 --host 127.0.0.1 --strictPort >"$WEB_LOG" 2>&1 &
+setsid npm run dev -w @servium-ia/web -- --port 5173 --host 127.0.0.1 --strictPort >"$WEB_LOG" 2>&1 &
 WEB_PID=$!
 
 echo -n ">>> Aguardando API /health"

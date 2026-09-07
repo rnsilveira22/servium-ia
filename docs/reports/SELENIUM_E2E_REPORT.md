@@ -1,4 +1,4 @@
-# Relatório — Suíte E2E Básica com Selenium (ServiumAI MVP)
+# Relatório — Suíte E2E Básica com Selenium (Servium IA MVP)
 
 **Data:** 2026-08-30 (seção CI adicionada na entrega da Issue #42)
 **Escopo:** Retomar/recuperar o WIP de `apps/e2e`, entregar uma suíte E2E básica determinística para o MVP e levá-la ao CI (GitHub Actions).

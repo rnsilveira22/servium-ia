@@ -1,4 +1,4 @@
-# Quality Gates — ServiumAI (V2)
+# Quality Gates — Servium IA (V2)
 
 > Cinco gates obrigatórios (mais Gate 4.5 quando aplicável). Nenhum é pulável; nenhum agente pode dispensar outro. Transições de gate são validadas/executadas pelo **Orchestrator** (ver `AGENT_ORCHESTRATION.md` §4).
 

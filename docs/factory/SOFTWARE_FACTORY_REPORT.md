@@ -1,6 +1,6 @@
 # Software Factory V1 — Relatório de Configuração
 
-> Execução: estruturação da Software Factory orientada por agentes do ServiumAI (OpenCode + GitHub). Branch: `chore/software-factory-v1` (a partir de `phase/003-mvp-architecture`). Nenhuma feature de produto foi desenvolvida.
+> Execução: estruturação da Software Factory orientada por agentes do Servium IA (OpenCode + GitHub). Branch: `chore/software-factory-v1` (a partir de `phase/003-mvp-architecture`). Nenhuma feature de produto foi desenvolvida.
 >
 > **ATUALIZAÇÃO (2026-08-30):** relatório **histórico** (pré-HG-002). Desde então o repositório evoluiu para **monorepo executável** com produto implementado (Onda 0–1 do MVP-01: SRV-6..18, UI, E2E Selenium). Estado real e pendências: [`FACTORY_STATUS.md`](FACTORY_STATUS.md) e [`reports/POST_MVP_BACKLOG_RECONCILIATION.md`](../reports/POST_MVP_BACKLOG_RECONCILIATION.md). O histórico desta fase foi preservado.
 
@@ -21,7 +21,7 @@ Foi estabelecida a fundação de engenharia por agentes: quatro agentes OpenCode
 | Documentação | Extensa e organizada: visão, princípios, produto (MVP), arquitetura (C4, boundaries, drivers, segurança, limites de IA), 11 ADRs Proposed, roadmap, glossário |
 | CI | Inexistente antes desta execução |
 | Branch atual na inspeção | `phase/003-mvp-architecture`; principal: `main`; working tree limpo exceto `RELATORIO_FASE_002.md` não versionado |
-| GitHub | `git@github.com:rnsilveira22/servium.git`; acesso SSH funcional; sem Project/labels/templates/rulesets |
+| GitHub | `git@github.com:rnsilveira22/servium-ia.git`; acesso SSH funcional; sem Project/labels/templates/rulesets |
 | Principais restrições | Regra crítica do repositório: ADRs `Proposed` não autorizam implementação; escopo MVP rígido (`MVP_SCOPE.md`); Conventional Commits pt-BR; convenção própria de branches (`feat/ fix/ docs/ chore/ refactor/ test/`) |
 
 ---
@@ -131,11 +131,11 @@ docs/factory/qa/.gitkeep                  (destino dos reviews de QA)
 |---|---|---|
 | Autenticação git (SSH) | CONFIGURED (pré-existente) | push/pull funcionais |
 | GitHub CLI (`gh`) | **BLOCKED_GITHUB_AUTH** | não instalado; nenhum token disponível |
-| Repo | ALREADY_EXISTED | `rnsilveira22/servium` |
+| Repo | ALREADY_EXISTED | `rnsilveira22/servium-ia` |
 | Templates de Issue (story/bug/debt) | CONFIGURED (local) | efetivos ao merge em `main` |
 | Pull Request template | CONFIGURED (local) | idem |
 | Labels | BLOCKED_GITHUB_AUTH | taxonomy definida em `GITHUB_WORKFLOW.md`; aplicar via `gh label create` |
-| Project `ServiumAI Development` | BLOCKED_GITHUB_AUTH | campos/views definidos em documento; criar via `gh project create` após `gh auth login` |
+| Project `Servium IA Development` | BLOCKED_GITHUB_AUTH | campos/views definidos em documento; criar via `gh project create` após `gh auth login` |
 | GitHub Actions (docs-ci.yml) | CONFIGURED (local) | sintaxe validada; execução real só ocorrerá no primeiro PR no GitHub |
 | Branch protection/rulesets | BLOCKED_GITHUB_PERMISSION | requer admin; plano documentado (PR + check obrigatório, sem travar operação inicial) |
 | `opencode github install` | AWAITING_CREDENTIAL | exige segredo de provedor no Actions; inspecionado, não executado |

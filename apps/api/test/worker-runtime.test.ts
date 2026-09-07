@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 
-import { ADMIN_URL, APP_URL, enqueue } from '@servium/db';
+import { ADMIN_URL, APP_URL, enqueue } from '@servium-ia/db';
 import pg from 'pg';
 import { FakeChannel } from '../src/motor/channel';
 import { createMotorWorker } from '../src/runtime/worker';

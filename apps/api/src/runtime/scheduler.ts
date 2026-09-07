@@ -9,7 +9,7 @@
  */
 import { setTimeout as sleep } from 'node:timers/promises';
 
-import { app, setTenant, enqueue, admin, reapStuck } from '@servium/db';
+import { app, setTenant, enqueue, admin, reapStuck } from '@servium-ia/db';
 
 export interface MotorSchedulerOptions {
   /** Intervalo entre varreduras (ms). Default 60_000. */
