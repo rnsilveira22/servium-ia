@@ -5,6 +5,7 @@
  */
 import { buildChannelFromEnv, registerChannelProvider } from './channel';
 import { MailpitProvider } from './mailpit';
+import { requireServiceId } from './service-id';
 import { createMotorWorker } from './worker';
 
 async function main(): Promise<void> {
@@ -12,6 +13,8 @@ async function main(): Promise<void> {
   const channel = buildChannelFromEnv();
   const worker = createMotorWorker({
     channel,
+    // PRM-P0.3-C · identidade do FD em auditoria (falha clara se ausente — CA-C-3)
+    serviceId: requireServiceId(),
     pollMs: Number(process.env.WORKER_POLL_MS ?? 2000),
     batch: Number(process.env.WORKER_BATCH ?? 10),
     reapIntervalMs: Number(process.env.WORKER_REAP_INTERVAL_MS ?? 60_000),

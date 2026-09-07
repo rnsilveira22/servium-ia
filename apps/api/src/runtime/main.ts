@@ -7,6 +7,7 @@
  */
 import { buildChannelFromEnv, registerChannelProvider } from './channel';
 import { MailpitProvider } from './mailpit';
+import { requireServiceId } from './service-id';
 import { createMotorWorker } from './worker';
 import { MotorScheduler } from './scheduler';
 import { RecebedorPeriodico } from './recebimento';
@@ -14,8 +15,13 @@ import { RecebedorPeriodico } from './recebimento';
 async function main(): Promise<void> {
   registerChannelProvider('mailpit', new MailpitProvider());
   const channel = buildChannelFromEnv();
+  // PRM-P0.3-C · identidade do FD em auditoria no runtime canônico (CA-C-1 e
+  // CA-C-3): eventos do motor e do recebimento são trabalho do Funcionário
+  // Digital e devem gravar actor_type='servico'; bootstrap falha sem o env.
+  const serviceId = requireServiceId();
   const worker = createMotorWorker({
     channel,
+    serviceId,
     pollMs: Number(process.env.WORKER_POLL_MS ?? 2000),
     batch: Number(process.env.WORKER_BATCH ?? 10),
     reapIntervalMs: Number(process.env.WORKER_REAP_INTERVAL_MS ?? 60_000),
@@ -38,6 +44,7 @@ async function main(): Promise<void> {
     ? new RecebedorPeriodico({
         apiUrl,
         caixa,
+        serviceId,
         receberIntervalMs: Number(process.env.RECEBER_INTERVAL_MS ?? 30_000),
       })
     : null;

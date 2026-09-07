@@ -49,6 +49,7 @@ jobs:
       MAILPIT_SMTP_HOST: localhost
       MAILPIT_SMTP_PORT: "1025"
       MAILPIT_API_URL: http://localhost:8025
+      SERVIUM_SERVICE_ID: "11111111-2222-3333-4444-555555555555"
     steps:
       - uses: actions/checkout@v4
 

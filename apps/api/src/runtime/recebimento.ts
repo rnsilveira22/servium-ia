@@ -105,12 +105,13 @@ async function auditar(
   entidade: string,
   entidadeId: string,
   acao: string,
-  detalhes: Record<string, unknown>
+  detalhes: Record<string, unknown>,
+  serviceId?: string
 ): Promise<void> {
   await ctx.query(
-    `INSERT INTO eventos_auditoria (tenant_id, actor_type, entidade, entidade_id, acao, detalhes)
-     VALUES ($1,'sistema',$2,$3,$4,$5)`,
-    [tenantId, entidade, entidadeId, acao, JSON.stringify(detalhes)]
+    `INSERT INTO eventos_auditoria (tenant_id, actor_type, actor_id, entidade, entidade_id, acao, detalhes)
+     VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+    [tenantId, serviceId ? 'servico' : 'sistema', serviceId ?? null, entidade, entidadeId, acao, JSON.stringify(detalhes)]
   );
 }
 
@@ -121,7 +122,8 @@ async function vincularResposta(
   ctx: pg.Client,
   tenantId: string,
   token: TokenCorrelacao,
-  msg: MensagemRecebida
+  msg: MensagemRecebida,
+  serviceId?: string
 ): Promise<boolean> {
   await ctx.query('BEGIN');
   try {
@@ -160,7 +162,7 @@ async function vincularResposta(
       rodada: token.rodada,
       token: token.token,
       message_id: msg.messageId,
-    });
+    }, serviceId);
 
     await ctx.query('COMMIT');
     return true;
@@ -170,7 +172,10 @@ async function vincularResposta(
   }
 }
 
-export async function correlacionarRecebidas(mensagens: MensagemRecebida[]): Promise<RecebimentoResultado> {
+export async function correlacionarRecebidas(
+  mensagens: MensagemRecebida[],
+  serviceId?: string
+): Promise<RecebimentoResultado> {
   let processadas = 0;
   let semToken = 0;
 
@@ -194,7 +199,7 @@ export async function correlacionarRecebidas(mensagens: MensagemRecebida[]): Pro
       await ctx.connect();
       try {
         await setTenant(ctx, rows[0].tenant_id as string);
-        if (await vincularResposta(ctx, rows[0].tenant_id as string, token, msg)) processadas++;
+        if (await vincularResposta(ctx, rows[0].tenant_id as string, token, msg, serviceId)) processadas++;
       } finally {
         void ctx.end();
       }
@@ -213,6 +218,9 @@ export interface RecebedorOptions {
   apiUrl: string;
   caixa: string;
   receberIntervalMs: number;
+  /** Identidade de serviço do Funcionário Digital (PRM-P0.3-C): os eventos
+   *  de 'receber' são gravados com actor_type='servico' + actor_id=serviceId. */
+  serviceId?: string;
   log?: (level: 'info' | 'warn' | 'error', msg: string, extra?: Record<string, unknown>) => void;
 }
 
@@ -255,7 +263,7 @@ export class RecebedorPeriodico {
   private async executa(): Promise<RecebimentoResultado> {
     try {
       const mensagens = await buscarMensagensDoMailpit(this.opts.apiUrl, this.opts.caixa);
-      const res = await correlacionarRecebidas(mensagens);
+      const res = await correlacionarRecebidas(mensagens, this.opts.serviceId);
       if (res.processadas > 0) {
         this.opts.log?.('info', 'respostas correlacionadas', { processadas: res.processadas, semToken: res.semToken });
       }
