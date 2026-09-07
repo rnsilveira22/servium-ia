@@ -1,16 +1,26 @@
 import pg from 'pg';
 import { hash } from '@node-rs/argon2';
+import { validarPoliticaSenha, mensagemPoliticaSenha } from '../packages/db/src/security/password-policy.ts';
 
 const DATABASE_URL =
   process.env.DATABASE_URL ?? 'postgres://servium:servium_dev@localhost:5432/servium';
 
 const TENANT_NAME = process.env.SEED_TENANT ?? 'Dev Corp';
 const ADMIN_EMAIL = process.env.SEED_EMAIL ?? 'admin@dev.local';
-const ADMIN_PASS = process.env.SEED_PASSWORD ?? 'admin123';
+const ADMIN_PASS = process.env.SEED_PASSWORD ?? 'admin-dev-corp-2026';
 const OPERATOR_EMAIL = process.env.SEED_OPERATOR_EMAIL ?? 'oper@dev.local';
-const OPERATOR_PASS = process.env.SEED_OPERATOR_PASSWORD ?? 'oper123';
+const OPERATOR_PASS = process.env.SEED_OPERATOR_PASSWORD ?? 'oper-dev-corp-2026';
 
 async function main() {
+  // Issue #54 (CA-A-2): seed falha com senhas fora da política ASVS/NIST.
+  for (const [nome, senha] of [['SEED_PASSWORD (admin)', ADMIN_PASS], ['SEED_OPERATOR_PASSWORD', OPERATOR_PASS]]) {
+    const validacao = validarPoliticaSenha(senha);
+    if (!validacao.ok) {
+      console.error(`Seed bloqueado: ${nome} fora da política de senha: ${mensagemPoliticaSenha(validacao.motivo)}`);
+      process.exit(1);
+    }
+  }
+
   const client = new pg.Client({ connectionString: DATABASE_URL });
   await client.connect();
   try {
