@@ -148,8 +148,8 @@ CORS estrito: aplicação usa **allow list explícita** configurável (`CORS_ORI
 | Capítulo | Total mapeado | Implementado | Parcial | Lacuna | n/d |
 |---|---|---|---|---|---|
 | V2 — Autenticação | 13 | 11 | 0 | 2 | 0 |
-| V3 — Sessão | 10 | 7 | 3 | 0 | 0 |
-| V4 — Controle de acesso | 7 | 7 | 0 | 0 | 0 |
+| V3 — Sessão | 10 | 8 | 2 | 0 | 0 |
+| V4 — Controle de acesso | 7 | 6 | 1 | 0 | 0 |
 | V5 — Validação / sanitização | 9 | 5 | 2 | 1 | 1 |
 | **Total** | **39** | **30** | **5** | **3** | **1** |
 
