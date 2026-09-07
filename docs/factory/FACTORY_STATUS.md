@@ -4,7 +4,7 @@
 
 ## Última atualização
 
-2026-09-07 · **P0.3 CONCLUÍDA + regressão nodemailer corrigida** · HEAD `69e0950` · PRM-P0.3-A (#54 política de senha, PR #80 `6313cab`), PRM-P0.3-B (#55 rate-limit, PR #81 `69e0950`) DONE+MERGED · Issues #54/#55 CLOSED · regressão P0 `nodemailer@10` (Issue #83) detectada e corrigida (PR #84 `7b96fd6`, merge L2 squash) · Especificação oficial do MVP v1.0 registrada (PR #82 docs, L3 humano) · Factory V2 operacional (Orchestrator + estados V2)
+2026-09-07 · **P0.3-C (#56) em PR QA_REVIEW + P0.3-A/B merged + regressão nodemailer corrigida** · HEAD `69e0950` · PRM-P0.3-A (#54 política de senha, PR #80 `6313cab`), PRM-P0.3-B (#55 rate-limit, PR #81 `69e0950`) DONE+MERGED · **PRM-P0.3-C (#56 Identidade de serviço do FD, `actor_type='servico'`) implementada em worktree (branch `feat/56-identidade-servico`) aguardando PR/QA** · regressão P0 `nodemailer@10` (Issue #83) detectada e corrigida (PR #84 `7b96fd6`, merge L2 squash) · Especificação oficial do MVP v1.0 registrada (PR #82 docs, L3 humano) · Factory V2 operacional (Orchestrator + estados V2)
 
 ### Reconciliado nesta sessão
 
@@ -20,7 +20,7 @@
 | Dimensão | Estado |
 |---|---|
 | Branch de trabalho | `main` sincronizada (`69e0950`) |
-| Estado do MVP-01 | **P0.1 resolvido** (PRs #61–#66) + **P0.2 resolvido** (PRs #76/#77/#78) + **P0.3-A/B resolvido** (#54/#55, PRs #80/#81) — restam P0.3-C (#56) e P0.3-D (#57) |
+| Estado do MVP-01 | **P0.1 resolvido** (PRs #61–#66) + **P0.2 resolvido** (PRs #76/#77/#78) + **P0.3-A/B resolvido** (#54/#55, PRs #80/#81) + **P0.3-C (#56) implementado (QA_REVIEW)** — resta P0.3-D (#57) |
 | Software Factory | **V2 OPERACIONAL** — Orchestrator + estados V2 aprovados (HG-F2-01/02/03) |
 | Meta canônica | [`../product/MVP_01_VERTICAL_SLICE.md`](../product/MVP_01_VERTICAL_SLICE.md) — primeiro Funcionário Digital em operação assistida no piloto |
 | ADRs 001..011 | `Accepted` (HG-002); ADR-008 `CommunicationChannel` preservado (HG-008) |
@@ -67,7 +67,8 @@ Registro formal: [`HUMAN_DECISIONS_LOG.md`](HUMAN_DECISIONS_LOG.md).
 | Issue | Item | Prioridade | Status real | Observação |
 |---|---|---|---|---|
 | [#9](https://github.com/rnsilveira22/servium/issues/9) | Auditoria append-only (**P0.2**) | P0 | **DONE no board** / Issue OPEN (aguarda fechamento formal) | CA-01/02 (reconciliação §5), CA-03 (#52), CA-04 (#51), CA-05 (#53) todos entregues; PR #79 merged humanamente; drift do board (Done/P1 vs OPEN/P0) registrado |
-| [#20](https://github.com/rnsilveira22/servium/issues/20) | N5 Auth mínima (**P0.3** hardening) | P0 | OPEN | HG-PR-SEC aprovado (06/09); **#54 (senha) e #55 (rate-limit) entregues e CLOSED** (PRs #80/#81) — restam #56 (identidade serviço, P0.3-C) e #57 (ASVS docs, P0.3-D) |
+| [#20](https://github.com/rnsilveira22/servium/issues/20) | N5 Auth mínima (**P0.3** hardening) | P0 | OPEN | HG-PR-SEC aprovado (06/09); **#54 (senha) e #55 (rate-limit) entregues e CLOSED** (PRs #80/#81); **#56 (identidade serviço, P0.3-C) implementada — QA_REVIEW**; resta #57 (ASVS docs, P0.3-D) |
+| [#56](https://github.com/rnsilveira22/servium/issues/56) | **PRM-P0.3-C · Identidade de serviço do FD (`actor_type='servico'`)** | P0 | **QA_REVIEW** (branch `feat/56-identidade-servico`, worktree) | CA-C-1/2/3 implementados e testados (worktree privado): `auditar()` aceita actor override `servico+actor_id=SERVIUM_SERVICE_ID`; bootstrap do worker falha claro sem o env; evidência em `apps/api/test/identidade-servico.test.ts` · aguarda PR/QA do Orchestrator 🚫 sem PR automaticamente |
 | [#73](https://github.com/rnsilveira22/servium/issues/73) | Bug P0 (funcional) | P0 | OPEN | aguarda próxima onda |
 | [#72](https://github.com/rnsilveira22/servium/issues/72) | Gap P1 | P1 | OPEN | aguarda próxima onda |
 | [#58](https://github.com/rnsilveira22/servium/issues/58) | Backlog P2 | P2 | OPEN | aguarda próxima onda |
@@ -84,12 +85,12 @@ Issues fechadas nesta sessão: #54 (PR #80), #55 (PR #81), #83 (PR #84). Issues 
 | **Fechar Issue #9** | Encerramento formal | Comentar cobertura CA-01→CA-05 + fechar (decisão do Owner); corrigir drift do board (Done/P1 vs OPEN/P0) |
 | **Drift do board #9** | Governança | Corrigir Status/Priority no board; migrar campo Status p/ estados V2 (web/admin) |
 | **PR #82** (spec MVP v1.0) | L3 humano | Merge/ajustes da Especificação Oficial do MVP v1.0 (`docs/product/MVP_EXPERIENCE_SPEC_v1.md`) |
-| **P0.3-C/D** (#56/#57) | Implementação | Identidade de serviço + mapeamento ASVS 4.0.3 → após aprovação da onda |
+| **P0.3-D** (#57) | Implementação | Mapeamento ASVS 4.0.3 → após aprovação da onda (#56 em QA_REVIEW aguarda PR/QA) |
 | Deploy/piloto no cliente real | Gate próprio | Após `PILOT_READY` |
 
 ## Próximos passos
 
-1. **P0.3 restante**: #56 (identidade de serviço, P0.3-C) → #57 (mapeamento ASVS docs, P0.3-D);
+1. **P0.3 restante**: #56 (identidade de serviço, P0.3-C) em **QA_REVIEW** → abrir PR + QA (Orchestrator) → #57 (mapeamento ASVS docs, P0.3-D);
 2. **Especificação MVP v1.0 (PR #82)**: merge humano + autorizar Fase 1 (auditoria da UI atual) e Fase 2 (Blueprint UX/UI) como proposta;
 3. Fechar Issue #9 (comentário rastreável + decisão do Owner); corrigir drift do board;
 4. Definir HG-RETENÇÃO (política de retenção);
