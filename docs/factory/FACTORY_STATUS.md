@@ -103,7 +103,7 @@ Issues fechadas nesta sessão: **#94 (PR #95), #93 (PR #93)** e, via L3 humano (
 | **PR #82** (spec MVP v1.0) | L3 humano | **MERGED** (`c35e672`) — Especificação Oficial do MVP v1.0 registrada |
 | **PR #90** (ASVS P0.3-D, #57) | L3 humano | **MERGED** (`a8c057a`, rebase, 08/09) — Gate 4.6 ativo; CA-D-3 (revisão de segurança) **pendente** no HUMAN_DECISIONS_LOG |
 | **PR #92** (Blueprint Fase 2 UX/UI) | L3 humano | **MERGED** (`731c009`, squash, 08/09) — proposta registrada; **implementação Fase 2: M0 APROVADO (HG-UX-M0)** |
-| **Implementação UX Fase 2** (E-01..E-08) | L3 humano | **M0 autorizado** (08/09, HG-UX-M0); **M1..M5, novos endpoints e regras de domínio NÃO autorizados** — cada milestone sujeito a Human Gate próprio |
+| **Implementação UX Fase 2** (E-01..E-08) | L3 humano | **M0 IMPLEMENTADO (PR #96 `8c7ab2f`, 08/09)** — branch `feat/web-ux-m0-foundation`; `verify` verde (178 testes); **em QA_REVIEW** (aguardando Selenium CI + visual QA); **M1..M5, novos endpoints e regras de domínio NÃO autorizados** — cada milestone sujeito a Human Gate próprio |
 | **P0.3-D** (#57) | Implementação | **MERGED** (PR #90 `a8c057a`) — Issue #57 CLOSED; CA-D-3 pendente |
 | Deploy/piloto no cliente real | Gate próprio | Após `PILOT_READY` |
 
@@ -112,6 +112,6 @@ Issues fechadas nesta sessão: **#94 (PR #95), #93 (PR #93)** e, via L3 humano (
 1. **Fechar Issue #9** (comentário rastreável + decisão do Owner); corrigir drift do board;
 2. **Definir HG-RETENÇÃO** (política de retenção numérica);
 3. **Registrar CA-D-3** (revisão de segurança do ASVS pela pessoa responsável) no `HUMAN_DECISIONS_LOG` — condição para `PILOT_READY`;
-4. **Implementar M0 — Fundação Visual** (autorizado por HG-UX-M0): E-01 Design System, E-02 Componentes Base, Menu Mobile, Acessibilidade — PR próprio `feat(web): implement UX foundation M0`, escopo restrito a `apps/web`; **M1..M5 permanecem NÃO autorizados**;
+4. **M0 — Fundação Visual IMPLEMENTADO** (PR #96 `8c7ab2f`, 08/09): E-01 Design System, E-02 Componentes Base, Menu Mobile consolidado, Acessibilidade — escopo restrito a `apps/web`; `npm run verify` verde (178 testes); em **QA_REVIEW** (aguardando Selenium CI + visual QA + `HUMAN_GATE_UX_M0_ACCEPTANCE`); **M1..M5 permanecem NÃO autorizados**;
 5. Priorizar #72/#58/#59 na próxima onda;
 6. Avaliar desativação da V1 após 2+ ciclos V2 com gates verdes (nunca automática).

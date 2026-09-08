@@ -288,6 +288,7 @@ A mensagem original de aprovação (04/09/2026) chegou truncada após o texto do
 - **Controles**: PR deve incluir descrição/escopo/CA/testes/evidências visuais/impacto/riscos. Máximo **3 ciclos QA** → `ESCALATED_TECHNICAL_FAILURE` no 3º.
 - **Evidência**: baseline `main@49fa677`; tokens oficiais existentes (`brand-tokens.css:1-8`); Modal acessível já em `apps/web/src/components/Modal.tsx`; `#2563eb`/`#1e40af`/`#dbeafe` restantes = **0**.
 - **Estado**: **RESOLVIDO** — gate aprovado; M0 = `PO_APPROVED` → pronto para `IMPLEMENTING` sob autonomia autorizada.
+- **Implementação (2026-09-08)**: M0 entregue na PR #96 (`8c7ab2f`, branch `feat/web-ux-m0-foundation`). E-01 tokens + App.css tokenizado; E-02 Button/Field/Badge/StatusBadge/Card/Table/Skeleton/Toast (Modal reutilizado); menu mobile consolidado; acessibilidade (focus-visible token, reduced-motion, Field id/aria-describedby/aria-invalid). `npm run verify` verde — **178 testes** (incl. 18 novos de componentes). Estado: **QA_REVIEW** — merge condicionado a Selenium CI verde + Visual QA + `HG-UX-M0_ACCEPTANCE`.
 
 ---
 
