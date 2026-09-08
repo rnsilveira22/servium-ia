@@ -74,8 +74,8 @@ export function CiclosPage() {
         </button>
       </div>
 
-      {aviso && <div className="alert alert-success">{aviso}</div>}
-      {erro && <div className="alert alert-error">{erro}</div>}
+      {aviso && <div className="alert alert-success" role="status" aria-live="polite">{aviso}</div>}
+      {erro && <div className="alert alert-error" role="alert" aria-live="assertive">{erro}</div>}
 
       {showForm && (
         <div className="form-inline">
@@ -111,34 +111,36 @@ export function CiclosPage() {
           <p className="text-muted">Clique em “+ Ativar Ciclo” para iniciar o monitoramento de uma obrigação.</p>
         </div>
       ) : (
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>Obrigação</th>
-              <th>Estado</th>
-              <th>Itens</th>
-              <th>Resolvidos</th>
-              <th>Excecoes</th>
-              <th>Criado em</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {ciclos.map((c) => (
-              <tr key={c.id}>
-                <td>{c.cliente}</td>
-                <td>{c.obrigacao}</td>
-                <td><span className={`badge badge-${c.estado}`}>{c.estado}</span></td>
-                <td>{c.itens}</td>
-                <td>{c.resolvidos}</td>
-                <td>{c.excecoes > 0 ? <span className="badge badge-alert">{c.excecoes}</span> : '0'}</td>
-                <td>{new Date(c.criado_em).toLocaleDateString('pt-BR')}</td>
-                <td><Link to={`/ciclos/${c.id}`} className="link">Detalhes</Link></td>
+        <div className="table-responsive">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Obrigação</th>
+                <th>Estado</th>
+                <th>Itens</th>
+                <th>Resolvidos</th>
+                <th>Excecoes</th>
+                <th>Criado em</th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {ciclos.map((c) => (
+                <tr key={c.id}>
+                  <td>{c.cliente}</td>
+                  <td>{c.obrigacao}</td>
+                  <td><span className={`badge badge-${c.estado}`}>{c.estado}</span></td>
+                  <td>{c.itens}</td>
+                  <td>{c.resolvidos}</td>
+                  <td>{c.excecoes > 0 ? <span className="badge badge-alert">{c.excecoes}</span> : '0'}</td>
+                  <td>{new Date(c.criado_em).toLocaleDateString('pt-BR')}</td>
+                  <td><Link to={`/ciclos/${c.id}`} className="link">Detalhes</Link></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
