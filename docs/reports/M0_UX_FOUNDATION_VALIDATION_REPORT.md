@@ -1,6 +1,6 @@
 # FACTORY V2 — M0 VALIDATION REPORT (UX Foundation)
 
-**Data:** 2026-09-08 · **Orchestrator:** `servium-orchestrator` · **Branch:** `feat/web-ux-m0-foundation` · **PR:** [#96](https://github.com/rnsilveira22/servium-ia/pull/96) · **HEAD:** `318eccd`
+**Data:** 2026-09-08 · **Orchestrator:** `servium-orchestrator` · **Branch:** `feat/web-ux-m0-foundation` · **PR:** [#96](https://github.com/rnsilveira22/servium-ia/pull/96) · **HEAD:** `baef22b`
 **Modelo/plataforma:** `opencode/big-pickle` · Linux
 
 ---
@@ -36,7 +36,7 @@ A correção foi feita **dentro do escopo M0** (2 arquivos, `apps/web`): `Field.
 | Item | Valor |
 |---|---|
 | Branch | `feat/web-ux-m0-foundation` (base `main@49fa677`, LG-1) |
-| Commits | `8c7ab2f` (feat M0) · `3e481b4` (docs, QA_REVIEW) · `6312ea1` (fix E2E) · `318eccd` (docs, validação `M0_READY_FOR_HUMAN_GATE_ACCEPTANCE`) |
+| Commits | `8c7ab2f` (feat M0) · `3e481b4` (docs, QA_REVIEW) · `6312ea1` (fix E2E) · `318eccd` (docs, validação `M0_READY_FOR_HUMAN_GATE_ACCEPTANCE`) · `baef22b` (docs, HEAD do relatório) |
 | Arquivos alterados | 26 (+1226 / −499) |
 | Escopo | `apps/web` (código) + `docs/` (relatório M0) |
 | PR #96 | OPEN · **MERGEABLE** · **mergeState `CLEAN`** |
