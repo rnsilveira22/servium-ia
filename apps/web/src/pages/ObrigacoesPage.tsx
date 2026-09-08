@@ -72,8 +72,8 @@ export function ObrigacoesPage() {
         </button>
       </div>
 
-      {erro && <div className="alert alert-error">{erro}</div>}
-      {aviso && <div className="alert alert-success">{aviso}</div>}
+      {erro && <div className="alert alert-error" role="alert" aria-live="assertive">{erro}</div>}
+      {aviso && <div className="alert alert-success" role="status" aria-live="polite">{aviso}</div>}
 
       {showForm && (
         <form className="form-inline" onSubmit={handleCreate}>
@@ -104,55 +104,59 @@ export function ObrigacoesPage() {
           <button className="btn btn-primary" onClick={() => setShowForm(true)}>Cadastrar primeira obrigacao</button>
         </div>
       ) : (
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>Descricao</th>
-              <th>Prazo</th>
-              <th>Criado em</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {obrigacoes.map((o) => (
-              <tr key={o.id}>
-                <td>{clienteNome(o.cliente_id)}</td>
-                <td>{o.descricao}</td>
-                <td>{o.prazo ? new Date(o.prazo).toLocaleDateString('pt-BR') : '-'}</td>
-                <td>{new Date(o.criado_em).toLocaleDateString('pt-BR')}</td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-primary"
-                    disabled={ativandoId !== null}
-                    onClick={() => handleAtivarCiclo(o)}
-                  >
-                    {ativandoId === o.id ? 'Ativando...' : 'Ativar ciclo'}
-                  </button>
-                </td>
+        <div className="table-responsive">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Descricao</th>
+                <th>Prazo</th>
+                <th>Criado em</th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {obrigacoes.map((o) => (
+                <tr key={o.id}>
+                  <td>{clienteNome(o.cliente_id)}</td>
+                  <td>{o.descricao}</td>
+                  <td>{o.prazo ? new Date(o.prazo).toLocaleDateString('pt-BR') : '-'}</td>
+                  <td>{new Date(o.criado_em).toLocaleDateString('pt-BR')}</td>
+                  <td>
+                    <button
+                      className="btn btn-sm btn-primary"
+                      disabled={ativandoId !== null}
+                      onClick={() => handleAtivarCiclo(o)}
+                    >
+                      {ativandoId === o.id ? 'Ativando...' : 'Ativar ciclo'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {templates.length > 0 && (
         <section className="section">
           <h2>Templates de Checklist</h2>
-          <table className="table">
-            <thead>
-              <tr><th>Nome</th><th>Canal</th><th>Itens</th></tr>
-            </thead>
-            <tbody>
-              {templates.map((t) => (
-                <tr key={t.id}>
-                  <td>{t.nome}</td>
-                  <td>{t.canal}</td>
-                  <td>{t.itens.length}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
+                <tr><th>Nome</th><th>Canal</th><th>Itens</th></tr>
+              </thead>
+              <tbody>
+                {templates.map((t) => (
+                  <tr key={t.id}>
+                    <td>{t.nome}</td>
+                    <td>{t.canal}</td>
+                    <td>{t.itens.length}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       )}
     </div>

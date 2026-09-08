@@ -31,7 +31,7 @@ export function DashboardPage() {
   const totalExcecoes = ciclos.reduce((s, c) => s + c.excecoes, 0);
 
   if (loading) return <div className="page-loading">Carregando...</div>;
-  if (erro) return <div className="alert alert-error">{erro}</div>;
+  if (erro) return <div className="alert alert-error" role="alert" aria-live="assertive">{erro}</div>;
 
   return (
     <div>
@@ -58,30 +58,32 @@ export function DashboardPage() {
       {ciclos.length > 0 && (
         <section className="section">
           <h2>Ciclos recentes</h2>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Estado</th>
-                <th>Itens</th>
-                <th>Resolvidos</th>
-                <th>Excecoes</th>
-                <th>Criado em</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {ciclos.slice(0, 10).map((c) => (
-                <tr key={c.id}>
-                  <td><span className={`badge badge-${c.estado}`}>{c.estado}</span></td>
-                  <td>{c.itens}</td>
-                  <td>{c.resolvidos}</td>
-                  <td>{c.excecoes > 0 ? <span className="badge badge-alert">{c.excecoes}</span> : '0'}</td>
-                  <td>{new Date(c.criado_em).toLocaleDateString('pt-BR')}</td>
-                  <td><Link to={`/ciclos/${c.id}`} className="link">Ver</Link></td>
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Estado</th>
+                  <th>Itens</th>
+                  <th>Resolvidos</th>
+                  <th>Excecoes</th>
+                  <th>Criado em</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {ciclos.slice(0, 10).map((c) => (
+                  <tr key={c.id}>
+                    <td><span className={`badge badge-${c.estado}`}>{c.estado}</span></td>
+                    <td>{c.itens}</td>
+                    <td>{c.resolvidos}</td>
+                    <td>{c.excecoes > 0 ? <span className="badge badge-alert">{c.excecoes}</span> : '0'}</td>
+                    <td>{new Date(c.criado_em).toLocaleDateString('pt-BR')}</td>
+                    <td><Link to={`/ciclos/${c.id}`} className="link">Ver</Link></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       )}
 

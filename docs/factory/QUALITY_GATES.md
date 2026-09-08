@@ -79,6 +79,26 @@ Responsável: humano (Rodrigo). Acionado pelo Orchestrator quando item entrar em
 - A decisão humana deve seguir o formato canônico `HUMAN_DECISION_REQUIRED` (`HUMAN_GATES.md`).
 - Sem decisão registrada, o item permanece `HUMAN_REVIEW`/`AWAITING_DECISION` — nunca avança por silêncio.
 
+## Gate 4.6 — Revisão de segurança (ASVS — Issue #57 / PRM-P0.3-D)
+
+> **Condição obrigatória para `PILOT_READY`.** Cada controle do documento vivo
+> [`docs/security/ASVS_PILOTO.md`](../security/ASVS_PILOTO.md) é verificado contra a implementação real
+> e sua evidência automatizada (teste → `arquivo:linha`). Responde ao ADR-009 (checklist OWASP ASVS +
+> testes de segurança) e à Issue #20 (CA-07).
+>
+> Responsável: pessoa responsável por segurança. Sem aprovação registrada (`VALIDATED`/`APPROVED`
+> no `HUMAN_DECISIONS_LOG`), o piloto **não** é declarado pronto — alternância aceita.
+
+Checklist de revisão de segurança (escopo: capítulos V2/V3/V4/V5 nível 1):
+
+- [ ] Mapeamento ASVS (V2/V3/V4/V5) presente e atual com o código (`docs/security/ASVS_PILOTO.md`)
+- [ ] Cada requisito `implementado` aponta evidência automatizada real (teste → arquivo:linha) — sem evidência inventada
+- [ ] Lacunas abertas (`lacuna`/`parcial`) rastreadas na tabela com ID ASVS (CA-D-1)
+- [ ] Lacunas G-01..G-08 revisadas e priorizadas (headers/CORS, CSRF/SameSite, cookie Secure, validação centralizada/schema, upload, activação out-of-band)
+- [ ] RLS deny-by-default por tenant confirmado (ADR-005) e coberto por teste de isolamento
+- [ ] Autenticação (argon2id, rate-limit, anti-enumeração) confirmada por teste automatizado
+- [ ] Revisão registrada explicitamente (não presumida) antes de `PILOT_READY` (CA-D-3)
+
 ## Estados de validação
 
 Usar explicitamente: `VALIDATED`, `NOT_VALIDATED`, `BLOCKED`, `AWAITING_CREDENTIAL`, `AWAITING_PERMISSION`, `AWAITING_DECISION`.

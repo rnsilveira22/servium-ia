@@ -48,7 +48,7 @@ export function LoginPage() {
             <span>Senha</span>
             <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} required />
           </label>
-          {erro && <div className="alert alert-error">{erro}</div>}
+          {erro && <div className="alert alert-error" role="alert" aria-live="assertive">{erro}</div>}
           <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
