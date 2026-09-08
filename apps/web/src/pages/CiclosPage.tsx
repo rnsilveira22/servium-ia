@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client';
 import type { ClienteDTO, ObrigacaoDTO } from '@servium-ia/shared-types';
+import { Button } from '../components/Button';
+import { Table, TableHead } from '../components/Table';
+import { StatusBadge } from '../components/Badge';
 
 interface CicloResumo {
   id: string;
@@ -69,9 +72,9 @@ export function CiclosPage() {
     <div>
       <div className="page-header">
         <h1>Ciclos</h1>
-        <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+        <Button onClick={() => setShowForm(!showForm)}>
           {showForm ? 'Cancelar' : '+ Ativar Ciclo'}
-        </button>
+        </Button>
       </div>
 
       {aviso && <div className="alert alert-success" role="status" aria-live="polite">{aviso}</div>}
@@ -86,9 +89,9 @@ export function CiclosPage() {
             </div>
           ) : (
             <>
-              <label className="field">
-                <span>Obrigação</span>
-                <select value={obrigacaoId} onChange={(e) => setObrigacaoId(e.target.value)}>
+              <div className="field">
+                <label htmlFor="ciclo-obrigacao">Obrigação</label>
+                <select id="ciclo-obrigacao" value={obrigacaoId} onChange={(e) => setObrigacaoId(e.target.value)}>
                   <option value="">Selecione uma obrigação...</option>
                   {obrigacoes.map((o) => (
                     <option key={o.id} value={o.id}>
@@ -96,10 +99,10 @@ export function CiclosPage() {
                     </option>
                   ))}
                 </select>
-              </label>
-              <button className="btn btn-primary" onClick={handleAtivar} disabled={ativando}>
+              </div>
+              <Button onClick={handleAtivar} loading={ativando}>
                 {ativando ? 'Ativando...' : 'Ativar ciclo'}
-              </button>
+              </Button>
             </>
           )}
         </div>
@@ -111,36 +114,23 @@ export function CiclosPage() {
           <p className="text-muted">Clique em “+ Ativar Ciclo” para iniciar o monitoramento de uma obrigação.</p>
         </div>
       ) : (
-        <div className="table-responsive">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Cliente</th>
-                <th>Obrigação</th>
-                <th>Estado</th>
-                <th>Itens</th>
-                <th>Resolvidos</th>
-                <th>Excecoes</th>
-                <th>Criado em</th>
-                <th></th>
+        <Table>
+          <TableHead columns={['Cliente', 'Obrigação', 'Estado', 'Itens', 'Resolvidos', 'Excecoes', 'Criado em', '']} />
+          <tbody>
+            {ciclos.map((c) => (
+              <tr key={c.id}>
+                <td>{c.cliente}</td>
+                <td>{c.obrigacao}</td>
+                <td><StatusBadge estado={c.estado} /></td>
+                <td>{c.itens}</td>
+                <td>{c.resolvidos}</td>
+                <td>{c.excecoes > 0 ? <span className="badge badge-alert">{c.excecoes}</span> : '0'}</td>
+                <td>{new Date(c.criado_em).toLocaleDateString('pt-BR')}</td>
+                <td><Link to={`/ciclos/${c.id}`} className="link">Detalhes</Link></td>
               </tr>
-            </thead>
-            <tbody>
-              {ciclos.map((c) => (
-                <tr key={c.id}>
-                  <td>{c.cliente}</td>
-                  <td>{c.obrigacao}</td>
-                  <td><span className={`badge badge-${c.estado}`}>{c.estado}</span></td>
-                  <td>{c.itens}</td>
-                  <td>{c.resolvidos}</td>
-                  <td>{c.excecoes > 0 ? <span className="badge badge-alert">{c.excecoes}</span> : '0'}</td>
-                  <td>{new Date(c.criado_em).toLocaleDateString('pt-BR')}</td>
-                  <td><Link to={`/ciclos/${c.id}`} className="link">Detalhes</Link></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </Table>
       )}
     </div>
   );

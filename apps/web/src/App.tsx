@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { Layout } from './layout/Layout';
+import { ToastProvider } from './components/Toast';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ClientesPage } from './pages/ClientesPage';
@@ -38,25 +39,27 @@ function PublicRoute() {
 export function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<PublicRoute />}>
-            <Route path="/login" element={<LoginPage />} />
-          </Route>
-          <Route element={<ProtectedRoute />}>
-            <Route element={<Layout />}>
-              <Route index element={<DashboardPage />} />
-              <Route path="/clientes" element={<ClientesPage />} />
-              <Route path="/obrigacoes" element={<ObrigacoesPage />} />
-              <Route path="/ciclos" element={<CiclosPage />} />
-              <Route path="/ciclos/:id" element={<CicloDetailPage />} />
-              <Route path="/excecoes" element={<ExcecoesPage />} />
-              <Route path="/auditoria" element={<AuditoriaPage />} />
+      <ToastProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<PublicRoute />}>
+              <Route path="/login" element={<LoginPage />} />
             </Route>
-          </Route>
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
+            <Route element={<ProtectedRoute />}>
+              <Route element={<Layout />}>
+                <Route index element={<DashboardPage />} />
+                <Route path="/clientes" element={<ClientesPage />} />
+                <Route path="/obrigacoes" element={<ObrigacoesPage />} />
+                <Route path="/ciclos" element={<CiclosPage />} />
+                <Route path="/ciclos/:id" element={<CicloDetailPage />} />
+                <Route path="/excecoes" element={<ExcecoesPage />} />
+                <Route path="/auditoria" element={<AuditoriaPage />} />
+              </Route>
+            </Route>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </ToastProvider>
     </AuthProvider>
   );
 }

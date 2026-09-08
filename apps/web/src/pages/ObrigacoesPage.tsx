@@ -1,6 +1,9 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { api } from '../api/client';
 import type { ObrigacaoDTO, ClienteDTO, ChecklistTemplateDTO } from '@servium-ia/shared-types';
+import { Button } from '../components/Button';
+import { Field } from '../components/Field';
+import { Table, TableHead } from '../components/Table';
 
 export function ObrigacoesPage() {
   const [obrigacoes, setObrigacoes] = useState<ObrigacaoDTO[]>([]);
@@ -67,9 +70,9 @@ export function ObrigacoesPage() {
     <div>
       <div className="page-header">
         <h1>Obrigacoes</h1>
-        <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+        <Button onClick={() => setShowForm(!showForm)}>
           {showForm ? 'Cancelar' : '+ Nova Obrigacao'}
-        </button>
+        </Button>
       </div>
 
       {erro && <div className="alert alert-error" role="alert" aria-live="assertive">{erro}</div>}
@@ -77,86 +80,66 @@ export function ObrigacoesPage() {
 
       {showForm && (
         <form className="form-inline" onSubmit={handleCreate}>
-          <label className="field">
-            <span>Cliente</span>
-            <select value={clienteId} onChange={(e) => setClienteId(e.target.value)} required>
+          <div className="field">
+            <label htmlFor="obrigacao-cliente">Cliente</label>
+            <select id="obrigacao-cliente" value={clienteId} onChange={(e) => setClienteId(e.target.value)} required>
               <option value="">Selecione...</option>
               {clientes.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
             </select>
-          </label>
-          <label className="field">
-            <span>Descricao</span>
+          </div>
+          <Field label="Descricao" required>
             <input value={descricao} onChange={(e) => setDescricao(e.target.value)} required />
-          </label>
-          <label className="field">
-            <span>Prazo</span>
+          </Field>
+          <Field label="Prazo">
             <input type="date" value={prazo} onChange={(e) => setPrazo(e.target.value)} />
-          </label>
-          <button type="submit" className="btn btn-primary" disabled={saving}>
+          </Field>
+          <Button type="submit" loading={saving}>
             {saving ? 'Salvando...' : 'Salvar'}
-          </button>
+          </Button>
         </form>
       )}
 
       {obrigacoes.length === 0 ? (
         <div className="empty-state">
           <p>Nenhuma obrigacao cadastrada.</p>
-          <button className="btn btn-primary" onClick={() => setShowForm(true)}>Cadastrar primeira obrigacao</button>
+          <Button onClick={() => setShowForm(true)}>Cadastrar primeira obrigacao</Button>
         </div>
       ) : (
-        <div className="table-responsive">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Cliente</th>
-                <th>Descricao</th>
-                <th>Prazo</th>
-                <th>Criado em</th>
-                <th></th>
+        <Table>
+          <TableHead columns={['Cliente', 'Descricao', 'Prazo', 'Criado em', '']} />
+          <tbody>
+            {obrigacoes.map((o) => (
+              <tr key={o.id}>
+                <td>{clienteNome(o.cliente_id)}</td>
+                <td>{o.descricao}</td>
+                <td>{o.prazo ? new Date(o.prazo).toLocaleDateString('pt-BR') : '-'}</td>
+                <td>{new Date(o.criado_em).toLocaleDateString('pt-BR')}</td>
+                <td>
+                  <Button size="sm" disabled={ativandoId !== null} onClick={() => handleAtivarCiclo(o)}>
+                    {ativandoId === o.id ? 'Ativando...' : 'Ativar ciclo'}
+                  </Button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {obrigacoes.map((o) => (
-                <tr key={o.id}>
-                  <td>{clienteNome(o.cliente_id)}</td>
-                  <td>{o.descricao}</td>
-                  <td>{o.prazo ? new Date(o.prazo).toLocaleDateString('pt-BR') : '-'}</td>
-                  <td>{new Date(o.criado_em).toLocaleDateString('pt-BR')}</td>
-                  <td>
-                    <button
-                      className="btn btn-sm btn-primary"
-                      disabled={ativandoId !== null}
-                      onClick={() => handleAtivarCiclo(o)}
-                    >
-                      {ativandoId === o.id ? 'Ativando...' : 'Ativar ciclo'}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </Table>
       )}
 
       {templates.length > 0 && (
         <section className="section">
           <h2>Templates de Checklist</h2>
-          <div className="table-responsive">
-            <table className="table">
-              <thead>
-                <tr><th>Nome</th><th>Canal</th><th>Itens</th></tr>
-              </thead>
-              <tbody>
-                {templates.map((t) => (
-                  <tr key={t.id}>
-                    <td>{t.nome}</td>
-                    <td>{t.canal}</td>
-                    <td>{t.itens.length}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Table>
+            <TableHead columns={['Nome', 'Canal', 'Itens']} />
+            <tbody>
+              {templates.map((t) => (
+                <tr key={t.id}>
+                  <td>{t.nome}</td>
+                  <td>{t.canal}</td>
+                  <td>{t.itens.length}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
         </section>
       )}
     </div>

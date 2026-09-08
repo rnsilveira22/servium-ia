@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { Button } from '../components/Button';
+import { Field } from '../components/Field';
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -36,22 +38,19 @@ export function LoginPage() {
           height={130}
         />
         <form onSubmit={handleSubmit}>
-          <label className="field">
-            <span>Escritorio (slug)</span>
+          <Field label="Escritorio (slug)" required>
             <input value={slug} onChange={(e) => setSlug(e.target.value)} required />
-          </label>
-          <label className="field">
-            <span>E-mail</span>
+          </Field>
+          <Field label="E-mail" required>
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          </label>
-          <label className="field">
-            <span>Senha</span>
+          </Field>
+          <Field label="Senha" required>
             <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} required />
-          </label>
+          </Field>
           {erro && <div className="alert alert-error" role="alert" aria-live="assertive">{erro}</div>}
-          <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
+          <Button type="submit" className="btn-full" loading={loading}>
             {loading ? 'Entrando...' : 'Entrar'}
-          </button>
+          </Button>
         </form>
       </div>
     </div>
