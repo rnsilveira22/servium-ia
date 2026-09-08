@@ -9,7 +9,7 @@
 ### Reconciliado nesta sessão
 
 - **PR #90 (P0.3-D, ASVS #57) MERGED via L3 humano (rebase, `a8c057a`)**: autorização explícita do Owner (2026-09-08). Rebase sobre `main@b265762` + correção F-01 (contagem ASVS → 40 requisitos: 31/5/3/1, validado por script) + F-02 (conflito FACTORY_STATUS). CI 2/2 verde pós-rebase. `Closes #57` — Issue #57 CLOSED.
-- **PR #92 (Blueprint UX/UI Fase 2) MERGED via L3 humano (squash, `731c009`)**: autorização explícita do Owner (2026-09-08). Escopo validado: 1 arquivo novo (`docs/reports/UI_EXPERIENCE_BLUEPRINT_PROPOSAL.md`, +343), sem código/API/schema/dependências. `gh pr update-branch` aplicado para resolução de retardo (main → branch); diff pós-atualização inalterado (só o blueprint). **Implementação da Fase 2: NOT_STARTED — aguarda nova autorização humana (E-01..E-08 não autorizados).**
+- **PR #92 (Blueprint UX/UI Fase 2) MERGED via L3 humano (squash, `731c009`)**: autorização explícita do Owner (2026-09-08). Escopo validado: 1 arquivo novo (`docs/reports/UI_EXPERIENCE_BLUEPRINT_PROPOSAL.md`, +343), sem código/API/schema/dependências. `gh pr update-branch` aplicado para resolução de retardo (main → branch); diff pós-atualização inalterado (só o blueprint). **Implementação da Fase 2: M0 autorizado via HUMAN_GATE_UX_M0 (2026-09-08)** — M0 (E-01/E-02, Menu Mobile, Acessibilidade) permitido; **M1..M5 e novos endpoints backend NÃO autorizados**.
 - **#93 (dívida de lint da main) merged via L2 (squash, `dd48cf0`)**: fix MD037 (trailing spaces) em `FACTORY_STATUS.md`; restaura `npm run lint:docs` verde na main.
 - **#94 (Issue P1: correções de UX/UI da auditoria) IMPLEMENTADA na branch `feat/94-ux-correcoes-p0p1`** (base `dd48cf0`): modal acessível (`Modal.tsx` — `role=dialog`, `aria-modal`, `aria-labelledby`, trap de foco, `data-autofocus`, retorno de foco), menu mobile real (topbar com hambúrguer `aria-expanded/aria-controls`, backdrop, Escape), tokens de marca navy/teal no lugar de `#2563eb`, coluna **Contexto** legível em ciclos/exceções, tabelas em `.table-responsive`, `aria-live`/`role` em alertas, `:focus-visible` global, `badge-aberto`/`badge-expirado`. **QA completo: web unit 25/25, API 108(+2 skip), E2E Selenium 31/31, lint/typecheck/build verdes + Visual QA programático 10/11. → MERGED via PR #95 (squash L2, `30744fa`, `Closes #94`)**.
 
@@ -27,8 +27,8 @@
 
 | Dimensão | Estado |
 |---|---|
-| Branch de trabalho | `main` sincronizada (`731c009`) |
-| Estado do MVP-01 | **P0.1 resolvido** (PRs #61–#66) + **P0.2 resolvido** (PRs #76/#77/#78) + **P0.3-A/B resolvido** (#54/#55, PRs #80/#81) + **P0.3-C (#56) MERGED (PR #89)** + **Bug P0 #73 MERGED (PR #91)** + **UX/UI #94 MERGED (PR #95)** + **P0.3-D (#57/ASVS) MERGED (PR #90, L3) + Blueprint Fase 2 (PR #92, L3) MERGED** — P0.3 restante: 0 · **implementação da Fase 2 UX/UI: NOT_STARTED (aguarda autorização)** |
+| Branch de trabalho | `main` sincronizada (`49fa677`) |
+| Estado do MVP-01 | **P0.1 resolvido** (PRs #61–#66) + **P0.2 resolvido** (PRs #76/#77/#78) + **P0.3-A/B resolvido** (#54/#55, PRs #80/#81) + **P0.3-C (#56) MERGED (PR #89)** + **Bug P0 #73 MERGED (PR #91)** + **UX/UI #94 MERGED (PR #95)** + **P0.3-D (#57/ASVS) MERGED (PR #90, L3) + Blueprint Fase 2 (PR #92, L3) MERGED** — P0.3 restante: 0 · **UX Fase 2: M0 APROVADO (HG-UX-M0, 08/09)** — M1..M5 NÃO autorizados |
 | Software Factory | **V2 OPERACIONAL** — Orchestrator + estados V2 aprovados (HG-F2-01/02/03) |
 | Meta canônica | [`../product/MVP_01_VERTICAL_SLICE.md`](../product/MVP_01_VERTICAL_SLICE.md) — primeiro Funcionário Digital em operação assistida no piloto |
 | ADRs 001..011 | `Accepted` (HG-002); ADR-008 `CommunicationChannel` preservado (HG-008) |
@@ -102,8 +102,8 @@ Issues fechadas nesta sessão: **#94 (PR #95), #93 (PR #93)** e, via L3 humano (
 | **Drift do board #9** | Governança | Corrigir Status/Priority no board; migrar campo Status p/ estados V2 (web/admin) |
 | **PR #82** (spec MVP v1.0) | L3 humano | **MERGED** (`c35e672`) — Especificação Oficial do MVP v1.0 registrada |
 | **PR #90** (ASVS P0.3-D, #57) | L3 humano | **MERGED** (`a8c057a`, rebase, 08/09) — Gate 4.6 ativo; CA-D-3 (revisão de segurança) **pendente** no HUMAN_DECISIONS_LOG |
-| **PR #92** (Blueprint Fase 2 UX/UI) | L3 humano | **MERGED** (`731c009`, squash, 08/09) — proposta registrada; **implementação Fase 2 NOT_STARTED** |
-| **Implementação UX Fase 2** (E-01..E-08) | L3 humano | Não autorizada — aguarda decisão do Owner |
+| **PR #92** (Blueprint Fase 2 UX/UI) | L3 humano | **MERGED** (`731c009`, squash, 08/09) — proposta registrada; **implementação Fase 2: M0 APROVADO (HG-UX-M0)** |
+| **Implementação UX Fase 2** (E-01..E-08) | L3 humano | **M0 autorizado** (08/09, HG-UX-M0); **M1..M5, novos endpoints e regras de domínio NÃO autorizados** — cada milestone sujeito a Human Gate próprio |
 | **P0.3-D** (#57) | Implementação | **MERGED** (PR #90 `a8c057a`) — Issue #57 CLOSED; CA-D-3 pendente |
 | Deploy/piloto no cliente real | Gate próprio | Após `PILOT_READY` |
 
@@ -112,6 +112,6 @@ Issues fechadas nesta sessão: **#94 (PR #95), #93 (PR #93)** e, via L3 humano (
 1. **Fechar Issue #9** (comentário rastreável + decisão do Owner); corrigir drift do board;
 2. **Definir HG-RETENÇÃO** (política de retenção numérica);
 3. **Registrar CA-D-3** (revisão de segurança do ASVS pela pessoa responsável) no `HUMAN_DECISIONS_LOG` — condição para `PILOT_READY`;
-4. **Decidir implementação da UX Fase 2** (E-01..E-08) — blueprint MERGED (#92), implementação NOT_STARTED;
+4. **Implementar M0 — Fundação Visual** (autorizado por HG-UX-M0): E-01 Design System, E-02 Componentes Base, Menu Mobile, Acessibilidade — PR próprio `feat(web): implement UX foundation M0`, escopo restrito a `apps/web`; **M1..M5 permanecem NÃO autorizados**;
 5. Priorizar #72/#58/#59 na próxima onda;
 6. Avaliar desativação da V1 após 2+ ciclos V2 com gates verdes (nunca automática).

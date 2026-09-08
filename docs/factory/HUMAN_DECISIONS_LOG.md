@@ -263,6 +263,34 @@ A mensagem original de aprovação (04/09/2026) chegou truncada após o texto do
 
 ---
 
+## HG-UX-M0 — Fundação Visual (Fundação Visual M0 — HUMAN_GATE_UX_M0)
+
+```text
+[AUTONOMY] L3 | decisão requerida: aprovar fundação visual M0 (Fase 2 UX/UI) | solicitada em: fluxo Human Gate 1 — HUMAN_GATE_UX_M0
+```
+
+- **Decisão**: **APROVADO — 2026-09-08** pelo decisor (Rodrigo, owner). Autoriza **exclusivamente o M0 — Fundação Visual**:
+  - **E-01 — Design System + Identidade** (tokens oficiais `--servium-navy/teal/mint/ink-muted/surface/white` em `apps/web/src/styles/brand-tokens.css`);
+  - **E-02 — Biblioteca de Componentes Base** (`apps/web/src/components`: Button, Input/Field, Table, Badge/StatusBadge, Card, Modal, Skeleton, Toast);
+  - **Correção/finalização do Menu Mobile** (AppShell/Layout — consolidação do comportamento já corrigido em #94/#95);
+  - **Acessibilidade como requisito transversal** (labels, focus-visible, teclado, semântica, contraste WCAG AA, `prefers-reduced-motion` preparado).
+- **Decisões registradas do gate**:
+  1. **Escala de cores** derivada dos tokens oficiais (hover/active/disabled/focus/success/warning/error/info) — sem nova identidade;
+  2. **Tipografia** — stack moderna/consistente sem dependência externa; fonte proprietária deferida;
+  3. **Componentes próprios leves** (sem lib de componentes pesada neste momento);
+  4. **Gráficos** (Recharts/equivalente leve) — **deferido para M1**; não instalar no M0;
+  5. **Dark Mode** — **FORA DO ESCOPO** do MVP/piloto (tokens organizados p/ extensão futura).
+- **Limitações explícitas** (obrigatórias durante M0):
+  - **NÃO autorizado**: M1 (Dashboard), M2 (Agent Experience), M3 (Decision Cards), M4 (Auditoria visual), M5 (gráficos de negócio);
+  - **NÃO criar**: novos endpoints backend (métricas/global/jobs/upload/etc.), alterações de schema/API/motor/filas/auth/RBAC/domínio — escopo restrito a `apps/web`; qualquer necessidade → `AWAITING_DECISION`;
+  - M0 entregue em **PR separado** (`feat(web): implement UX foundation M0`) — não misturar com M1.
+- **Condição de liberação do Próximo Gate (HG-UX-M1)**: QA aprovado + Visual QA aprovado + `npm run verify` verde + Selenium verde + PR mergeado + Factory V2 reconciliado.
+- **Controles**: PR deve incluir descrição/escopo/CA/testes/evidências visuais/impacto/riscos. Máximo **3 ciclos QA** → `ESCALATED_TECHNICAL_FAILURE` no 3º.
+- **Evidência**: baseline `main@49fa677`; tokens oficiais existentes (`brand-tokens.css:1-8`); Modal acessível já em `apps/web/src/components/Modal.tsx`; `#2563eb`/`#1e40af`/`#dbeafe` restantes = **0**.
+- **Estado**: **RESOLVIDO** — gate aprovado; M0 = `PO_APPROVED` → pronto para `IMPLEMENTING` sob autonomia autorizada.
+
+---
+
 ## Pendências
 
 | ID | Assunto | Estado |
@@ -271,3 +299,5 @@ A mensagem original de aprovação (04/09/2026) chegou truncada após o texto do
 | HG-007 | Credenciais/permissões ausentes (event-driven) | aguardando momento |
 | HG-RETENÇÃO | Retenção de eventos de auditoria | **DEFERRED** — prazo numérico a definir antes de PILOT_READY |
 | HG-PR-SEC | Hardening de segurança P0.3 (senha + rate-limit) | **APROVADO (2026-09-06)** — P0.3-A/B liberadas |
+| HG-UX-M0 | Fundação Visual M0 (Fase 2 UX/UI) | **APROVADO (2026-09-08)** — M0 autorizado; M1..M5 NÃO |
+| HG-UX-M1 | Dashboard / M1 (Fase 2 UX/UI) | aguardando conclusão do M0 (QA + Visual QA + verify + Selenium + merge) |
