@@ -4,10 +4,11 @@
 
 ## Última atualização
 
-2026-09-08 · **P0.3-D (#57 ASVS) MERGED (PR #90, rebase L3, `a8c057a`, `Closes #57`)** · **Blueprint UX/UI Fase 2 MERGED (PR #92, squash L3, `731c009`)** · **P0.3-C (#56) e #73 merged via L2** · PRM-P0.3-A (#54 política de senha, PR #80 `6313cab`), PRM-P0.3-B (#55 rate-limit, PR #81 `69e0950`) DONE+MERGED · **PRM-P0.3-C (#56 Identidade de serviço do FD, `actor_type='servico'`) merged L2 squash (PR #89, `Closes #56`)** · **#73 (bug P0 — cancelar ciclo ativado) merged L2 squash (PR #91, `Closes #73`)** · regressão P0 `nodemailer@10` (Issue #83) detectada e corrigida (PR #84 `7b96fd6`, merge L2 squash) · Especificação oficial do MVP v1.0 registrada (PR #82 docs, **merged**) · **#93 (dívida de lint MD037 da main) merged via L2 (`dd48cf0`)** · **#94 (correções P0/P1 de UX/UI) IMPLEMENTADA + QA completo → MERGED via PR #95 (`30744fa`, `Closes #94`)** · Factory V2 operacional (Orchestrator + estados V2)
+2026-09-08 · **P0.3-D (#57 ASVS) MERGED (PR #90, rebase L3, `a8c057a`, `Closes #57`)** · **Blueprint UX/UI Fase 2 MERGED (PR #92, squash L3, `731c009`)** · **P0.3-C (#56) e #73 merged via L2** · PRM-P0.3-A (#54 política de senha, PR #80 `6313cab`), PRM-P0.3-B (#55 rate-limit, PR #81 `69e0950`) DONE+MERGED · **M0 UX IMPLEMENTADO + VALIDADO (PR #96, `M0_READY_FOR_HUMAN_GATE_ACCEPTANCE`)** · Factory V2 operacional (Orchestrator + estados V2)
 
 ### Reconciliado nesta sessão
 
+- **M0 UX (PR #96) VALIDADO — `M0_READY_FOR_HUMAN_GATE_ACCEPTANCE`**: Selenium CI falhou na 1ª execução (22 testes) por regressão real do `Field` (markup label/irmão quebrando seletores `span/label/input` e `span/label/select` do E2E). Corrigido em `6312ea1` (escopo M0, `apps/web`). Pós-fix: Selenium local 31/31 + CI PASS, CI 4/4 verde, mergeState CLEAN, `verify` 178 testes, Visual QA 18/18 + 12 screenshots. Relatório: [`docs/reports/M0_UX_FOUNDATION_VALIDATION_REPORT.md`](../reports/M0_UX_FOUNDATION_VALIDATION_REPORT.md). **No aguardo do `HUMAN_GATE_UX_M0_ACCEPTANCE`** (decisão binária; sem merge antes; M1..M5 NOT_AUTHORIZED). Risco residual: Chrome local 152 vs chromedriver 151 (sessão WebDriver não-funcional crashou; CI estável pareado 151).
 - **PR #90 (P0.3-D, ASVS #57) MERGED via L3 humano (rebase, `a8c057a`)**: autorização explícita do Owner (2026-09-08). Rebase sobre `main@b265762` + correção F-01 (contagem ASVS → 40 requisitos: 31/5/3/1, validado por script) + F-02 (conflito FACTORY_STATUS). CI 2/2 verde pós-rebase. `Closes #57` — Issue #57 CLOSED.
 - **PR #92 (Blueprint UX/UI Fase 2) MERGED via L3 humano (squash, `731c009`)**: autorização explícita do Owner (2026-09-08). Escopo validado: 1 arquivo novo (`docs/reports/UI_EXPERIENCE_BLUEPRINT_PROPOSAL.md`, +343), sem código/API/schema/dependências. `gh pr update-branch` aplicado para resolução de retardo (main → branch); diff pós-atualização inalterado (só o blueprint). **Implementação da Fase 2: M0 autorizado via HUMAN_GATE_UX_M0 (2026-09-08)** — M0 (E-01/E-02, Menu Mobile, Acessibilidade) permitido; **M1..M5 e novos endpoints backend NÃO autorizados**.
 - **#93 (dívida de lint da main) merged via L2 (squash, `dd48cf0`)**: fix MD037 (trailing spaces) em `FACTORY_STATUS.md`; restaura `npm run lint:docs` verde na main.
@@ -28,7 +29,7 @@
 | Dimensão | Estado |
 |---|---|
 | Branch de trabalho | `main` sincronizada (`49fa677`) |
-| Estado do MVP-01 | **P0.1 resolvido** (PRs #61–#66) + **P0.2 resolvido** (PRs #76/#77/#78) + **P0.3-A/B resolvido** (#54/#55, PRs #80/#81) + **P0.3-C (#56) MERGED (PR #89)** + **Bug P0 #73 MERGED (PR #91)** + **UX/UI #94 MERGED (PR #95)** + **P0.3-D (#57/ASVS) MERGED (PR #90, L3) + Blueprint Fase 2 (PR #92, L3) MERGED** — P0.3 restante: 0 · **UX Fase 2: M0 APROVADO (HG-UX-M0, 08/09)** — M1..M5 NÃO autorizados |
+| Estado do MVP-01 | **P0.1 resolvido** (PRs #61–#66) + **P0.2 resolvido** (PRs #76/#77/#78) + **P0.3-A/B resolvido** (#54/#55, PRs #80/#81) + **P0.3-C (#56) MERGED (PR #89)** + **Bug P0 #73 MERGED (PR #91)** + **UX/UI #94 MERGED (PR #95)** + **P0.3-D (#57/ASVS) MERGED (PR #90, L3) + Blueprint Fase 2 (PR #92, L3) MERGED** — P0.3 restante: 0 · **UX Fase 2: M0 IMPLEMENTADO + VALIDADO (`M0_READY_FOR_HUMAN_GATE_ACCEPTANCE`, PR #96)** — aguardando `HUMAN_GATE_UX_M0_ACCEPTANCE`; M1..M5 NÃO autorizados |
 | Software Factory | **V2 OPERACIONAL** — Orchestrator + estados V2 aprovados (HG-F2-01/02/03) |
 | Meta canônica | [`../product/MVP_01_VERTICAL_SLICE.md`](../product/MVP_01_VERTICAL_SLICE.md) — primeiro Funcionário Digital em operação assistida no piloto |
 | ADRs 001..011 | `Accepted` (HG-002); ADR-008 `CommunicationChannel` preservado (HG-008) |
@@ -103,7 +104,7 @@ Issues fechadas nesta sessão: **#94 (PR #95), #93 (PR #93)** e, via L3 humano (
 | **PR #82** (spec MVP v1.0) | L3 humano | **MERGED** (`c35e672`) — Especificação Oficial do MVP v1.0 registrada |
 | **PR #90** (ASVS P0.3-D, #57) | L3 humano | **MERGED** (`a8c057a`, rebase, 08/09) — Gate 4.6 ativo; CA-D-3 (revisão de segurança) **pendente** no HUMAN_DECISIONS_LOG |
 | **PR #92** (Blueprint Fase 2 UX/UI) | L3 humano | **MERGED** (`731c009`, squash, 08/09) — proposta registrada; **implementação Fase 2: M0 APROVADO (HG-UX-M0)** |
-| **Implementação UX Fase 2** (E-01..E-08) | L3 humano | **M0 IMPLEMENTADO (PR #96 `8c7ab2f`, 08/09)** — branch `feat/web-ux-m0-foundation`; `verify` verde (178 testes); **em QA_REVIEW** (aguardando Selenium CI + visual QA); **M1..M5, novos endpoints e regras de domínio NÃO autorizados** — cada milestone sujeito a Human Gate próprio |
+| **Implementação UX Fase 2** (E-01..E-08) | L3 humano | **M0 IMPLEMENTADO + VALIDADO (PR #96 `8c7ab2f`+`6312ea1`, 08/09)** — branch `feat/web-ux-m0-foundation`; CI 4/4 verde, mergeState CLEAN, Selenium local 31/31 + CI PASS, Visual QA 18/18 + 12 screenshots; **VERDICT: `M0_READY_FOR_HUMAN_GATE_ACCEPTANCE`** (ver `docs/reports/M0_UX_FOUNDATION_VALIDATION_REPORT.md`); **no aguardo do `HUMAN_GATE_UX_M0_ACCEPTANCE` (APROVAR/rejeitar decisão binária); sem merge antes da decisão; M1..M5, novos endpoints e regras de domínio NÃO autorizados** — cada milestone sujeito a Human Gate próprio |
 | **P0.3-D** (#57) | Implementação | **MERGED** (PR #90 `a8c057a`) — Issue #57 CLOSED; CA-D-3 pendente |
 | Deploy/piloto no cliente real | Gate próprio | Após `PILOT_READY` |
 
@@ -112,6 +113,6 @@ Issues fechadas nesta sessão: **#94 (PR #95), #93 (PR #93)** e, via L3 humano (
 1. **Fechar Issue #9** (comentário rastreável + decisão do Owner); corrigir drift do board;
 2. **Definir HG-RETENÇÃO** (política de retenção numérica);
 3. **Registrar CA-D-3** (revisão de segurança do ASVS pela pessoa responsável) no `HUMAN_DECISIONS_LOG` — condição para `PILOT_READY`;
-4. **M0 — Fundação Visual IMPLEMENTADO** (PR #96 `8c7ab2f`, 08/09): E-01 Design System, E-02 Componentes Base, Menu Mobile consolidado, Acessibilidade — escopo restrito a `apps/web`; `npm run verify` verde (178 testes); em **QA_REVIEW** (aguardando Selenium CI + visual QA + `HUMAN_GATE_UX_M0_ACCEPTANCE`); **M1..M5 permanecem NÃO autorizados**;
+4. **M0 — Fundação Visual IMPLEMENTADO + VALIDADO** (PR #96 `8c7ab2f`+`6312ea1`, 08/09): E-01 Design System, E-02 Componentes Base, Menu Mobile consolidado, Acessibilidade — escopo restrito a `apps/web`; CI 4/4 verde (incl. Selenium PASS pós-fix `6312ea1`), mergeState CLEAN, `npm run verify` verde (178 testes), Selenium local 31/31, Visual QA 18/18 + 12 screenshots; **VERDICT: `M0_READY_FOR_HUMAN_GATE_ACCEPTANCE`**; **aguardando `HUMAN_GATE_UX_M0_ACCEPTANCE` (decisão binária APPROVE/REJECT); sem merge antes; M1..M5 permanecem NÃO autorizados**;
 5. Priorizar #72/#58/#59 na próxima onda;
 6. Avaliar desativação da V1 após 2+ ciclos V2 com gates verdes (nunca automática).
