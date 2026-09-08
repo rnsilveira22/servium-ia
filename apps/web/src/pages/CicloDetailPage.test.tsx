@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { CicloDetailPage } from './CicloDetailPage';
 
@@ -183,5 +183,42 @@ describe('CicloDetailPage · detalhe legível', () => {
     expect(screen.queryByRole('button', { name: 'Cancelar ciclo' })).toBeNull();
     expect((screen.getByText('Resolver') as HTMLButtonElement).closest('button')?.disabled).toBe(true);
     expect((screen.getByText('Reenviar') as HTMLButtonElement).closest('button')?.disabled).toBe(true);
+  });
+
+  it('#94: modal de confirmação é acessível (role/aria-modal/labelledby, ESC fecha, foco volta ao gatilho)', async () => {
+    instalarFetch({ status: 200, body: DETALHE }, [EXCECAO]);
+    renderizar();
+    const gatilho = await screen.findByRole('button', { name: 'Resolver' });
+    gatilho.focus();
+    expect(document.activeElement).toBe(gatilho);
+    gatilho.click();
+
+    const dialog = await screen.findByRole('dialog');
+    expect(dialog.getAttribute('aria-modal')).toBe('true');
+    const titleId = dialog.getAttribute('aria-labelledby');
+    expect(titleId).toBeTruthy();
+    expect(document.getElementById(titleId!)?.textContent).toBe('Confirmar acao');
+
+    const confirmar = screen.getByRole('button', { name: 'Confirmar' });
+    fireEvent.focus(confirmar);
+    expect(document.activeElement).toBe(confirmar);
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect(document.activeElement).toBe(gatilho);
+  });
+
+  it('#94: contexto da exceção é renderizado quando presente', async () => {
+    const comContexto = { ...EXCECAO, contexto: { etapa: 'enriquecimento', origem: 'cnh' } };
+    instalarFetch({ status: 200, body: DETALHE }, [comContexto]);
+    renderizar();
+    expect(await screen.findByText('{"etapa":"enriquecimento","origem":"cnh"}')).toBeTruthy();
+  });
+
+  it('#94: contexto ausente não é renderizado', async () => {
+    instalarFetch({ status: 200, body: DETALHE }, [EXCECAO]);
+    renderizar();
+    await screen.findByText('sem_resposta');
+    expect(screen.queryByText(/enriquecimento|codigo\/erro/i)).toBeNull();
   });
 });

@@ -60,7 +60,7 @@ export function AuditoriaPage() {
       <section className="section">
         <h2>Metricas</h2>
         {loadingMetrics && <div className="loading">Carregando metricas...</div>}
-        {errorMetrics && <div className="alert alert-error">{errorMetrics}</div>}
+        {errorMetrics && <div className="alert alert-error" role="alert" aria-live="assertive">{errorMetrics}</div>}
         {metrics && (
           <div className="cards-grid">
             {Object.entries(metrics).map(([key, value]) => (
@@ -76,7 +76,7 @@ export function AuditoriaPage() {
       <section className="section">
         <h2>Saude do Sistema</h2>
         {loadingHealth && <div className="loading">Verificando saude...</div>}
-        {errorHealth && <div className="alert alert-error">{errorHealth}</div>}
+        {errorHealth && <div className="alert alert-error" role="alert" aria-live="assertive">{errorHealth}</div>}
         {health && (
           <div className="table-responsive">
             <table className="table">

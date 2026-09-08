@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
+import { Modal } from '../components/Modal';
 
 interface CicloDetalhe {
   id: string;
@@ -43,7 +44,7 @@ interface Excecao {
   id: string;
   tipo: string;
   motivo: string;
-  contexto: string;
+  contexto: unknown;
   criado_em: string;
   item_id: string;
   tentativas: number;
@@ -54,6 +55,19 @@ interface Excecao {
 function formatarData(iso?: string | null): string {
   if (!iso) return '—';
   return new Date(iso).toLocaleString('pt-BR');
+}
+
+function formatarContexto(contexto: unknown): string | null {
+  if (contexto === null || contexto === undefined) return null;
+  if (typeof contexto === 'string') {
+    const limpo = contexto.trim();
+    return limpo === '' || limpo === '{}' ? null : limpo;
+  }
+  if (typeof contexto === 'object') {
+    const json = JSON.stringify(contexto);
+    return json === '{}' ? null : json;
+  }
+  return String(contexto);
 }
 
 function mensagemErro(err: unknown): string {
@@ -158,7 +172,7 @@ export function CicloDetailPage() {
 
   if (loading) return <div className="page-loading">Carregando...</div>;
 
-  if (erro && !ciclo) return <div className="container"><div className="alert alert-error">{erro}</div><Link to="/ciclos" className="link">&larr; Ciclos</Link></div>;
+  if (erro && !ciclo) return <div className="container"><div className="alert alert-error" role="alert" aria-live="assertive">{erro}</div><Link to="/ciclos" className="link">&larr; Ciclos</Link></div>;
 
   return (
     <div>
@@ -169,15 +183,16 @@ export function CicloDetailPage() {
         </div>
       </div>
 
-      {erro && <div className="alert alert-error">{erro}</div>}
-      {aviso && <div className="alert alert-success">{aviso}</div>}
+      {erro && <div className="alert alert-error" role="alert" aria-live="assertive">{erro}</div>}
+      {aviso && <div className="alert alert-success" role="status" aria-live="polite">{aviso}</div>}
 
       {ciclo && (
         <>
           <section className="section">
             <h2>Informacoes</h2>
-            <table className="table">
-              <tbody>
+            <div className="table-responsive">
+              <table className="table">
+                <tbody>
                 <tr>
                   <td className="text-muted">Cliente</td>
                   <td>{ciclo.cliente}</td>
@@ -217,7 +232,8 @@ export function CicloDetailPage() {
                   <td className="text-muted">{ciclo.id}</td>
                 </tr>
               </tbody>
-            </table>
+              </table>
+            </div>
           </section>
 
           <section className="section">
@@ -225,26 +241,28 @@ export function CicloDetailPage() {
             {ciclo.itens.length === 0 ? (
               <div className="empty-state"><p>Nenhum item neste ciclo.</p></div>
             ) : (
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Descricao</th>
-                    <th>Estado</th>
-                    <th>Tentativas</th>
-                    <th>Ultima acao</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ciclo.itens.map((item) => (
-                    <tr key={item.id}>
-                      <td>{item.descricao}</td>
-                      <td><span className={`badge badge-${item.estado}`}>{item.estado}</span></td>
-                      <td>{item.tentativas}</td>
-                      <td>{formatarData(item.atualizado_em)}</td>
+              <div className="table-responsive">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Descricao</th>
+                      <th>Estado</th>
+                      <th>Tentativas</th>
+                      <th>Ultima acao</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {ciclo.itens.map((item) => (
+                      <tr key={item.id}>
+                        <td>{item.descricao}</td>
+                        <td><span className={`badge badge-${item.estado}`}>{item.estado}</span></td>
+                        <td>{item.tentativas}</td>
+                        <td>{formatarData(item.atualizado_em)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </section>
 
@@ -253,28 +271,30 @@ export function CicloDetailPage() {
             {ciclo.comunicacoes.length === 0 ? (
               <div className="empty-state"><p>Nenhuma comunicacao neste ciclo.</p></div>
             ) : (
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Direcao</th>
-                    <th>Canal</th>
-                    <th>Status</th>
-                    <th>Destinatario / Remetente</th>
-                    <th>Data</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ciclo.comunicacoes.map((com) => (
-                    <tr key={com.id}>
-                      <td>{com.direcao}</td>
-                      <td>{com.canal}</td>
-                      <td><span className="badge badge-info">{com.status}</span></td>
-                      <td>{com.destinatario ?? com.remetente ?? '—'}</td>
-                      <td>{formatarData(com.criado_em)}</td>
+              <div className="table-responsive">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Direcao</th>
+                      <th>Canal</th>
+                      <th>Status</th>
+                      <th>Destinatario / Remetente</th>
+                      <th>Data</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {ciclo.comunicacoes.map((com) => (
+                      <tr key={com.id}>
+                        <td>{com.direcao}</td>
+                        <td>{com.canal}</td>
+                        <td><span className="badge badge-info">{com.status}</span></td>
+                        <td>{com.destinatario ?? com.remetente ?? '—'}</td>
+                        <td>{formatarData(com.criado_em)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </section>
 
@@ -283,115 +303,119 @@ export function CicloDetailPage() {
             {excecoes.length === 0 ? (
               <div className="empty-state"><p>Nenhuma excecao neste ciclo.</p></div>
             ) : (
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Tipo</th>
-                    <th>Motivo</th>
-                    <th>Cliente</th>
-                    <th>Item</th>
-                    <th>Tentativas</th>
-                    <th>Data</th>
-                    {isAdmin && <th></th>}
-                  </tr>
-                </thead>
-                <tbody>
-                  {excecoes.map((exc) => (
-                    <tr key={exc.id}>
-                      <td><span className="badge badge-alert">{exc.tipo}</span></td>
-                      <td>{exc.motivo}</td>
-                      <td>{exc.cliente_nome}</td>
-                      <td>{exc.item_descricao}</td>
-                      <td>{exc.tentativas}</td>
-                      <td>{new Date(exc.criado_em).toLocaleDateString('pt-BR')}</td>
-                      {isAdmin && (
-                        <td>
-                          <div style={{ display: 'flex', gap: '0.5rem' }}>
-                            <button
-                              className="btn btn-primary btn-sm"
-                              disabled={actionLoading === exc.item_id || ciclo.estado !== 'aberto'}
-                              onClick={() => setConfirmAction({ tipo: 'resolvido', itemId: exc.item_id })}
-                            >
-                              Resolver
-                            </button>
-                            <button
-                              className="btn btn-danger btn-sm"
-                              disabled={actionLoading === exc.item_id || ciclo.estado !== 'aberto'}
-                              onClick={() => setConfirmAction({ tipo: 'cancelado', itemId: exc.item_id })}
-                            >
-                              Cancelar
-                            </button>
-                            <button
-                              className="btn btn-sm"
-                              disabled={actionLoading === exc.item_id || ciclo.estado !== 'aberto'}
-                              onClick={() => handleReenviar(exc.item_id)}
-                            >
-                              Reenviar
-                            </button>
-                          </div>
-                        </td>
-                      )}
+              <div className="table-responsive">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Tipo</th>
+                      <th>Motivo</th>
+                      <th>Contexto</th>
+                      <th>Cliente</th>
+                      <th>Item</th>
+                      <th>Tentativas</th>
+                      <th>Data</th>
+                      {isAdmin && <th></th>}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {excecoes.map((exc) => (
+                      <tr key={exc.id}>
+                        <td><span className="badge badge-alert">{exc.tipo}</span></td>
+                        <td>{exc.motivo}</td>
+                        <td>{formatarContexto(exc.contexto)}</td>
+                        <td>{exc.cliente_nome}</td>
+                        <td>{exc.item_descricao}</td>
+                        <td>{exc.tentativas}</td>
+                        <td>{new Date(exc.criado_em).toLocaleDateString('pt-BR')}</td>
+                        {isAdmin && (
+                          <td>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                              <button
+                                className="btn btn-primary btn-sm"
+                                disabled={actionLoading === exc.item_id || ciclo.estado !== 'aberto'}
+                                onClick={() => setConfirmAction({ tipo: 'resolvido', itemId: exc.item_id })}
+                              >
+                                Resolver
+                              </button>
+                              <button
+                                className="btn btn-danger btn-sm"
+                                disabled={actionLoading === exc.item_id || ciclo.estado !== 'aberto'}
+                                onClick={() => setConfirmAction({ tipo: 'cancelado', itemId: exc.item_id })}
+                              >
+                                Cancelar
+                              </button>
+                              <button
+                                className="btn btn-sm"
+                                disabled={actionLoading === exc.item_id || ciclo.estado !== 'aberto'}
+                                onClick={() => handleReenviar(exc.item_id)}
+                              >
+                                Reenviar
+                              </button>
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </section>
         </>
       )}
 
       {confirmAction && (
-        <div className="modal-overlay" onClick={() => setConfirmAction(null)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Confirmar acao</h3>
-            <p>
-              Tem certeza que deseja marcar este item como{' '}
-              <strong>{confirmAction.tipo === 'resolvido' ? 'resolvido' : 'cancelado'}</strong>?
-            </p>
-            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-              <button className="btn btn-sm" onClick={() => setConfirmAction(null)}>
-                Voltar
-              </button>
-              <button
-                className={confirmAction.tipo === 'resolvido' ? 'btn btn-primary btn-sm' : 'btn btn-danger btn-sm'}
-                disabled={!!actionLoading}
-                onClick={() => handleDecidir(confirmAction.itemId, confirmAction.tipo)}
-              >
-                {actionLoading ? 'Processando...' : 'Confirmar'}
-              </button>
-            </div>
+        <Modal title="Confirmar acao" onClose={() => setConfirmAction(null)}>
+          <p>
+            Tem certeza que deseja marcar este item como{' '}
+            <strong>{confirmAction.tipo === 'resolvido' ? 'resolvido' : 'cancelado'}</strong>?
+          </p>
+          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+            <button className="btn btn-sm" onClick={() => setConfirmAction(null)}>
+              Voltar
+            </button>
+            <button
+              className={confirmAction.tipo === 'resolvido' ? 'btn btn-primary btn-sm' : 'btn btn-danger btn-sm'}
+              data-autofocus
+              disabled={!!actionLoading}
+              onClick={() => handleDecidir(confirmAction.itemId, confirmAction.tipo)}
+            >
+              {actionLoading ? 'Processando...' : 'Confirmar'}
+            </button>
           </div>
-        </div>
+        </Modal>
       )}
 
       {cancelOpen && (
-        <div className="modal-overlay" onClick={() => setCancelOpen(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Cancelar ciclo</h3>
-            <p>
-              Tem certeza que deseja <strong>cancelar</strong> este ciclo? O Funcionário Digital
-              não enviará novas comunicações e os itens existentes serão preservados para consulta.
-            </p>
-            <div className="form-group">
-              <label htmlFor="motivo-cancelar">Motivo (opcional)</label>
-              <textarea
-                id="motivo-cancelar"
-                rows={3}
-                value={motivoCancel}
-                onChange={(e) => setMotivoCancel(e.target.value)}
-                placeholder="Ex.: ciclo ativado para a obrigação errada"
-              />
-            </div>
-            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-              <button className="btn btn-sm" disabled={!!actionLoading} onClick={() => setCancelOpen(false)}>
-                Voltar
-              </button>
-              <button className="btn btn-danger btn-sm" disabled={!!actionLoading} onClick={() => handleCancelar()}>
-                {actionLoading === 'ciclo' ? 'Cancelando...' : 'Confirmar cancelamento'}
-              </button>
-            </div>
+        <Modal title="Cancelar ciclo" onClose={() => setCancelOpen(false)}>
+          <p>
+            Tem certeza que deseja <strong>cancelar</strong> este ciclo? O Funcionário Digital
+            não enviará novas comunicações e os itens existentes serão preservados para consulta.
+          </p>
+          <div className="form-group">
+            <label htmlFor="motivo-cancelar">Motivo (opcional)</label>
+            <textarea
+              id="motivo-cancelar"
+              rows={3}
+              value={motivoCancel}
+              onChange={(e) => setMotivoCancel(e.target.value)}
+              placeholder="Ex.: ciclo ativado para a obrigação errada"
+            />
           </div>
-        </div>
+          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+            <button className="btn btn-sm" disabled={!!actionLoading} onClick={() => setCancelOpen(false)}>
+              Voltar
+            </button>
+            <button
+              className="btn btn-danger btn-sm"
+              data-autofocus
+              disabled={!!actionLoading}
+              onClick={() => handleCancelar()}
+            >
+              {actionLoading === 'ciclo' ? 'Cancelando...' : 'Confirmar cancelamento'}
+            </button>
+          </div>
+        </Modal>
       )}
     </div>
   );

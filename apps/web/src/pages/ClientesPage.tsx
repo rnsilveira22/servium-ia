@@ -48,7 +48,7 @@ export function ClientesPage() {
         </button>
       </div>
 
-      {erro && <div className="alert alert-error">{erro}</div>}
+      {erro && <div className="alert alert-error" role="alert" aria-live="assertive">{erro}</div>}
 
       {showForm && (
         <form className="form-inline" onSubmit={handleCreate}>
@@ -76,26 +76,28 @@ export function ClientesPage() {
           <button className="btn btn-primary" onClick={() => setShowForm(true)}>Cadastrar primeiro cliente</button>
         </div>
       ) : (
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Identificacao</th>
-              <th>E-mail</th>
-              <th>Criado em</th>
-            </tr>
-          </thead>
-          <tbody>
-            {clientes.map((c) => (
-              <tr key={c.id}>
-                <td>{c.nome}</td>
-                <td>{c.identificacao ?? '-'}</td>
-                <td>{c.email ?? '-'}</td>
-                <td>{new Date(c.criado_em).toLocaleDateString('pt-BR')}</td>
+        <div className="table-responsive">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Identificacao</th>
+                <th>E-mail</th>
+                <th>Criado em</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {clientes.map((c) => (
+                <tr key={c.id}>
+                  <td>{c.nome}</td>
+                  <td>{c.identificacao ?? '-'}</td>
+                  <td>{c.email ?? '-'}</td>
+                  <td>{new Date(c.criado_em).toLocaleDateString('pt-BR')}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
