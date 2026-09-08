@@ -80,13 +80,12 @@ export function ObrigacoesPage() {
 
       {showForm && (
         <form className="form-inline" onSubmit={handleCreate}>
-          <div className="field">
-            <label htmlFor="obrigacao-cliente">Cliente</label>
+          <Field label="Cliente" htmlFor="obrigacao-cliente">
             <select id="obrigacao-cliente" value={clienteId} onChange={(e) => setClienteId(e.target.value)} required>
               <option value="">Selecione...</option>
               {clientes.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
             </select>
-          </div>
+          </Field>
           <Field label="Descricao" required>
             <input value={descricao} onChange={(e) => setDescricao(e.target.value)} required />
           </Field>

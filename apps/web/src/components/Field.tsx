@@ -23,10 +23,10 @@ export function Field({ label, htmlFor, hint, error, required, children }: Field
   return (
     <div className="field">
       <label htmlFor={id}>
-        {label}
+        <span>{label}</span>
         {required && <span className="field-required" aria-hidden="true"> *</span>}
+        {input}
       </label>
-      {input}
       {hint && <small id={`${id}-helper`} className="field-hint">{hint}</small>}
       {error && (
         <small id={`${id}-helper`} className="field-error" role="alert">
