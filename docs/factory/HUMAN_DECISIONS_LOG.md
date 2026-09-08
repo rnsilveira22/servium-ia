@@ -244,6 +244,25 @@ A mensagem original de aprovação (04/09/2026) chegou truncada após o texto do
 
 ---
 
+## HG-L3-0809 — Merges L3: PR #90 (ASVS #57) e PR #92 (Blueprint UX Fase 2)
+
+```text
+[AUTONOMY] L3 | decisão requerida: merge PR #90 (mapeamento ASVS) e PR #92 (Blueprint Fase 2 UX/UI) | solicitada em: docs/reports/FACTORY_V2_HUMAN_REVIEW_L3_REPORT.md
+```
+
+- **Decisão**: **APROVADO — 2026-09-08** pelo decisor (Rodrigo, owner) para os dois merges, em execuções distintas:
+  - **PR #90** (`docs/security/ASVS_PILOTO.md` + Gate 4.6 no `QUALITY_GATES.md`) → **merge via rebase** (`a8c057a`, `Closes #57`).
+  - **PR #92** (`docs/reports/UI_EXPERIENCE_BLUEPRINT_PROPOSAL.md`, proposta Fase 2 UX/UI) → **merge via squash** (`731c009`).
+- **Escopo da autorização**: apenas o registro dos documentos na `main`. **NÃO autoriza a implementação da UX/UI Fase 2** (E-01..E-08) — permanece `NOT_STARTED`, sujeita a novo Human Gate.
+- **Condições/observações**:
+  1. PR #90: conflito resolvido via rebase + correção F-01 (contagem ASVS → 40 requisitos: 31 implementados, 5 parciais, 3 lacunas, 1 n/d); CI 2/2 verde.
+  2. **CA-D-3** — revisão de segurança do mapeamento ASVS por pessoa responsável **NÃO registrada** (condição de `PILOT_READY`; sem aprovação inventada).
+  3. PR #92: `gh pr update-branch` aplicado para resolver retardo (conflito zerado); diff inalterado (1 arquivo, +343).
+- **Evidência**: PRs [#90](https://github.com/rnsilveira22/servium-ia/pull/90) e [#92](https://github.com/rnsilveira22/servium-ia/pull/92); commits `a8c057a` e `731c009`; `main@731c009`.
+- **Estado**: **RESOLVIDO** — merges executados e registrados.
+
+---
+
 ## Pendências
 
 | ID | Assunto | Estado |
