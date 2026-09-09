@@ -288,6 +288,12 @@ A mensagem original de aprovação (04/09/2026) chegou truncada após o texto do
 - **Controles**: PR deve incluir descrição/escopo/CA/testes/evidências visuais/impacto/riscos. Máximo **3 ciclos QA** → `ESCALATED_TECHNICAL_FAILURE` no 3º.
 - **Evidência**: baseline `main@49fa677`; tokens oficiais existentes (`brand-tokens.css:1-8`); Modal acessível já em `apps/web/src/components/Modal.tsx`; `#2563eb`/`#1e40af`/`#dbeafe` restantes = **0**.
 - **Estado**: **RESOLVIDO** — gate aprovado; M0 = `PO_APPROVED` → pronto para `IMPLEMENTING` sob autonomia autorizada.
+- **Implementação (2026-09-08)**: M0 entregue na PR #96 (`8c7ab2f`, branch `feat/web-ux-m0-foundation`). E-01 tokens + App.css tokenizado; E-02 Button/Field/Badge/StatusBadge/Card/Table/Skeleton/Toast (Modal reutilizado); menu mobile consolidado; acessibilidade (focus-visible token, reduced-motion, Field id/aria-describedby/aria-invalid). `npm run verify` verde — **178 testes** (incl. 18 novos de componentes). Estado: **QA_REVIEW** — merge condicionado a Selenium CI verde + Visual QA + `HG-UX-M0_ACCEPTANCE`.
+- **Validação (2026-09-08) — `M0_READY_FOR_HUMAN_GATE_ACCEPTANCE`** (ver [`M0_UX_FOUNDATION_VALIDATION_REPORT.md`](../reports/M0_UX_FOUNDATION_VALIDATION_REPORT.md)):
+  - **Defeito encontrado e corrigido**: Selenium CI falhou (22 testes) — o `Field` do M0 renderizava label/controle como irmãos, quebrando os seletores E2E (`span/label/input`, `span/label/select`). Corrigido em `6312ea1` (2 arquivos, `apps/web` dentro do escopo M0): `Field.tsx` aninha `<label><span>{label}</span><controle/></label>`; `ObrigacoesPage.tsx` migra o select para `<Field>`.
+  - **Evidências pós-fix**: Selenium local **31/31** · Selenium CI **PASS** · CI 4/4 verde · mergeState `CLEAN` · `npm run verify` **178 testes** · Visual QA programático **18/18** · 12 screenshots em `apps/e2e/evidence/m0-qa/` (gitignored) p/ review humano.
+  - **Risco residual registrado**: Chrome local 152 vs chromedriver 151 (crash de sessão de WebDriver não-funcional) — CI estável (usa Chrome for Testing 151 pareado).
+  - **Próximo passo**: solicitação formal de decisão binária **`HUMAN_GATE_UX_M0_ACCEPTANCE`** (APPROVE → autoriza merge da PR #96; REJECT → retorna à fila M0). **Sem merge antes da decisão humana. M1..M5 permanecem NOT_AUTHORIZED.**
 
 ---
 

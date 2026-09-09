@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { api } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
 import { Modal } from '../components/Modal';
+import { Button } from '../components/Button';
+import { Table, TableHead } from '../components/Table';
 
 interface CicloResumo {
   id: string;
@@ -109,64 +111,38 @@ export function ExcecoesPage() {
           <p className="text-muted">Excecoes aparecerao aqui quando itens de ciclos encontrarem problemas.</p>
         </div>
       ) : (
-        <div className="table-responsive">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Tipo</th>
-                <th>Motivo</th>
-                <th>Contexto</th>
-                <th>Cliente</th>
-                <th>Item</th>
-                <th>Tentativas</th>
-                <th>Data</th>
-                <th>Ciclo</th>
-                {isAdmin && <th></th>}
+        <Table>
+          <TableHead columns={['Tipo', 'Motivo', 'Contexto', 'Cliente', 'Item', 'Tentativas', 'Data', 'Ciclo', ...(isAdmin ? [''] : [])]} />
+          <tbody>
+            {excecoes.map((exc) => (
+              <tr key={exc.id}>
+                <td><span className="badge badge-alert">{exc.tipo}</span></td>
+                <td>{exc.motivo}</td>
+                <td>{formatarContexto(exc.contexto)}</td>
+                <td>{exc.cliente_nome}</td>
+                <td>{exc.item_descricao}</td>
+                <td>{exc.tentativas}</td>
+                <td>{new Date(exc.criado_em).toLocaleDateString('pt-BR')}</td>
+                <td><Link to={`/ciclos/${exc.ciclo_id}`} className="link">{exc.ciclo_id.slice(0, 8)}</Link></td>
+                {isAdmin && (
+                  <td>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <Button size="sm" disabled={actionLoading === exc.item_id} onClick={() => setConfirmAction({ tipo: 'resolvido', itemId: exc.item_id })}>
+                        Resolver
+                      </Button>
+                      <Button size="sm" variant="danger" disabled={actionLoading === exc.item_id} onClick={() => setConfirmAction({ tipo: 'cancelado', itemId: exc.item_id })}>
+                        Cancelar
+                      </Button>
+                      <Button size="sm" variant="secondary" disabled={actionLoading === exc.item_id} onClick={() => handleReenviar(exc.item_id)}>
+                        Reenviar
+                      </Button>
+                    </div>
+                  </td>
+                )}
               </tr>
-            </thead>
-            <tbody>
-              {excecoes.map((exc) => (
-                <tr key={exc.id}>
-                  <td><span className="badge badge-alert">{exc.tipo}</span></td>
-                  <td>{exc.motivo}</td>
-                  <td>{formatarContexto(exc.contexto)}</td>
-                  <td>{exc.cliente_nome}</td>
-                  <td>{exc.item_descricao}</td>
-                  <td>{exc.tentativas}</td>
-                  <td>{new Date(exc.criado_em).toLocaleDateString('pt-BR')}</td>
-                  <td><Link to={`/ciclos/${exc.ciclo_id}`} className="link">{exc.ciclo_id.slice(0, 8)}</Link></td>
-                  {isAdmin && (
-                    <td>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button
-                          className="btn btn-primary btn-sm"
-                          disabled={actionLoading === exc.item_id}
-                          onClick={() => setConfirmAction({ tipo: 'resolvido', itemId: exc.item_id })}
-                        >
-                          Resolver
-                        </button>
-                        <button
-                          className="btn btn-danger btn-sm"
-                          disabled={actionLoading === exc.item_id}
-                          onClick={() => setConfirmAction({ tipo: 'cancelado', itemId: exc.item_id })}
-                        >
-                          Cancelar
-                        </button>
-                        <button
-                          className="btn btn-sm"
-                          disabled={actionLoading === exc.item_id}
-                          onClick={() => handleReenviar(exc.item_id)}
-                        >
-                          Reenviar
-                        </button>
-                      </div>
-                    </td>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </Table>
       )}
 
       {confirmAction && (
@@ -176,17 +152,18 @@ export function ExcecoesPage() {
             <strong>{confirmAction.tipo === 'resolvido' ? 'resolvido' : 'cancelado'}</strong>?
           </p>
           <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-            <button className="btn btn-sm" onClick={() => setConfirmAction(null)}>
+            <Button variant="secondary" size="sm" onClick={() => setConfirmAction(null)}>
               Voltar
-            </button>
-            <button
-              className={confirmAction.tipo === 'resolvido' ? 'btn btn-primary btn-sm' : 'btn btn-danger btn-sm'}
+            </Button>
+            <Button
+              size="sm"
+              variant={confirmAction.tipo === 'resolvido' ? 'primary' : 'danger'}
               data-autofocus
-              disabled={!!actionLoading}
+              loading={!!actionLoading}
               onClick={() => handleDecidir(confirmAction.itemId, confirmAction.tipo)}
             >
               {actionLoading ? 'Processando...' : 'Confirmar'}
-            </button>
+            </Button>
           </div>
         </Modal>
       )}

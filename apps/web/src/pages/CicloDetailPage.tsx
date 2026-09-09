@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { api } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
 import { Modal } from '../components/Modal';
+import { Button } from '../components/Button';
+import { Table, TableHead } from '../components/Table';
 
 interface CicloDetalhe {
   id: string;
@@ -190,9 +192,8 @@ export function CicloDetailPage() {
         <>
           <section className="section">
             <h2>Informacoes</h2>
-            <div className="table-responsive">
-              <table className="table">
-                <tbody>
+            <Table>
+              <tbody>
                 <tr>
                   <td className="text-muted">Cliente</td>
                   <td>{ciclo.cliente}</td>
@@ -206,14 +207,15 @@ export function CicloDetailPage() {
                   <td>
                     <span className={`badge badge-${ciclo.estado}`}>{ESTADO_LABEL[ciclo.estado] ?? ciclo.estado}</span>
                     {ciclo.estado === 'aberto' && (
-                      <button
-                        className="btn btn-danger btn-sm"
+                      <Button
+                        variant="danger"
+                        size="sm"
                         style={{ marginLeft: '0.75rem' }}
-                        disabled={actionLoading === 'ciclo'}
+                        loading={actionLoading === 'ciclo'}
                         onClick={() => setCancelOpen(true)}
                       >
                         {actionLoading === 'ciclo' ? 'Cancelando...' : 'Cancelar ciclo'}
-                      </button>
+                      </Button>
                     )}
                   </td>
                 </tr>
@@ -232,8 +234,7 @@ export function CicloDetailPage() {
                   <td className="text-muted">{ciclo.id}</td>
                 </tr>
               </tbody>
-              </table>
-            </div>
+            </Table>
           </section>
 
           <section className="section">
@@ -241,28 +242,19 @@ export function CicloDetailPage() {
             {ciclo.itens.length === 0 ? (
               <div className="empty-state"><p>Nenhum item neste ciclo.</p></div>
             ) : (
-              <div className="table-responsive">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Descricao</th>
-                      <th>Estado</th>
-                      <th>Tentativas</th>
-                      <th>Ultima acao</th>
+              <Table>
+                <TableHead columns={['Descricao', 'Estado', 'Tentativas', 'Ultima acao']} />
+                <tbody>
+                  {ciclo.itens.map((item) => (
+                    <tr key={item.id}>
+                      <td>{item.descricao}</td>
+                      <td><span className={`badge badge-${item.estado}`}>{item.estado}</span></td>
+                      <td>{item.tentativas}</td>
+                      <td>{formatarData(item.atualizado_em)}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {ciclo.itens.map((item) => (
-                      <tr key={item.id}>
-                        <td>{item.descricao}</td>
-                        <td><span className={`badge badge-${item.estado}`}>{item.estado}</span></td>
-                        <td>{item.tentativas}</td>
-                        <td>{formatarData(item.atualizado_em)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </Table>
             )}
           </section>
 
@@ -271,30 +263,20 @@ export function CicloDetailPage() {
             {ciclo.comunicacoes.length === 0 ? (
               <div className="empty-state"><p>Nenhuma comunicacao neste ciclo.</p></div>
             ) : (
-              <div className="table-responsive">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Direcao</th>
-                      <th>Canal</th>
-                      <th>Status</th>
-                      <th>Destinatario / Remetente</th>
-                      <th>Data</th>
+              <Table>
+                <TableHead columns={['Direcao', 'Canal', 'Status', 'Destinatario / Remetente', 'Data']} />
+                <tbody>
+                  {ciclo.comunicacoes.map((com) => (
+                    <tr key={com.id}>
+                      <td>{com.direcao}</td>
+                      <td>{com.canal}</td>
+                      <td><span className="badge badge-info">{com.status}</span></td>
+                      <td>{com.destinatario ?? com.remetente ?? '—'}</td>
+                      <td>{formatarData(com.criado_em)}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {ciclo.comunicacoes.map((com) => (
-                      <tr key={com.id}>
-                        <td>{com.direcao}</td>
-                        <td>{com.canal}</td>
-                        <td><span className="badge badge-info">{com.status}</span></td>
-                        <td>{com.destinatario ?? com.remetente ?? '—'}</td>
-                        <td>{formatarData(com.criado_em)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </Table>
             )}
           </section>
 
@@ -303,62 +285,51 @@ export function CicloDetailPage() {
             {excecoes.length === 0 ? (
               <div className="empty-state"><p>Nenhuma excecao neste ciclo.</p></div>
             ) : (
-              <div className="table-responsive">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Tipo</th>
-                      <th>Motivo</th>
-                      <th>Contexto</th>
-                      <th>Cliente</th>
-                      <th>Item</th>
-                      <th>Tentativas</th>
-                      <th>Data</th>
-                      {isAdmin && <th></th>}
+              <Table>
+                <TableHead columns={['Tipo', 'Motivo', 'Contexto', 'Cliente', 'Item', 'Tentativas', 'Data', ...(isAdmin ? [''] : [])]} />
+                <tbody>
+                  {excecoes.map((exc) => (
+                    <tr key={exc.id}>
+                      <td><span className="badge badge-alert">{exc.tipo}</span></td>
+                      <td>{exc.motivo}</td>
+                      <td>{formatarContexto(exc.contexto)}</td>
+                      <td>{exc.cliente_nome}</td>
+                      <td>{exc.item_descricao}</td>
+                      <td>{exc.tentativas}</td>
+                      <td>{new Date(exc.criado_em).toLocaleDateString('pt-BR')}</td>
+                      {isAdmin && (
+                        <td>
+                          <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <Button
+                              size="sm"
+                              disabled={actionLoading === exc.item_id || ciclo.estado !== 'aberto'}
+                              onClick={() => setConfirmAction({ tipo: 'resolvido', itemId: exc.item_id })}
+                            >
+                              Resolver
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="danger"
+                              disabled={actionLoading === exc.item_id || ciclo.estado !== 'aberto'}
+                              onClick={() => setConfirmAction({ tipo: 'cancelado', itemId: exc.item_id })}
+                            >
+                              Cancelar
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              disabled={actionLoading === exc.item_id || ciclo.estado !== 'aberto'}
+                              onClick={() => handleReenviar(exc.item_id)}
+                            >
+                              Reenviar
+                            </Button>
+                          </div>
+                        </td>
+                      )}
                     </tr>
-                  </thead>
-                  <tbody>
-                    {excecoes.map((exc) => (
-                      <tr key={exc.id}>
-                        <td><span className="badge badge-alert">{exc.tipo}</span></td>
-                        <td>{exc.motivo}</td>
-                        <td>{formatarContexto(exc.contexto)}</td>
-                        <td>{exc.cliente_nome}</td>
-                        <td>{exc.item_descricao}</td>
-                        <td>{exc.tentativas}</td>
-                        <td>{new Date(exc.criado_em).toLocaleDateString('pt-BR')}</td>
-                        {isAdmin && (
-                          <td>
-                            <div style={{ display: 'flex', gap: '0.5rem' }}>
-                              <button
-                                className="btn btn-primary btn-sm"
-                                disabled={actionLoading === exc.item_id || ciclo.estado !== 'aberto'}
-                                onClick={() => setConfirmAction({ tipo: 'resolvido', itemId: exc.item_id })}
-                              >
-                                Resolver
-                              </button>
-                              <button
-                                className="btn btn-danger btn-sm"
-                                disabled={actionLoading === exc.item_id || ciclo.estado !== 'aberto'}
-                                onClick={() => setConfirmAction({ tipo: 'cancelado', itemId: exc.item_id })}
-                              >
-                                Cancelar
-                              </button>
-                              <button
-                                className="btn btn-sm"
-                                disabled={actionLoading === exc.item_id || ciclo.estado !== 'aberto'}
-                                onClick={() => handleReenviar(exc.item_id)}
-                              >
-                                Reenviar
-                              </button>
-                            </div>
-                          </td>
-                        )}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </Table>
             )}
           </section>
         </>
@@ -371,17 +342,18 @@ export function CicloDetailPage() {
             <strong>{confirmAction.tipo === 'resolvido' ? 'resolvido' : 'cancelado'}</strong>?
           </p>
           <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-            <button className="btn btn-sm" onClick={() => setConfirmAction(null)}>
+            <Button variant="secondary" size="sm" onClick={() => setConfirmAction(null)}>
               Voltar
-            </button>
-            <button
-              className={confirmAction.tipo === 'resolvido' ? 'btn btn-primary btn-sm' : 'btn btn-danger btn-sm'}
+            </Button>
+            <Button
+              size="sm"
+              variant={confirmAction.tipo === 'resolvido' ? 'primary' : 'danger'}
               data-autofocus
-              disabled={!!actionLoading}
+              loading={!!actionLoading}
               onClick={() => handleDecidir(confirmAction.itemId, confirmAction.tipo)}
             >
               {actionLoading ? 'Processando...' : 'Confirmar'}
-            </button>
+            </Button>
           </div>
         </Modal>
       )}
@@ -403,17 +375,18 @@ export function CicloDetailPage() {
             />
           </div>
           <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-            <button className="btn btn-sm" disabled={!!actionLoading} onClick={() => setCancelOpen(false)}>
+            <Button variant="secondary" size="sm" disabled={!!actionLoading} onClick={() => setCancelOpen(false)}>
               Voltar
-            </button>
-            <button
-              className="btn btn-danger btn-sm"
+            </Button>
+            <Button
+              size="sm"
+              variant="danger"
               data-autofocus
-              disabled={!!actionLoading}
+              loading={actionLoading === 'ciclo'}
               onClick={() => handleCancelar()}
             >
               {actionLoading === 'ciclo' ? 'Cancelando...' : 'Confirmar cancelamento'}
-            </button>
+            </Button>
           </div>
         </Modal>
       )}

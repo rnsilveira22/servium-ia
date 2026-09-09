@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api/client';
+import { Card } from '../components/Card';
+import { Table, TableHead } from '../components/Table';
+import { Skeleton } from '../components/Skeleton';
 
 interface Metrics {
   totalClientes?: number;
@@ -59,15 +62,19 @@ export function AuditoriaPage() {
 
       <section className="section">
         <h2>Metricas</h2>
-        {loadingMetrics && <div className="loading">Carregando metricas...</div>}
+        {loadingMetrics && (
+          <div className="cards-grid" aria-label="Carregando metricas" role="status">
+            <Card label={<Skeleton width="70%" />} value={<Skeleton width="40%" height="1.5rem" />} />
+            <Card label={<Skeleton width="70%" />} value={<Skeleton width="40%" height="1.5rem" />} />
+            <Card label={<Skeleton width="70%" />} value={<Skeleton width="40%" height="1.5rem" />} />
+            <Card label={<Skeleton width="70%" />} value={<Skeleton width="40%" height="1.5rem" />} />
+          </div>
+        )}
         {errorMetrics && <div className="alert alert-error" role="alert" aria-live="assertive">{errorMetrics}</div>}
         {metrics && (
           <div className="cards-grid">
             {Object.entries(metrics).map(([key, value]) => (
-              <div className="card" key={key}>
-                <div className="card-label">{key.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}</div>
-                <div className="card-value">{formatValue(value)}</div>
-              </div>
+              <Card key={key} label={key.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')} value={formatValue(value)} />
             ))}
           </div>
         )}
@@ -78,52 +85,45 @@ export function AuditoriaPage() {
         {loadingHealth && <div className="loading">Verificando saude...</div>}
         {errorHealth && <div className="alert alert-error" role="alert" aria-live="assertive">{errorHealth}</div>}
         {health && (
-          <div className="table-responsive">
-            <table className="table">
-              <thead>
+          <Table>
+            <TableHead columns={['Propriedade', 'Valor']} />
+            <tbody>
+              <tr>
+                <td>Status</td>
+                <td>
+                  <span className={`badge badge-${health.status === 'ok' ? 'ativo' : 'encerrado'}`}>
+                    {health.status}
+                  </span>
+                </td>
+              </tr>
+              {health.uptime !== undefined && (
                 <tr>
-                  <th>Propriedade</th>
-                  <th>Valor</th>
+                  <td>Uptime</td>
+                  <td>{formatUptime(health.uptime)}</td>
                 </tr>
-              </thead>
-              <tbody>
+              )}
+              {health.timestamp && (
                 <tr>
-                  <td>Status</td>
-                  <td>
-                    <span className={`badge badge-${health.status === 'ok' ? 'ativo' : 'encerrado'}`}>
-                      {health.status}
-                    </span>
-                  </td>
+                  <td>Timestamp</td>
+                  <td>{new Date(health.timestamp).toLocaleString('pt-BR')}</td>
                 </tr>
-                {health.uptime !== undefined && (
-                  <tr>
-                    <td>Uptime</td>
-                    <td>{formatUptime(health.uptime)}</td>
+              )}
+              {health.correlationId && (
+                <tr>
+                  <td>Correlation ID</td>
+                  <td><code>{health.correlationId}</code></td>
+                </tr>
+              )}
+              {Object.entries(health)
+                .filter(([k]) => !['status', 'uptime', 'timestamp', 'correlationId'].includes(k))
+                .map(([key, value]) => (
+                  <tr key={key}>
+                    <td>{key.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}</td>
+                    <td>{formatValue(value)}</td>
                   </tr>
-                )}
-                {health.timestamp && (
-                  <tr>
-                    <td>Timestamp</td>
-                    <td>{new Date(health.timestamp).toLocaleString('pt-BR')}</td>
-                  </tr>
-                )}
-                {health.correlationId && (
-                  <tr>
-                    <td>Correlation ID</td>
-                    <td><code>{health.correlationId}</code></td>
-                  </tr>
-                )}
-                {Object.entries(health)
-                  .filter(([k]) => !['status', 'uptime', 'timestamp', 'correlationId'].includes(k))
-                  .map(([key, value]) => (
-                    <tr key={key}>
-                      <td>{key.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}</td>
-                      <td>{formatValue(value)}</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </div>
+                ))}
+            </tbody>
+          </Table>
         )}
       </section>
     </div>

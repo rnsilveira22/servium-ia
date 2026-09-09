@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { Button } from '../components/Button';
 
 const NAV = [
   { to: '/', label: 'Painel' },
@@ -24,6 +25,8 @@ export function Layout() {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [menuOpen]);
+
+  const closeMenu = () => setMenuOpen(false);
 
   const handleLogout = async () => {
     await logout();
@@ -49,7 +52,7 @@ export function Layout() {
               to={n.to}
               className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
               end={n.to === '/'}
-              onClick={() => setMenuOpen(false)}
+              onClick={closeMenu}
             >
               {n.label}
             </NavLink>
@@ -57,7 +60,7 @@ export function Layout() {
         </nav>
         <div className="sidebar-footer">
           <span className="sidebar-role">{sessao?.papel === 'admin' ? 'Administrador' : 'Operador'}</span>
-          <button onClick={handleLogout} className="btn btn-sm">Sair</button>
+          <Button variant="ghost" size="sm" onClick={handleLogout}>Sair</Button>
         </div>
       </aside>
       <div className="topbar">
@@ -74,7 +77,7 @@ export function Layout() {
         <span className="topbar-brand">Servium IA</span>
       </div>
       {menuOpen && (
-        <div className="sidebar-backdrop" aria-hidden="true" onClick={() => setMenuOpen(false)} />
+        <div className="sidebar-backdrop" aria-hidden="true" onClick={closeMenu} />
       )}
       <main className="main-content">
         <Outlet />

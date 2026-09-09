@@ -1,6 +1,9 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { api } from '../api/client';
 import type { ClienteDTO } from '@servium-ia/shared-types';
+import { Button } from '../components/Button';
+import { Field } from '../components/Field';
+import { Table, TableHead } from '../components/Table';
 
 export function ClientesPage() {
   const [clientes, setClientes] = useState<ClienteDTO[]>([]);
@@ -43,61 +46,49 @@ export function ClientesPage() {
     <div>
       <div className="page-header">
         <h1>Clientes</h1>
-        <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+        <Button onClick={() => setShowForm(!showForm)}>
           {showForm ? 'Cancelar' : '+ Novo Cliente'}
-        </button>
+        </Button>
       </div>
 
       {erro && <div className="alert alert-error" role="alert" aria-live="assertive">{erro}</div>}
 
       {showForm && (
         <form className="form-inline" onSubmit={handleCreate}>
-          <label className="field">
-            <span>Nome</span>
+          <Field label="Nome" required>
             <input value={nome} onChange={(e) => setNome(e.target.value)} required />
-          </label>
-          <label className="field">
-            <span>Identificacao (CPF/CNPJ)</span>
+          </Field>
+          <Field label="Identificacao (CPF/CNPJ)">
             <input value={identificacao} onChange={(e) => setIdentificacao(e.target.value)} />
-          </label>
-          <label className="field">
-            <span>E-mail</span>
+          </Field>
+          <Field label="E-mail">
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          </label>
-          <button type="submit" className="btn btn-primary" disabled={saving}>
+          </Field>
+          <Button type="submit" loading={saving}>
             {saving ? 'Salvando...' : 'Salvar'}
-          </button>
+          </Button>
         </form>
       )}
 
       {clientes.length === 0 ? (
         <div className="empty-state">
           <p>Nenhum cliente cadastrado.</p>
-          <button className="btn btn-primary" onClick={() => setShowForm(true)}>Cadastrar primeiro cliente</button>
+          <Button onClick={() => setShowForm(true)}>Cadastrar primeiro cliente</Button>
         </div>
       ) : (
-        <div className="table-responsive">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Identificacao</th>
-                <th>E-mail</th>
-                <th>Criado em</th>
+        <Table>
+          <TableHead columns={['Nome', 'Identificacao', 'E-mail', 'Criado em']} />
+          <tbody>
+            {clientes.map((c) => (
+              <tr key={c.id}>
+                <td>{c.nome}</td>
+                <td>{c.identificacao ?? '-'}</td>
+                <td>{c.email ?? '-'}</td>
+                <td>{new Date(c.criado_em).toLocaleDateString('pt-BR')}</td>
               </tr>
-            </thead>
-            <tbody>
-              {clientes.map((c) => (
-                <tr key={c.id}>
-                  <td>{c.nome}</td>
-                  <td>{c.identificacao ?? '-'}</td>
-                  <td>{c.email ?? '-'}</td>
-                  <td>{new Date(c.criado_em).toLocaleDateString('pt-BR')}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </Table>
       )}
     </div>
   );

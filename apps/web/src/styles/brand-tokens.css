@@ -1,10 +1,97 @@
 :root {
+  /* ===== Identidade oficial Servium AI ===== */
   --servium-navy: #12304a;
   --servium-teal: #0f8b83;
   --servium-mint: #38b7a5;
   --servium-ink-muted: #557080;
   --servium-surface: #f4f8f8;
   --servium-white: #ffffff;
+
+  /* ===== Escala derivada da identidade (E-01 · HUMAN_GATE_UX_M0) ===== */
+  --navy-50: #eef3f7;
+  --navy-100: #d7e1ea;
+  --navy-700: #0d2438;
+  --navy-800: #0a1c2c;
+  --navy-900: #071520;
+
+  --teal-50: #e8f4f2;
+  --teal-100: #d7f0ec;
+  --teal-200: #b0e0d9;
+  --teal-300: #6fc4bb;
+  --teal-400: #2fa49a;
+  --teal-500: #258f87;
+  --teal-600: #0e736c;
+  --teal-700: #0a5f59;
+  --teal-800: #0a4a46;
+
+  --mint-50: #eefaf8;
+  --mint-100: #d4f3ec;
+  --mint-200: #a6e5da;
+
+  --ink-50: #f8fafc;
+  --ink-100: #eef2f5;
+  --ink-200: #e2e8f0;
+  --ink-300: #cbd5e1;
+  --ink-400: #94a3b8;
+  --ink-500: #64748b;
+  --ink-600: #475569;
+  --ink-700: #334155;
+  --ink-800: #1e293b;
+  --ink-900: #0f172a;
+
+  --surface-1: var(--servium-white);
+  --surface-2: var(--servium-surface);
+  --surface-3: var(--navy-50);
+
+  /* ===== Estado semântico (fundação M0) ===== */
+  --color-success: #16a34a;
+  --color-success-bg: #f0fdf4;
+  --color-success-border: #bbf7d0;
+  --color-warning: #b45309;
+  --color-warning-bg: #fffbeb;
+  --color-warning-border: #fde68a;
+  --color-error: #b91c1c;
+  --color-error-bg: #fef2f2;
+  --color-error-border: #fecaca;
+  --color-info: var(--teal-700);
+  --color-info-bg: var(--teal-50);
+  --color-info-border: var(--teal-200);
+
+  /* ===== Tipografia ===== */
+  --font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-size-caption: 0.75rem;
+  --font-size-small: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --line-height-base: 1.5;
+  --line-height-tight: 1.25;
+
+  /* ===== Espaçamento ===== */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  /* ===== Bordas / Radius ===== */
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+
+  /* ===== Foco ===== */
+  --focus-ring-color: var(--servium-teal);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
 }
 
 .servium-logo-login { width: min(100%, 520px); height: auto; }
