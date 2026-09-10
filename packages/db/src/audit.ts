@@ -34,6 +34,8 @@ export interface EventoAuditoriaDTO {
   id: string;
   actor_type: 'sistema' | 'operador' | 'servico';
   actor_id: string | null;
+  /** M1-OPS-07 · aditivo: nome do ator humano resolvido no controller. */
+  actor_nome?: string | null;
   entidade: string;
   entidade_id: string;
   acao: string;

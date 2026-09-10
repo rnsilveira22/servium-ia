@@ -57,7 +57,7 @@ describe('Local Acceptance — ativação de ciclo pela UI', () => {
     await loginPage.loginAsAuthed(ENV.SLUG, ENV.EMAIL, ENV.PASSWORD);
     await layoutPage.waitForAuthenticated();
 
-    const clienteStatus = await apiFetch('/clientes', 'POST', { nome: clienteNome });
+const clienteStatus = await apiFetch('/clientes', 'POST', { nome: clienteNome, email: `e2e-${sufixo}@local.test` });
     expect(clienteStatus).toBe(201);
 
     await layoutPage.clickNav('Obrigacoes');
@@ -67,7 +67,6 @@ describe('Local Acceptance — ativação de ciclo pela UI', () => {
     await obrigacoesPage.fillDescricao(descricao);
     await obrigacoesPage.submit();
     await obrigacoesPage.waitingRow(descricao);
-
     await obrigacoesPage.activateCicloOnRow(descricao);
     const sucesso = await obrigacoesPage.getSuccessMessage();
     expect(sucesso).toContain('Ciclo ativado');
@@ -95,7 +94,7 @@ describe('Local Acceptance — ativação de ciclo pela UI', () => {
     await loginPage.loginAsAuthed(ENV.SLUG, ENV.EMAIL, ENV.PASSWORD);
     await layoutPage.waitForAuthenticated();
 
-    const clienteStatus = await apiFetch('/clientes', 'POST', { nome: clienteNome });
+    const clienteStatus = await apiFetch('/clientes', 'POST', { nome: clienteNome, email: `e2e-canc-${sufixo}@local.test` });
     expect(clienteStatus).toBe(201);
 
     await layoutPage.clickNav('Obrigacoes');

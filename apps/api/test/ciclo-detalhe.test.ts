@@ -88,7 +88,7 @@ async function limpar() {
 }
 
 async function criaCicloA(): Promise<string> {
-  const c = await req.post('/clientes').set('Cookie', cookieAdminA).send({ nome: 'Cliente Detalhe' });
+  const c = await req.post('/clientes').set('Cookie', cookieAdminA).send({ nome: 'Cliente Detalhe', email: 'detalhe@local.test' });
   expect(c.status).toBe(201);
   const o = await req
     .post('/obrigacoes')

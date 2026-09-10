@@ -11,7 +11,7 @@ export const SERVICE_VERSION = '0.1.0';
 export interface CriarClienteInput {
   nome: string;
   identificacao?: string;
-  email?: string;
+  email: string;
 }
 
 export interface ClienteDTO {
@@ -26,6 +26,8 @@ export interface CriarObrigacaoInput {
   cliente_id: string;
   descricao: string;
   prazo?: string;
+  /** ID do checklist_template (mesmo tenant). Opcional — retrocompatível (M1-OPS-01). */
+  template_id?: string;
 }
 
 export interface ObrigacaoDTO {
@@ -33,6 +35,8 @@ export interface ObrigacaoDTO {
   cliente_id: string;
   descricao: string;
   prazo: string | null;
+  template_id: string | null;
+  template_nome: string | null;
   criado_em: string;
 }
 
@@ -63,4 +67,10 @@ export interface ChecklistTemplateDTO {
     tamanho_max_bytes: number | null;
     ordem: number;
   }>;
+}
+
+// ===== M1-OPS-05 · Configurações do tenant (e-mail do escritório) =====
+
+export interface TenantConfigDTO {
+  email_escritorio: string | null;
 }

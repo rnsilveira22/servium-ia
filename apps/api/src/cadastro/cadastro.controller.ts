@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Post, Req, UseGuards } from '@nestjs/common';
 import { Client } from 'pg';
 
 import type {
@@ -11,6 +11,7 @@ import type {
   TipoEsperado,
 } from '@servium-ia/shared-types';
 import { RequireAuth, type AuthedRequest } from '../auth/auth.guard';
+import { validarEmail } from '../common/email-validation';
 
 const TIPOS: readonly string[] = ['documento', 'informacao', 'assinatura'];
 
@@ -45,13 +46,15 @@ export class CadastroController {
   @Post('clientes')
   async criarCliente(@Req() req: AuthedRequest, @Body() body: CriarClienteInput): Promise<ClienteDTO> {
     if (!texto(body?.nome)) throw new BadRequestException('nome obrigatório');
-    if (body.email !== undefined && !texto(body.email)) throw new BadRequestException('email inválido');
+    // DD-08 · e-mail obrigatório + validado (anti-CRLF) para NOVOS clientes.
+    const email = validarEmail(body?.email);
+    if (!email.ok) throw new BadRequestException(email.motivo);
     const client = this.pg(req);
     const { rows } = await client.query<ClienteDTO>(
       `INSERT INTO clientes (tenant_id, nome, identificacao, email)
        VALUES ($1,$2,$3,$4)
        RETURNING id, nome, identificacao, email, criado_em`,
-      [req.sessao!.tenantId, body.nome.trim(), body.identificacao?.trim() ?? null, body.email?.trim() ?? null]
+      [req.sessao!.tenantId, body.nome.trim(), body.identificacao?.trim() ?? null, body.email.trim()]
     );
     const cliente = rows[0];
     if (!cliente) throw new Error('insert sem retorno');
@@ -79,24 +82,46 @@ export class CadastroController {
     // tenant precisa ser verificada explicitamente dentro do contexto atual.
     const dono = await client.query('SELECT 1 FROM clientes WHERE id=$1', [body.cliente_id]);
     if (dono.rowCount === 0) throw new BadRequestException('cliente não encontrado neste tenant');
+
+    // M1-OPS-01 · quando template_id vier, ele precisa existir NESTE tenant.
+    // A FK de obrigacoes.template_id ignora RLS, então a validação de
+    // pertencimento é explícita aqui (nunca confiar apenas na UI).
+    let templateId: string | null = null;
+    if (body.template_id !== undefined && body.template_id !== null && texto(body.template_id)) {
+      const tpl = await client.query('SELECT 1 FROM checklist_templates WHERE id=$1', [body.template_id]);
+      if (tpl.rowCount === 0) {
+        throw new NotFoundException('template não encontrado neste tenant — verifique o checklist selecionado');
+      }
+      templateId = body.template_id;
+    }
+
     const { rows } = await client.query<ObrigacaoDTO>(
-      `INSERT INTO obrigacoes (tenant_id, cliente_id, descricao, prazo)
-       VALUES ($1,$2,$3,$4)
-       RETURNING id, cliente_id, descricao, prazo::text, criado_em`,
-      [req.sessao!.tenantId, body.cliente_id, body.descricao.trim(), body.prazo ?? null]
+      `INSERT INTO obrigacoes (tenant_id, cliente_id, descricao, prazo, template_id)
+       VALUES ($1,$2,$3,$4,$5)
+       RETURNING id, cliente_id, descricao, prazo::text, template_id, criado_em`,
+      [req.sessao!.tenantId, body.cliente_id, body.descricao.trim(), body.prazo ?? null, templateId]
     );
     const obrigacao = rows[0];
     if (!obrigacao) throw new Error('insert sem retorno');
     await auditar(client, req.sessao!.tenantId, req.sessao!.operadorId, 'obrigacao', obrigacao.id, 'criar', {
       descricao: obrigacao.descricao,
+      template_id: obrigacao.template_id,
     });
-    return obrigacao;
+    let templateNome: string | null = null;
+    if (obrigacao.template_id) {
+      const t = await client.query<{ nome: string }>('SELECT nome FROM checklist_templates WHERE id=$1', [obrigacao.template_id]);
+      templateNome = t.rows[0]?.nome ?? null;
+    }
+    return { ...obrigacao, template_nome: templateNome };
   }
 
   @Get('obrigacoes')
   async listarObrigacoes(@Req() req: AuthedRequest): Promise<ObrigacaoDTO[]> {
     const { rows } = await this.pg(req).query<ObrigacaoDTO>(
-      'SELECT id, cliente_id, descricao, prazo::text AS prazo, criado_em FROM obrigacoes ORDER BY criado_em DESC'
+      `SELECT o.id, o.cliente_id, o.descricao, o.prazo::text AS prazo, o.template_id, t.nome AS template_nome, o.criado_em
+         FROM obrigacoes o
+         LEFT JOIN checklist_templates t ON t.id = o.template_id
+        ORDER BY o.criado_em DESC`
     );
     return rows;
   }

@@ -1,7 +1,7 @@
 import { BadRequestException, Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import type { Client } from 'pg';
 
-import { listarEventos, type FiltrosEventos } from '@servium-ia/db';
+import { listarEventos, type EventoAuditoriaDTO, type FiltrosEventos } from '@servium-ia/db';
 import { RequireAuth, Roles, type AuthedRequest } from '../auth/auth.guard';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -18,6 +18,12 @@ export class AuditoriaController {
    * Trilha de auditoria consultável (CA-04). Admin-only; o isolamento de
    * tenant é garantido pelo RLS da conexão (`req.pg` já contextualizada
    * pelo RequireAuth). Validação de entrada aqui evita erros SQL 22P02.
+   *
+   * M1-OPS-07 (DA-02): enrich `actor_id → actor_nome` no controller — resolve
+   * o nome dos atores humanos (tabela `operadores`) mantendo `actor_type` e
+   * `actor_id` intactos no contrato. Para atores de serviço/sistema o campo
+   * aditivo `actor_nome` fica null (a UI presenta "Funcionária Digital" a
+   * partir de `actor_type='servico'`).
    */
   @Get()
   async listar(@Req() req: AuthedRequest, @Query() query: Record<string, unknown>) {
@@ -37,7 +43,27 @@ export class AuditoriaController {
     };
 
     const { eventos, tem_mais } = await listarEventos(this.pg(req), filtros);
-    return { eventos, tem_mais };
+    const eventosComNome = await this.enriquecerAtores(this.pg(req), eventos);
+    return { eventos: eventosComNome, tem_mais };
+  }
+
+  /**
+   * DA-02 · resolve os nomes dos atores humanos numa única query (IN), sem
+   * mudar RLS nem o contrato: `actor_nome` é um campo aditivo.
+   */
+  private async enriquecerAtores(client: Client, eventos: EventoAuditoriaDTO[]): Promise<EventoAuditoriaDTO[]> {
+    const operadorIds = Array.from(
+      new Set(eventos.filter((e) => e.actor_type === 'operador' && e.actor_id).map((e) => e.actor_id as string))
+    );
+    if (operadorIds.length === 0) {
+      return eventos.map((e) => ({ ...e, actor_nome: null }));
+    }
+    const { rows } = await client.query<{ id: string; nome: string }>(
+      `SELECT id, nome FROM operadores WHERE id = ANY($1::uuid[])`,
+      [operadorIds]
+    );
+    const nomes = new Map(rows.map((r) => [r.id, r.nome]));
+    return eventos.map((e) => ({ ...e, actor_nome: e.actor_type === 'operador' ? (nomes.get(e.actor_id as string) ?? null) : null }));
   }
 
   private texto(valor: unknown, campo: string): string | undefined {
