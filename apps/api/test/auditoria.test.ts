@@ -218,3 +218,49 @@ describe('PRM-P0.2-A · GET /auditoria (Issue #51)', () => {
     expect(p2.body.eventos.every((e: { id: string }) => e.id !== ev.id)).toBe(true);
   });
 });
+
+describe('M1-OPS-07 · enrich actor_id → actor_nome (DA-02)', () => {
+  it('ator humano ⇒ actor_nome resolvido, actor_type/actor_id intactos', async () => {
+    const { rows: op } = await admin.query('SELECT id FROM operadores WHERE tenant_id=$1 AND email=$2', [TEN, ADMIN_EMAIL]);
+    const opId = op[0]!.id;
+    await admin.query(
+      `INSERT INTO eventos_auditoria (tenant_id, actor_type, actor_id, entidade, entidade_id, acao, detalhes)
+       VALUES ($1,'operador',$2,'item_ciclo',$3,'decidir','{"desfecho":"resolvido"}')`,
+      [TEN, opId, 'cccc0000-0000-0000-0000-0000000000c1']
+    );
+    const r = await req.get('/auditoria').query({ acao: 'decidir' }).set('Cookie', cookieAdmin);
+    expect(r.status).toBe(200);
+    const ev = r.body.eventos.find((e: { entidade_id: string }) => e.entidade_id === 'cccc0000-0000-0000-0000-0000000000c1');
+    expect(ev).toBeTruthy();
+    expect(ev.actor_type).toBe('operador');
+    expect(ev.actor_id).toBe(opId);
+    expect(ev.actor_nome).toBe('Admin');
+  });
+
+  it("actor_type='servico' ⇒ actor_nome null (UI renderiza 'Funcionária Digital')", async () => {
+    await admin.query(
+      `INSERT INTO eventos_auditoria (tenant_id, actor_type, actor_id, entidade, entidade_id, acao, detalhes)
+       VALUES ($1,'servico',$2,'item_ciclo',$3,'receber','{}')`,
+      [TEN, 'aaaaaaaa-0000-0000-0000-0000000000aa', 'cccc0000-0000-0000-0000-0000000000c2']
+    );
+    const r = await req.get('/auditoria').query({ acao: 'receber' }).set('Cookie', cookieAdmin);
+    const ev = r.body.eventos.find((e: { entidade_id: string }) => e.entidade_id === 'cccc0000-0000-0000-0000-0000000000c2');
+    expect(ev).toBeTruthy();
+    expect(ev.actor_type).toBe('servico');
+    expect(ev.actor_nome).toBeNull();
+  });
+
+  it('regressão: filtros/keyset intactos — actor_nome é aditivo e não quebra paginação', async () => {
+    const p1 = await req.get('/auditoria').query({ acao: 'decidir', limite: '1' }).set('Cookie', cookieAdmin);
+    expect(p1.status).toBe(200);
+    expect(p1.body.eventos.length).toBeLessThanOrEqual(1);
+    expect(typeof p1.body.eventos[0]?.id).toBe('string');
+    const ev = p1.body.eventos[0];
+    const p2 = await req
+      .get('/auditoria')
+      .query({ antes_de: ev.criado_em, antes_id: ev.id })
+      .set('Cookie', cookieAdmin);
+    expect(p2.status).toBe(200);
+    expect(p2.body.tem_mais).toBe(false);
+  });
+});

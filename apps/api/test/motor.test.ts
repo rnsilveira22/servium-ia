@@ -18,8 +18,16 @@ const handlers = registrarMotorHandlers(deps);
 let cicloId: string;
 let obrigId: string;
 
-async function rodarJobs(maxIter = 30): Promise<number> {
-  let n = 0;
+/** Evidência por rotina executada (M1-OPS-03). */
+interface ResultadoRotina {
+  tipo: string;
+  ok: boolean;
+  tentativas: number;
+  ultimo_erro: string | null;
+}
+
+async function rodarJobs(maxIter = 60): Promise<ResultadoRotina[]> {
+  const resultados = new Map<string, ResultadoRotina>();
   for (let i = 0; i < maxIter; i++) {
     const jobs = await claimJobs(admin, 10);
     if (jobs.length === 0) break;
@@ -29,20 +37,34 @@ async function rodarJobs(maxIter = 30): Promise<number> {
         if (!h) throw new Error(`sem handler ${j.tipo}`);
         await h(j, ctx);
         await completeJob(ctx, j.id);
-        process.stdout.write(`[rodarJobs] ok ${j.tipo}\n`);
+        resultados.set(j.id, { tipo: j.tipo, ok: true, tentativas: j.tentativas, ultimo_erro: null });
       } catch (err) {
-        process.stdout.write(`[rodarJobs] ERR ${j.tipo}: ${(err as Error).message}\n`);
-        await ctx.query(
-          `UPDATE jobs_fila SET tentativas=tentativas+1,
-             estado = CASE WHEN tentativas+1 >= max_tentativas THEN 'falha' ELSE 'pendente' END,
-             disponivel_em = now(), ultimo_erro=$2 WHERE id=$1`,
-          [j.id, String((err as Error).message)]
+        const msg = String((err as Error).message);
+        // claimJobs já incrementou tentativas; retry/limite usam o valor corrente.
+        const { rows } = await ctx.query<{ estado: string; tentativas: number; ultimo_erro: string | null }>(
+          `UPDATE jobs_fila
+              SET estado = CASE WHEN tentativas >= max_tentativas THEN 'falha' ELSE 'pendente' END,
+                  ultimo_erro = $2,
+                  disponivel_em = now()
+            WHERE id = $1 AND estado = 'processando'
+            RETURNING estado, tentativas, ultimo_erro`,
+          [j.id, msg]
         );
+        const r = rows[0];
+        resultados.set(j.id, {
+          tipo: j.tipo,
+          ok: false,
+          tentativas: r?.tentativas ?? j.tentativas,
+          ultimo_erro: r?.ultimo_erro ?? msg,
+        });
       }
-      n++;
+      // n++ não é mais necessário — os resultados por job id resolvem o total
     }
   }
-  return n;
+  const ok = [...resultados.values()].filter((r) => r.ok).length;
+  const falha = [...resultados.values()].filter((r) => !r.ok).length;
+  process.stdout.write(`[motor] ok: ${ok} falha: ${falha}\n`);
+  return [...resultados.values()];
 }
 
 beforeAll(async () => {

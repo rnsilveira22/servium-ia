@@ -61,8 +61,9 @@ async function limpar() {
   for (const ten of [TEN_A, TEN_B]) {
     for (const sql of [
       'DELETE FROM itens_template WHERE tenant_id=$1',
-      'DELETE FROM checklist_templates WHERE tenant_id=$1',
+      // obrigacoes referencia checklist_templates via FK (template_id) — deletar antes
       'DELETE FROM obrigacoes WHERE tenant_id=$1',
+      'DELETE FROM checklist_templates WHERE tenant_id=$1',
       'DELETE FROM clientes WHERE tenant_id=$1',
       'DELETE FROM eventos_auditoria WHERE tenant_id=$1',
       'DELETE FROM sessoes WHERE tenant_id=$1',
@@ -95,14 +96,14 @@ describe('SRV-16 · cadastro mínimo', () => {
 
   it('isolamento: cliente de A é invisível para B', async () => {
     const c = (
-      await req.post('/clientes').set('Cookie', cookieA).send({ nome: 'Só A' })
+      await req.post('/clientes').set('Cookie', cookieA).send({ nome: 'Só A', email: 'so-a@acme.local' })
     ).body;
     const listaB = await req.get('/clientes').set('Cookie', cookieB);
     expect(listaB.body.some((x: { id: string }) => x.id === c.id)).toBe(false);
   });
 
   it('obrigação exige cliente do MESMO tenant (FK não vaza por RLS)', async () => {
-    const cA = (await req.post('/clientes').set('Cookie', cookieA).send({ nome: 'Cliente A' })).body;
+    const cA = (await req.post('/clientes').set('Cookie', cookieA).send({ nome: 'Cliente A', email: 'clienteA@acme.local' })).body;
     const negada = await req
       .post('/obrigacoes')
       .set('Cookie', cookieB)
@@ -115,6 +116,7 @@ describe('SRV-16 · cadastro mínimo', () => {
       .send({ cliente_id: cA.id, descricao: 'Contrato social', prazo: '2026-09-30' });
     expect(ok.status).toBe(201);
     expect(ok.body.prazo).toBe('2026-09-30');
+    expect(ok.body.template_id).toBeNull(); // retrocompat: sem template
   });
 
   it('template + itens atômicos; item inválido desfaz TUDO', async () => {
@@ -146,11 +148,104 @@ describe('SRV-16 · cadastro mínimo', () => {
   });
 
   it('auditoria registrar criar_* com actor operador', async () => {
-    const c = (await req.post('/clientes').set('Cookie', cookieA).send({ nome: 'Auditado' })).body;
+    const c = (await req.post('/clientes').set('Cookie', cookieA).send({ nome: 'Auditado', email: 'auditado@acme.local' })).body;
     const { rows } = await admin.query(
       "SELECT acao, actor_type FROM eventos_auditoria WHERE entidade='cliente' AND entidade_id=$1",
       [c.id]
     );
     expect(rows[0]).toMatchObject({ acao: 'criar', actor_type: 'operador' });
+  });
+});
+
+describe('M1-OPS-04A · e-mail obrigatório e validado em POST /clientes (novos)', () => {
+  it('sem email ⇒ 400 orientativo e NÃO cria cliente', async () => {
+    const r = await req.post('/clientes').set('Cookie', cookieA).send({ nome: 'Sem Email' });
+    expect(r.status).toBe(400);
+    expect(String(r.body.message).toLowerCase()).toContain('email');
+    const lista = await req.get('/clientes').set('Cookie', cookieA);
+    expect(lista.body.some((c: { nome: string }) => c.nome === 'Sem Email')).toBe(false);
+  });
+
+  it('email inválido ou com CRLF/linha nova ⇒ 400 e NÃO cria (anti injeção)', async () => {
+    const invalidos = ['nao-e-email', 'a@b', 'foo@bar.com\r\nBcc: x@y.com', 'foo@bar.com\ninject'];
+    for (const email of invalidos) {
+      const r = await req.post('/clientes').set('Cookie', cookieA).send({ nome: 'Inject', email });
+      expect(r.status, `email=${JSON.stringify(email)}`).toBe(400);
+    }
+    const lista = await req.get('/clientes').set('Cookie', cookieA);
+    expect(lista.body.some((c: { nome: string }) => c.nome === 'Inject')).toBe(false);
+  });
+
+  it('email válido ⇒ 201 e persistido', async () => {
+    const r = await req.post('/clientes').set('Cookie', cookieA).send({ nome: 'Com Email', email: 'com.email@acme.local' });
+    expect(r.status).toBe(201);
+    expect(r.body.email).toBe('com.email@acme.local');
+  });
+
+  it('legados intocados: tentativas inválidas não alteram/não adicionam linhas', async () => {
+    const antes = await req.get('/clientes').set('Cookie', cookieA);
+    const countAntes = antes.body.length;
+    await req.post('/clientes').set('Cookie', cookieA).send({ nome: 'Tentativa', email: 'bad\r\nBcc: x' });
+    await req.post('/clientes').set('Cookie', cookieA).send({ nome: 'Tentativa' });
+    const depois = await req.get('/clientes').set('Cookie', cookieA);
+    expect(depois.body.length).toBe(countAntes);
+    expect(depois.body.some((c: { nome: string }) => c.nome === 'Tentativa')).toBe(false);
+  });
+});
+
+describe('M1-OPS-01 · template_id em obrigação via API (contrato DTO+rota)', () => {
+  it('criar com template válido do mesmo tenant ⇒ 201 expõe template_id + template_nome', async () => {
+    const cli = (
+      await req.post('/clientes').set('Cookie', cookieA).send({ nome: 'Tpl Cliente', email: 'tplcliente@acme.local' })
+    ).body;
+    const tpl = await req.post('/checklist-templates').set('Cookie', cookieA).send({
+      nome: 'OPS01',
+      itens: [{ descricao: 'Doc 1' }],
+    });
+    expect(tpl.status).toBe(201);
+    const criada = await req
+      .post('/obrigacoes')
+      .set('Cookie', cookieA)
+      .send({ cliente_id: cli.id, descricao: 'Com template', template_id: tpl.body.id });
+    expect(criada.status).toBe(201);
+    expect(criada.body.template_id).toBe(tpl.body.id);
+    expect(criada.body.template_nome).toBe('OPS01');
+  });
+
+  it('template de OUTRO tenant ⇒ 404 orientativo e NÃO cria obrigação', async () => {
+    const cliB = (
+      await req.post('/clientes').set('Cookie', cookieB).send({ nome: 'Tpl B', email: 'tplb@acme.local' })
+    ).body;
+    const tplA = await req.post('/checklist-templates').set('Cookie', cookieA).send({
+      nome: 'OPS01-B',
+      itens: [{ descricao: 'Doc B' }],
+    });
+    const negada = await req
+      .post('/obrigacoes')
+      .set('Cookie', cookieB)
+      .send({ cliente_id: cliB.id, descricao: 'cross tenant', template_id: tplA.body.id });
+    expect(negada.status).toBe(404);
+    expect(String(negada.body.message).toLowerCase()).toContain('template');
+    const listaB = await req.get('/obrigacoes').set('Cookie', cookieB);
+    expect(listaB.body.some((o: { descricao: string }) => o.descricao === 'cross tenant')).toBe(false);
+  });
+
+  it('template inexistente ⇒ 404 orientativo e NÃO cria', async () => {
+    const cli = (
+      await req.post('/clientes').set('Cookie', cookieA).send({ nome: 'Tpl X', email: 'tplx@acme.local' })
+    ).body;
+    const r = await req
+      .post('/obrigacoes')
+      .set('Cookie', cookieA)
+      .send({ cliente_id: cli.id, descricao: 'nao existe', template_id: '00000000-0000-0000-0000-000000000000' });
+    expect(r.status).toBe(404);
+    expect(String(r.body.message).toLowerCase()).toContain('template');
+  });
+
+  it('GET /obrigacoes lista template_id e template_nome via LEFT JOIN', async () => {
+    const lista = await req.get('/obrigacoes').set('Cookie', cookieA);
+    const comTpl = lista.body.find((o: { template_nome: string | null }) => o.template_nome === 'OPS01');
+    expect(comTpl).toBeTruthy();
+    expect(comTpl.template_id).toBeTruthy();
   });
 });
