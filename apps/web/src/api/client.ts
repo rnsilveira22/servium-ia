@@ -1,3 +1,5 @@
+import type { ChecklistTemplateDTO, CriarChecklistTemplateInput } from '@servium-ia/shared-types';
+
 const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 
 interface ApiOptions {
@@ -21,4 +23,12 @@ export async function api<T = unknown>(path: string, opts: ApiOptions = {}): Pro
     throw err;
   }
   return data as T;
+}
+
+export function listarChecklistTemplates(): Promise<ChecklistTemplateDTO[]> {
+  return api<ChecklistTemplateDTO[]>('/checklist-templates');
+}
+
+export function criarChecklistTemplate(input: CriarChecklistTemplateInput): Promise<ChecklistTemplateDTO> {
+  return api<ChecklistTemplateDTO>('/checklist-templates', { method: 'POST', body: input });
 }

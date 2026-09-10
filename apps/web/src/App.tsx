@@ -6,6 +6,7 @@ import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ClientesPage } from './pages/ClientesPage';
 import { ObrigacoesPage } from './pages/ObrigacoesPage';
+import { TemplatesPage } from './pages/TemplatesPage';
 import { CiclosPage } from './pages/CiclosPage';
 import { CicloDetailPage } from './pages/CicloDetailPage';
 import { ExcecoesPage } from './pages/ExcecoesPage';
@@ -50,6 +51,7 @@ export function App() {
                 <Route index element={<DashboardPage />} />
                 <Route path="/clientes" element={<ClientesPage />} />
                 <Route path="/obrigacoes" element={<ObrigacoesPage />} />
+                <Route path="/templates" element={<TemplatesPage />} />
                 <Route path="/ciclos" element={<CiclosPage />} />
                 <Route path="/ciclos/:id" element={<CicloDetailPage />} />
                 <Route path="/excecoes" element={<ExcecoesPage />} />
