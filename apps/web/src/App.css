@@ -943,6 +943,11 @@ code {
   gap: 0.5rem;
 }
 
+.excecao-aviso-permissao {
+  font-size: var(--font-size-xs);
+  font-style: italic;
+}
+
 .excecao-tecnico {
   margin-top: 0.75rem;
   font-size: var(--font-size-xs);

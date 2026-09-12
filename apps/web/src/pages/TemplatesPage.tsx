@@ -15,11 +15,10 @@ interface ItemForm {
   tamanho_max_mb: string;
 }
 
-let chaveSequencial = 0;
-
 function novaChaveItem(): string {
-  chaveSequencial += 1;
-  return `item-${chaveSequencial}`;
+  return typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `item-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
 function novoItem(): ItemForm {

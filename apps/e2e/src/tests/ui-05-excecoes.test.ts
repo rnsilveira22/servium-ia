@@ -125,10 +125,12 @@ function estadoDoItem(ciclo: { itens: ItemCicloApi[] }, itemId: string): string 
   return item.estado;
 }
 
+const fixtures: FixtureExcecao[] = [];
 let fixture: FixtureExcecao;
 
 beforeAll(async () => {
   fixture = await criarFixtureExcecao();
+  fixtures.push(fixture);
   driver = await createDriver();
   loginPage = new LoginPage(driver);
   layoutPage = new LayoutPage(driver);
@@ -137,7 +139,9 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await driver?.quit();
-  await limparFixture(fixture);
+  for (const f of fixtures) {
+    await limparFixture(f);
+  }
 });
 
 beforeEach(async () => {
@@ -187,6 +191,7 @@ describe('M1-UI-05 · exceções explicadas + ações com confirmação (jornada
   it('modal de Cancelar explica a consequência e só executa após confirmação', async () => {
     // recria a exceção após o fluxo de Resolver (o decidir anterior consumiu a exceção)
     fixture = await criarFixtureExcecao();
+    fixtures.push(fixture);
 
     await loginPage.loginAsAuthed(ENV.SLUG, ENV.EMAIL, ENV.PASSWORD);
     await layoutPage.waitForAuthenticated();

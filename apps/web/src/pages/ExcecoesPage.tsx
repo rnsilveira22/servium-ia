@@ -138,7 +138,7 @@ export function ExcecoesPage() {
               ? ''
               : typeof exc.contexto === 'string'
                 ? exc.contexto
-                : JSON.stringify(exc.contexto);
+                : JSON.stringify(exc.contexto, null, 2);
           return (
             <section key={exc.id} className="card excecao-card">
               <div className="excecao-card-header">
@@ -168,7 +168,7 @@ export function ExcecoesPage() {
                 </div>
               </dl>
 
-              {isAdmin && (
+              {isAdmin ? (
                 <div className="excecao-acoes">
                   <Button
                     size="sm"
@@ -194,6 +194,10 @@ export function ExcecoesPage() {
                     Cancelar
                   </Button>
                 </div>
+              ) : (
+                <p className="text-muted excecao-aviso-permissao">
+                  Apenas administradores podem decidir ou reenviar exceções.
+                </p>
               )}
 
               <details className="excecao-tecnico">

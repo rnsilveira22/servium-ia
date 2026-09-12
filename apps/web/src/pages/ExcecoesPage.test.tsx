@@ -4,8 +4,10 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { MemoryRouter } from 'react-router-dom';
 import { ExcecoesPage } from './ExcecoesPage';
 
+let mockPapel = 'admin';
+
 vi.mock('../auth/AuthContext', () => ({
-  useAuth: () => ({ sessao: { operadorId: 'op-1', tenantId: 't-1', papel: 'admin' } }),
+  useAuth: () => ({ sessao: { operadorId: 'op-1', tenantId: 't-1', papel: mockPapel } }),
 }));
 
 const CICLOS = [
@@ -62,6 +64,7 @@ function renderizar() {
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  mockPapel = 'admin';
 });
 
 function soNoDetalheTecnico(texto: string | RegExp): void {
@@ -80,9 +83,8 @@ describe('ExcecoesPage · exceções explicadas + ações com confirmação (M1-
     expect(screen.getByText('Verso da CNH')).toBeTruthy();
     expect(screen.getByText('Acme SA')).toBeTruthy();
 
-    soNoDetalheTecnico('{"passo":"segundo_envio","canal":"email"}');
-    soNoDetalheTecnico(/tentativas sociais esgotadas/);
     soNoDetalheTecnico(/segundo_envio/);
+    soNoDetalheTecnico(/tentativas sociais esgotadas/);
   });
 
   it('detalhe técnico fica colapsável (DUX-01) e só aparece após expandir', async () => {
@@ -90,7 +92,7 @@ describe('ExcecoesPage · exceções explicadas + ações com confirmação (M1-
     renderizar();
     await screen.findByText('Tentativas esgotadas');
 
-    const pre = screen.getByText('{"passo":"segundo_envio","canal":"email"}');
+    const pre = screen.getByText(/segundo_envio/);
     const detalhe = pre.closest('details') as HTMLDetailsElement | null;
     expect(detalhe).not.toBeNull();
     expect(detalhe!.hasAttribute('open')).toBe(false);
@@ -204,5 +206,17 @@ describe('ExcecoesPage · exceções explicadas + ações com confirmação (M1-
 
     expect(await screen.findByText('item não está em exceção')).toBeTruthy();
     expect(screen.getByText('Tentativas esgotadas')).toBeTruthy();
+  });
+
+  it('operador comum visualiza exceções com aviso orientativo e sem botões de ação', async () => {
+    mockPapel = 'operador';
+    instalarFetch();
+    renderizar();
+
+    expect(await screen.findByText('Tentativas esgotadas')).toBeTruthy();
+    expect(screen.getByText('Apenas administradores podem decidir ou reenviar exceções.')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Resolver' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Reenviar' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Cancelar' })).toBeNull();
   });
 });
