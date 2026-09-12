@@ -126,6 +126,7 @@ Transições inválidas (ex.: `aguardando → resolvido`, `recebido → cancelad
 | D-5 | Motivo com default ("Encaminhado para análise na validação do recebimento") | Campo `motivo` da exceção é `NOT NULL`; mantém UX fluida sem forçã-la em tela |
 | D-6 | Aviso de sucesso diferenciado (`resolvido`/`cancelado`/encaminhado) | Feedback honesto por desfecho na UI |
 | D-7 | Frontend condicionado a `admin` | Papel autorizado (RBAC de `decidir`); operador segue sem ação em `recebido` |
+| D-8 | **Encerramento com exceção aberta: comportamento ACEITO** (decisão de produto pós-revisão — `HG-B1-2026-09_EXEC`) | O motor pode encerrar o ciclo com itens em `excecao` (mesmo abertos): `excecao` não integra o conjunto bloqueante do encerramento (`handlers.ts` `NOT IN ('resolvido','cancelado','excecao')`). Regra pré-existente, agora alcançável; **AC-B1-08 ajustado** para refleti-la. Sem mudança de código |
 
 ---
 
@@ -184,6 +185,8 @@ Estruturas legadas preservadas: `receber` (correlação), `escalar`, `encerrar`,
 | AC-B1-11 | Selenium `b1-recebido-validation.test.ts` |
 | AC-B1-12 | `recebido-decisao.test.ts` (isolation) + Selenium RBAC |
 
+> **Revisão independente (2026-09-12)**: veredito do revisor independente — **PASS COM RESSALVAS**; ressalvas tratadas: (1) autorização de execução **registrada** (`HG-B1-2026-09_EXEC` em `HUMAN_DECISIONS_LOG.md`); (2) **AC-B1-08 ajustado** conforme decisão de produto — o encerramento do ciclo ocorre quando não restar item fora de `resolvido/cancelado/excecao`, e itens em `excecao` (**mesmo com exceção aberta**) **não bloqueiam** o encerramento (regra pré-existente do motor; §7 **D-8**; sem mudança de código); (3) sugestões menores aplicadas (newline EOF, cleanup E2E). Flakiness de timing em runtime-e2e é conhecida (2ª execução 3/3).
+
 ---
 
 ## 10. Selenium E2E
@@ -193,7 +196,7 @@ Estruturas legadas preservadas: `receber` (correlação), `escalar`, `encerrar`,
 1. **Validar e concluir** → badge do item muda para `resolvido`, sem erro, screenshot (`validar-concluir`).
 2. **Encaminhar para análise** (com motivo) → badge `excecao` + seção "Exceções (1)"; sem erro, screenshot (`encaminhar-analise`).
 
-Detalhe de infraestrutura do harness (`run-e2e.sh` roda apenas API+Web, sem worker): `ciclo.ativar` não chega a processar → **itens_ciclo são semeados via DB** no teste (JOIN `ciclos`×`itens_template`, `UPDATE ... estado='recebido'`), espelhando o efeito do handler. `apiFetch` de preparação roda **após login** (cookie de sessão).
+Detalhe de infraestrutura do harness (`run-e2e.sh` roda apenas API+Web, sem worker): `ciclo.ativar` não chega a processar → **itens_ciclo são semeados via DB** no teste (JOIN `ciclos`×`itens_template`, `UPDATE ... estado='recebido'`), espelhando o efeito do handler. `apiFetch` de preparação roda **após login** (cookie de sessão). Ao final da suíte, os dados E2E criados são **limpos via DB** (`limparCriados` — ordem de FK segura), evitando acumular ciclos abertos no tenant de seed.
 
 ---
 
@@ -256,7 +259,7 @@ Detalhe de infraestrutura do harness (`run-e2e.sh` roda apenas API+Web, sem work
 
 ### Declaração final
 
-> **B-1 (MVP-01): IMPLEMENTADO · QA_APPROVED (sintético) · AGUARDANDO HUMAN REVIEW (Pleno + PO)**
+> **B-1 (MVP-01): IMPLEMENTADO · QA_APPROVED (sintético + revisão independente) · EXECUTION_AUTHORIZED (HG-B1-2026-09_EXEC) · AGUARDANDO HUMAN REVIEW (Pleno + PO) para merge**
 > Resolução automática: **NÃO IMPLEMENTADA** · LLM: **NÃO IMPLEMENTADO** · Novos estados: **NENHUM** · Upload: **NÃO IMPLEMENTADO** · M2+: **NÃO IMPLEMENTADO** · Gmail/P0-2: **NÃO ALTERADO**
 
 ---
