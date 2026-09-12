@@ -17,6 +17,24 @@ let ciclosPage: CiclosPage;
 let cicloDetailPage: CicloDetailPage;
 let db: pg.Client;
 
+/** Registro criado no tenant E2E para limpeza ao final da suíte. */
+type Criado = { clienteId: string; templateId: string; obrigacaoId: string; cicloId: string; itemIds: string[] };
+const criados: Criado[] = [];
+
+/** Limpa apenas os dados criados por esta suíte (ordem de FK segura). */
+async function limparCriados(): Promise<void> {
+  for (const reg of criados) {
+    await db.query('DELETE FROM eventos_auditoria WHERE entidade_id = ANY($1)', [reg.itemIds]);
+    await db.query('DELETE FROM excecoes WHERE item_ciclo_id = ANY($1)', [reg.itemIds]);
+    await db.query('DELETE FROM itens_ciclo WHERE id = ANY($1)', [reg.itemIds]);
+    await db.query('DELETE FROM ciclos WHERE id=$1', [reg.cicloId]);
+    await db.query('DELETE FROM obrigacoes WHERE id=$1', [reg.obrigacaoId]);
+    await db.query('DELETE FROM itens_template WHERE template_id=$1', [reg.templateId]);
+    await db.query('DELETE FROM checklist_templates WHERE id=$1', [reg.templateId]);
+    await db.query('DELETE FROM clientes WHERE id=$1', [reg.clienteId]);
+  }
+}
+
 function apiFetch(path: string, method: string, body: unknown): Promise<unknown> {
   const bodyStr = body === undefined ? 'undefined' : JSON.stringify(body);
   return driver.executeScript<unknown>(
@@ -70,7 +88,7 @@ async function criarCicloComItensRecebidos(sufixo: number): Promise<{ cliente: s
 
   // Neste harness só a API roda (sem worker): o job ciclo.ativar não é processado,
   // então o item é criado no DB exatamente como o handler faria (copia do template).
-  const { rowCount: criados } = await db.query<{ count: string }>(
+  const { rowCount, rows: itemRows } = await db.query<{ id: string }>(
     `INSERT INTO itens_ciclo (tenant_id, ciclo_id, item_template_id)
      SELECT c.tenant_id, c.id, t.id
        FROM ciclos c
@@ -79,13 +97,21 @@ async function criarCicloComItensRecebidos(sufixo: number): Promise<{ cliente: s
       RETURNING id`,
     [ciclo.body.id, template.body.id],
   );
-  expect(criados).toBe(2);
+  expect(rowCount).toBe(2);
 
-  const { rowCount } = await db.query(
+  const { rowCount: atualizados } = await db.query(
     "UPDATE itens_ciclo SET estado='recebido', atualizado_em=now() WHERE ciclo_id=$1 AND estado='pendente'",
     [ciclo.body.id],
   );
-  expect(rowCount).toBe(2);
+  expect(atualizados).toBe(2);
+
+  criados.push({
+    clienteId: cliente.body.id,
+    templateId: template.body.id,
+    obrigacaoId: obrigacao.body.id,
+    cicloId: ciclo.body.id,
+    itemIds: itemRows.map((r) => r.id),
+  });
 
   return { cliente: clienteNome, obrigacao: descricao, item1 };
 }
@@ -101,8 +127,12 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await db?.end();
-  await driver?.quit();
+  try {
+    await limparCriados();
+  } finally {
+    await db?.end();
+    await driver?.quit();
+  }
 });
 
 beforeEach(async () => {
