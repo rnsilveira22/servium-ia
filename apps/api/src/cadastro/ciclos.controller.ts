@@ -176,19 +176,34 @@ export class CiclosController {
     return { ok: true, cancelado: resultado.cancelado };
   }
 
-  /** Intervenção humana nº2/3: resolver/cancelar item em exceção. */
+  /** Intervenção humana nº2/3 + HG-B1-2026-09:
+   *  - excecao  → resolvido/cancelado (decisão existente);
+   *  - recebido → resolvido (validação humana positiva);
+   *  - recebido → excecao (encaminhamento p/ análise, abre exceção no fluxo existente). */
   @Post('itens/:itemId/decidir')
   @Roles('admin')
-  async decidirItem(@Req() req: AuthedRequest, @Param('itemId') itemId: string, @Body() body: { desfecho?: string }) {
-    if (!['resolvido', 'cancelado'].includes(body?.desfecho ?? '')) {
-      throw new BadRequestException("desfecho deve ser 'resolvido' ou 'cancelado'");
+  async decidirItem(
+    @Req() req: AuthedRequest,
+    @Param('itemId') itemId: string,
+    @Body() body: { desfecho?: string; motivo?: string }
+  ) {
+    if (!['resolvido', 'cancelado', 'excecao'].includes(body?.desfecho ?? '')) {
+      throw new BadRequestException("desfecho deve ser 'resolvido', 'cancelado' ou 'excecao'");
     }
-    await decidirItemTxn(
+    const { cicloId } = await decidirItemTxn(
       this.pg(req),
       { tenantId: req.sessao!.tenantId, operadorId: req.sessao!.operadorId },
       itemId,
-      body.desfecho as DesfechoItem
+      body.desfecho as DesfechoItem,
+      body?.motivo?.trim() || undefined
     );
+    // Motor reavalia o ciclo após a decisão humana: encerra quando todos os
+    // itens estiverem em estados finais (mesmo padrão de reenviar/ativar).
+    await enqueue(this.pg(req), {
+      tipo: 'ciclo.tick',
+      payload: { ciclo_id: cicloId },
+      idempotencyKey: `tick-decisao:${itemId}:${body.desfecho}`,
+    });
     return { ok: true };
   }
 

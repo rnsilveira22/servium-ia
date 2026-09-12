@@ -4,7 +4,16 @@
 
 ## Última atualização
 
-2026-09-08 · **P0.3-D (#57 ASVS) MERGED (PR #90, rebase L3, `a8c057a`, `Closes #57`)** · **Blueprint UX/UI Fase 2 MERGED (PR #92, squash L3, `731c009`)** · **P0.3-C (#56) e #73 merged via L2** · PRM-P0.3-A (#54 política de senha, PR #80 `6313cab`), PRM-P0.3-B (#55 rate-limit, PR #81 `69e0950`) DONE+MERGED · **M0 UX IMPLEMENTADO + VALIDADO (PR #96, `M0_READY_FOR_HUMAN_GATE_ACCEPTANCE`)** · Factory V2 operacional (Orchestrator + estados V2)
+2026-09-12 · **RECONCILIAÇÃO OFICIAL** do estado real do GitHub (ver `docs/reports/FACTORY_V2_GITHUB_RECONCILIATION_2026-09.md`). Snapshots anteriores: 2026-09-08 · P0.3-D (#57 ASVS) MERGED (PR #90, rebase L3, `a8c057a`, `Closes #57`) · Blueprint UX/UI Fase 2 MERGED (PR #92, squash L3, `731c009`) · P0.3-C (#56) e #73 merged via L2 · PRM-P0.3-A (#54, PR #80 `6313cab`) e PRM-P0.3-B (#55, PR #81 `69e0950`) DONE+MERGED · **M0 UX IMPLEMENTADO + VALIDADO (PR #96)** · Factory V2 operacional (Orchestrator + estados V2).
+
+Mudanças desde o último snapshot (evidência objetiva em GitHub/git):
+
+- **PR #96 (M0 UX — Fundação Visual) MERGED (09-09, commit `95c8160`, squash, branch `feat/web-ux-m0-foundation`)** — a `main` local/remota contém o M0. O documento anterior registrava `AWAITING_HUMAN_DECISION` e "sem merge antes da decisão"; o merge foi executado por `rnsilveira22`, mas **sem registro formal do `HUMAN_GATE_UX_M0_ACCEPTANCE` no `HUMAN_DECISIONS_LOG`** → `AWAITING_DECISION` (formalizar; a única evidência é o próprio merge).
+- **PR #98 (M1 Wave B1 backend) MERGED (09-10, commit `dfb75c0`, squash, merge humano `rnsilveira22`)** — entrega **M1-OPS-01** (`template_id` em `POST /obrigacoes`), **M1-OPS-03** (`motor-erro.test.ts`, evidências + retry), **M1-OPS-04A** (e-mail obrigatório/validado em `POST /clientes` — DD-08, `email-validation.ts`), **M1-OPS-05** (`GET/PUT /configuracoes`, `ConfiguracoesController`, migração `0011_emails.sql`), **M1-OPS-07** (`actor_nome` na auditoria — DA-02). **M1-OPS-04B** segue `AWAITING_DECISION` (legados sem e-mail intocados). Verificações do PR: `npm run verify` exit 0 (API 138/2, Web 43, Runtime E2E 2, lint/build/typecheck verdes).
+- **M1 UX (Frente A) IMPLEMENTED na branch `feat/m1-frente-a-pleno` — 3 commits à frente de `main` (`3f6ebdb` M1-UI-01 templates, `a45f830` M1-UI-05 exceções explicadas, `20af34f` revisão)** — branch publicada em `origin`, **sem PR aberto** e **sem autorização de merge registrada** → `AWAITING_DECISION` (crear PR + gate de aprovação).
+- **E2E Selenium**: `f0ca3f7` realinhou `POST /clientes` (envio de e-mail no teste `ciclo-activation`) — suíte 31/31 ok (já em `origin/main` via PR #98).
+- **Documentos de análise M1/UX NÃO commitados** (perdidos do worktree; existem apenas como blobs/checkpoints efêmeros): `docs/ux/FACTORY_V2_UX_UI_EVOLUTION_BACKLOG.md`, `docs/ux/FACTORY_V2_UX_UI_REFERENCE_COMPARISON.md` e `docs/factory/FACTORY_V2_M1_EXECUTABLE_BACKLOG.md` → `AWAITING_DECISION` (recuperar/commitar).
+- **PR #97 (dependabot, devDeps) está OPEN** — fila L2/L3 não está zerada.
 
 ### Reconciliado nesta sessão
 
@@ -29,7 +38,7 @@
 | Dimensão | Estado |
 |---|---|
 | Branch de trabalho | `main` sincronizada (`49fa677`) |
-| Estado do MVP-01 | **P0.1 resolvido** (PRs #61–#66) + **P0.2 resolvido** (PRs #76/#77/#78) + **P0.3-A/B resolvido** (#54/#55, PRs #80/#81) + **P0.3-C (#56) MERGED (PR #89)** + **Bug P0 #73 MERGED (PR #91)** + **UX/UI #94 MERGED (PR #95)** + **P0.3-D (#57/ASVS) MERGED (PR #90, L3) + Blueprint Fase 2 (PR #92, L3) MERGED** — P0.3 restante: 0 · **UX Fase 2: M0 IMPLEMENTADO + VALIDADO (`M0_READY_FOR_HUMAN_GATE_ACCEPTANCE`, PR #96)** — aguardando `HUMAN_GATE_UX_M0_ACCEPTANCE`; M1..M5 NÃO autorizados |
+| Estado do MVP-01 | **P0.1–P0.3 resolvido** (PRs #61–#66, #76/#77/#78, #80/#81, #89, #90, #91, #95) + **P0.3 restante: 0** · **M0 UX MERGED (PR #96, `95c8160`, 09/09)** — atualizado → M0 `DONE` · **M1 Backend Wave B1 MERGED (PR #98, `dfb75c0`, 09/10 — OPS-01/03/04A/05/07; OPS-04B `AWAITING_DECISION`)** · **M1 UX (Frente A, M1-UI-01/05) IMPLEMENTED em branch, SEM PR** (`feat/m1-frente-a-pleno`, 3 commits) · M0/M1 UX formalização de gates: `AWAITING_DECISION` |
 | Software Factory | **V2 OPERACIONAL** — Orchestrator + estados V2 aprovados (HG-F2-01/02/03) |
 | Meta canônica | [`../product/MVP_01_VERTICAL_SLICE.md`](../product/MVP_01_VERTICAL_SLICE.md) — primeiro Funcionário Digital em operação assistida no piloto |
 | ADRs 001..011 | `Accepted` (HG-002); ADR-008 `CommunicationChannel` preservado (HG-008) |
@@ -72,8 +81,10 @@ Registro formal: [`HUMAN_DECISIONS_LOG.md`](HUMAN_DECISIONS_LOG.md).
 | 07/09/2026 | merge PR normal squash | #73 (bug P0) | [PR #91](https://github.com/rnsilveira22/servium/pull/91) `Closes #73` | ok |
 | 07/09/2026 | merge PR normal squash (docs) | #93 (dívida lint MD037) | [PR #93](https://github.com/rnsilveira22/servium/pull/93) `dd48cf0` | ok |
 | 07/09/2026 | merge PR normal squash | #94 (P1 — correções UX/UI auditoria) | [PR #95](https://github.com/rnsilveira22/servium/pull/95) `30744fa` | ok |
+| 09/09/2026 | merge PR (humano `rnsilveira22`) | #96 (M0 UX — Fundação Visual) | [PR #96](https://github.com/rnsilveira22/servium/pull/96) `95c8160` — **sem registro formal de `HUMAN_GATE_UX_M0_ACCEPTANCE` no `HUMAN_DECISIONS_LOG`** (única evidência: o merge) | ok (evidência = merge) |
+| 10/09/2026 | merge PR (humano `rnsilveira22`) | PR #98 (M1 Wave B1 — OPS-01/03/04A/05/07) | [PR #98](https://github.com/rnsilveira22/servium/pull/98) `dfb75c0` — commits `e6a2a1f` + `f0ca3f7`; **sem reviews registrados**; sem registro no `HUMAN_DECISIONS_LOG` | ok (evidência = merge + CI) |
 
-> **L2 merges**: #76/#77/#78, #84, #81, #89, #91, #93, #95. **Merges L3 humanos (2026-09-08)**: PR #90 (ASVS #57, rebase `a8c057a`) e PR #92 (Blueprint Fase 2, squash `731c009`). **Nenhum PR aberto** — fila L2/L3 zerada; próxima atividade fica condicionada a novos gates.
+> **L2 merges**: #76/#77/#78, #84, #81, #89, #91, #93, #95. **Merges L3 humanos (2026-09-08)**: PR #90 (ASVS #57, rebase `a8c057a`) e PR #92 (Blueprint Fase 2, squash `731c009`). **Merges humanos (09/09–10/09)**: PR #96 (`95c8160`) e PR #98 (`dfb75c0`). **PRs abertos (09/12)**: **#97 (dependabot/development) — fila NÃO zerada**; **sem PR para `feat/m1-frente-a-pleno`** (M1 UX implementada, aguarda decisão).
 
 ## Fila efetiva (Project `Servium IA Development`)
 
@@ -82,7 +93,7 @@ Registro formal: [`HUMAN_DECISIONS_LOG.md`](HUMAN_DECISIONS_LOG.md).
 | Issue | Item | Prioridade | Status real | Observação |
 |---|---|---|---|---|
 | [#9](https://github.com/rnsilveira22/servium/issues/9) | Auditoria append-only (**P0.2**) | P0 | **DONE no board** / Issue OPEN (aguarda fechamento formal) | CA-01/02 (reconciliação §5), CA-03 (#52), CA-04 (#51), CA-05 (#53) todos entregues; PR #79 merged humanamente; drift do board (Done/P1 vs OPEN/P0) registrado |
-| [#20](https://github.com/rnsilveira22/servium/issues/20) | N5 Auth mínima (**P0.3** hardening) | P0 | OPEN | HG-PR-SEC aprovado (06/09); **#54, #55, #56, #73, #57 entregues e CLOSED** (PRs #80/#81/#89/#91/#90) — P0.3 DONE |
+| [#20](https://github.com/rnsilveira22/servium/issues/20) | N5 Auth mínima (**P0.3** hardening) | P0 | **CLOSED no GitHub (24/08) — linha corrigida nesta reconciliação** | Issue #20 (slice ADR-009) fechada em 24/08; a linha anterior listava como OPEN (drift); hardening P0.3 entregue via #54/#55/#56/#73/#57 (PRs #80/#81/#89/#91/#90) — P0.3 DONE |
 | [#56](https://github.com/rnsilveira22/servium/issues/56) | **PRM-P0.3-C · Identidade de serviço do FD (`actor_type='servico'`)** | P0 | **MERGED** (PR #89, squash L2) | CA-C-1/2/3 implementados e testados: runtime canônico (`main.ts`) injeta `serviceId: requireServiceId()`; recebimento propaga `serviceId` (evento `receber` com `actor_type='servico'`); CA-C-2 refinado com request HTTP real (`login_sucesso` ⇒ `actor_type='operador'`); evidência em `apps/api/test/identidade-servico.test.ts` · **QA APROVADO (ciclo 2) → merge L2** + `Closes #56` |
 | [#57](https://github.com/rnsilveira22/servium/issues/57) | **PRM-P0.3-D · Mapeamento ASVS 4.0.3 nível 1** | P0 | **MERGED** (PR #90, rebase L3) | `docs/security/ASVS_PILOTO.md` (40 requisitos mapeados: 31 implementados, 5 parciais, 3 lacunas, 1 n/d; lacunas G-01..G-08) + Gate 4.6 no QUALITY_GATES. Merge L3 humano (08/09) `a8c057a` + `Closes #57` — **CA-D-3 pendente** |
 | [#73](https://github.com/rnsilveira22/servium/issues/73) | Bug P0 (funcional) | P0 | **MERGED** (PR #91, squash L2) | Cancelar ciclo ativo (#73): endpoint `POST /ciclos/:cicloId/cancelar` (+ `cancelar-ciclo.ts`), guarda `c.estado='aberto'` em `cobrarItem`, bloqueia `reenviarItem` em ciclo não aberto, UI (botão Cancelar + confirmação + motivo + badge Cancelado + ações desabilitadas). Testes API (8), web e E2E Selenium verdes (CI) · **QA APROVADO → merge L2** + `Closes #73` |
@@ -103,16 +114,22 @@ Issues fechadas nesta sessão: **#94 (PR #95), #93 (PR #93)** e, via L3 humano (
 | **Drift do board #9** | Governança | Corrigir Status/Priority no board; migrar campo Status p/ estados V2 (web/admin) |
 | **PR #82** (spec MVP v1.0) | L3 humano | **MERGED** (`c35e672`) — Especificação Oficial do MVP v1.0 registrada |
 | **PR #90** (ASVS P0.3-D, #57) | L3 humano | **MERGED** (`a8c057a`, rebase, 08/09) — Gate 4.6 ativo; CA-D-3 (revisão de segurança) **pendente** no HUMAN_DECISIONS_LOG |
-| **PR #92** (Blueprint Fase 2 UX/UI) | L3 humano | **MERGED** (`731c009`, squash, 08/09) — proposta registrada; **implementação Fase 2: M0 APROVADO (HG-UX-M0)** |
-| **Implementação UX Fase 2** (E-01..E-08) | L3 humano | **M0 IMPLEMENTADO + VALIDADO (PR #96, HEAD `b00da07`, 08/09)** — branch `feat/web-ux-m0-foundation`; CI 4/4 verde, mergeState CLEAN, Selenium local 31/31 + CI PASS, Visual QA 18/18 + 12 screenshots; **VERDICT: `M0_READY_FOR_HUMAN_GATE_ACCEPTANCE`** (ver `docs/reports/M0_UX_FOUNDATION_VALIDATION_REPORT.md`) · **`HUMAN_GATE_UX_M0_ACCEPTANCE` SOLICITADO** (ver `docs/reports/HUMAN_GATE_UX_M0_ACCEPTANCE_REQUEST.md`) — **estado: `AWAITING_HUMAN_DECISION`**; sem merge antes da decisão explícita do Owner; M1..M5, novos endpoints e regras de domínio NÃO autorizados — cada milestone sujeito a Human Gate próprio |
+| **PR #92** (Blueprint Fase 2 UX/UI) | L3 humano | **MERGED** (`731c009`, squash, 08/09) — proposta registrada; **M0 MERGED (PR #96)** |
+| **Implementação UX Fase 2** M0 | L3 humano | **M0 MERGED (PR #96, `95c8160`, 09/09, merge humano)** — CI verde, Selenium 31/31, Visual QA 18/18; **NOTA da reconciliação: `HUMAN_GATE_UX_M0_ACCEPTANCE` NÃO registrado formalmente** (docs `HUMAN_DECISIONS_LOG`/reports ainda dizem `AWAITING`); evidência de autorização = próprio merge — **decisão pendente: formalizar registro (AWAITING_DECISION)** |
+| **M1 Backend Wave B1** (OPS-01/03/04A/05/07) | L3 humano | **MERGED (PR #98, `dfb75c0`, 10/09, merge humano `rnsilveira22`)** — verificações exit 0; **sem registro formal no `HUMAN_DECISIONS_LOG`** → formalizar (AWAITING_DECISION) |
+| **M1 UX (Frente A)** (M1-UI-01/05) | L3 humano | **IMPLEMENTED na branch `feat/m1-frente-a-pleno`** (`3f6ebdb`, `a45f830`, `20af34f`), publicada em `origin` — **sem PR aberto e sem gate de aprovação registrado** → criar PR + Human Gate (AWAITING_DECISION) |
+| **M1-OPS-04B** (legados sem e-mail) | `AWAITING_DECISION` | Definir tratamento de clientes legados sem e-mail (bloqueada; não autorizada) |
+| **Docs perdidos (não commitados)** (`docs/ux/FACTORY_V2_UX_UI_*`, `docs/factory/FACTORY_V2_M1_EXECUTABLE_BACKLOG.md`) | Recuperação | Artefatos criados em sessões (08–10/09) existem apenas como blobs efêmeros/checkpoints; ausentes do worktree e de todas as branches → decidir recuperar/commitar (AWAITING_DECISION) |
 | **P0.3-D** (#57) | Implementação | **MERGED** (PR #90 `a8c057a`) — Issue #57 CLOSED; CA-D-3 pendente |
 | Deploy/piloto no cliente real | Gate próprio | Após `PILOT_READY` |
 
 ## Próximos passos
 
-1. **Fechar Issue #9** (comentário rastreável + decisão do Owner); corrigir drift do board;
-2. **Definir HG-RETENÇÃO** (política de retenção numérica);
-3. **Registrar CA-D-3** (revisão de segurança do ASVS pela pessoa responsável) no `HUMAN_DECISIONS_LOG` — condição para `PILOT_READY`;
-4. **M0 — Fundação Visual IMPLEMENTADO + VALIDADO** (PR #96, HEAD `b00da07`, 08/09): E-01 Design System, E-02 Componentes Base, Menu Mobile consolidado, Acessibilidade — escopo restrito a `apps/web`; CI 4/4 verde (incl. Selenium PASS pós-fix `6312ea1`), mergeState CLEAN, `npm run verify` verde (178 testes), Selenium local 31/31, Visual QA 18/18 + 12 screenshots; **VERDICT: `M0_READY_FOR_HUMAN_GATE_ACCEPTANCE`**; **`HUMAN_GATE_UX_M0_ACCEPTANCE` SOLICITADO — AGUARDANDO DECISÃO EXPLÍCITA DO OWNER (APPROVE/REJECT); sem merge antes; M1..M5 permanecem NÃO autorizados**;
-5. Priorizar #72/#58/#59 na próxima onda;
-6. Avaliar desativação da V1 após 2+ ciclos V2 com gates verdes (nunca automática).
+1. **Formalizar registros faltantes** (decisão do Owner): `HUMAN_GATE_UX_M0_ACCEPTANCE` (merged via PR #96 em 09/09), aprovação do plano M1 PARALELO (citada como 09/09 apenas no backlog executável não commitado) e merge do Wave B1 (PR #98, 10/09) — sem registro formal em `HUMAN_DECISIONS_LOG.md`;
+2. **M1 UX (Frente A)**: decidir criar PR para `feat/m1-frente-a-pleno` + aprovar gate de implementação (AWAITING_DECISION);
+3. **Recuperar/commitar docs perdidos** (`docs/ux/*` e `FACTORY_V2_M1_EXECUTABLE_BACKLOG.md`) — AWAITING_DECISION;
+4. **Fechar Issue #9** (comentário rastreável + decisão do Owner); corrigir drift do board;
+5. **Definir HG-RETENÇÃO** (política de retenção numérica);
+6. **Registrar CA-D-3** (revisão de segurança do ASVS pela pessoa responsável) no `HUMAN_DECISIONS_LOG` — condição para `PILOT_READY`;
+7. Priorizar #72/#58/#59 na próxima onda (Issue #17/classificação e abordagem de dívida);
+8. Avaliar desativação da V1 após 2+ ciclos V2 com gates verdes (nunca automática).

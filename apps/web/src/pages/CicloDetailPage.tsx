@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
@@ -96,9 +96,20 @@ export function CicloDetailPage() {
   const [erro, setErro] = useState('');
   const [aviso, setAviso] = useState('');
   const [actionLoading, setActionLoading] = useState('');
-  const [confirmAction, setConfirmAction] = useState<{ tipo: 'resolvido' | 'cancelado'; itemId: string } | null>(null);
+  const [confirmAction, setConfirmAction] = useState<{ tipo: 'resolvido' | 'cancelado' | 'excecao'; itemId: string } | null>(null);
   const [cancelOpen, setCancelOpen] = useState(false);
   const [motivoCancel, setMotivoCancel] = useState('');
+  const [motivoValidacao, setMotivoValidacao] = useState('');
+
+  const carregar = useCallback(async () => {
+    if (!id) return;
+    const [c, e] = await Promise.all([
+      api<CicloDetalhe>(`/ciclos/${id}`),
+      api<Excecao[]>(`/ciclos/${id}/excecoes`).catch(() => [] as Excecao[]),
+    ]);
+    setCiclo(c);
+    setExcecoes(e);
+  }, [id]);
 
   useEffect(() => {
     if (!id) return;
@@ -108,33 +119,36 @@ export function CicloDetailPage() {
     setErro('');
     setAviso('');
     setCancelOpen(false);
-    Promise.all([
-      api<CicloDetalhe>(`/ciclos/${id}`),
-      api<Excecao[]>(`/ciclos/${id}/excecoes`).catch(() => [] as Excecao[]),
-    ])
-      .then(([c, e]) => { setCiclo(c); setExcecoes(e); })
+    carregar()
       .catch((err) => {
         console.error('Falha ao carregar o detalhe do ciclo', id, err);
         setErro(mensagemErro(err));
       })
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, carregar]);
 
-  const handleDecidir = async (itemId: string, desfecho: 'resolvido' | 'cancelado') => {
+  const handleDecidir = async (itemId: string, desfecho: 'resolvido' | 'cancelado' | 'excecao', motivo?: string) => {
     setErro('');
     setActionLoading(itemId);
     try {
-      await api(`/ciclos/itens/${itemId}/decidir`, { method: 'POST', body: { desfecho } });
-      setExcecoes((prev) => prev.filter((e) => e.item_id !== itemId));
-      setCiclo((prev) => {
-        if (!prev) return prev;
-        return { ...prev, itens: prev.itens.filter((i) => i.id !== itemId) };
+      await api(`/ciclos/itens/${itemId}/decidir`, {
+        method: 'POST',
+        body: desfecho === 'excecao' ? { desfecho, motivo: motivo?.trim() } : { desfecho },
       });
+      setConfirmAction(null);
+      setMotivoValidacao('');
+      await carregar();
+      setAviso(
+        desfecho === 'excecao'
+          ? 'Item encaminhado para análise.'
+          : desfecho === 'cancelado'
+            ? 'Item cancelado.'
+            : 'Item marcado como resolvido.'
+      );
     } catch (err) {
       setErro(err instanceof Error ? err.message : 'Erro ao processar acao');
     } finally {
       setActionLoading('');
-      setConfirmAction(null);
     }
   };
 
@@ -143,7 +157,7 @@ export function CicloDetailPage() {
     setActionLoading(itemId);
     try {
       await api(`/ciclos/itens/${itemId}/reenviar`, { method: 'POST' });
-      setExcecoes((prev) => prev.filter((e) => e.item_id !== itemId));
+      await carregar();
     } catch (err) {
       setErro(err instanceof Error ? err.message : 'Erro ao reenviar');
     } finally {
@@ -243,7 +257,7 @@ export function CicloDetailPage() {
               <div className="empty-state"><p>Nenhum item neste ciclo.</p></div>
             ) : (
               <Table>
-                <TableHead columns={['Descricao', 'Estado', 'Tentativas', 'Ultima acao']} />
+                <TableHead columns={['Descricao', 'Estado', 'Tentativas', 'Ultima acao', ...(isAdmin ? [''] : [])]} />
                 <tbody>
                   {ciclo.itens.map((item) => (
                     <tr key={item.id}>
@@ -251,6 +265,29 @@ export function CicloDetailPage() {
                       <td><span className={`badge badge-${item.estado}`}>{item.estado}</span></td>
                       <td>{item.tentativas}</td>
                       <td>{formatarData(item.atualizado_em)}</td>
+                      {isAdmin && (
+                        <td>
+                          {item.estado === 'recebido' && ciclo.estado === 'aberto' && (
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                              <Button
+                                size="sm"
+                                disabled={!!actionLoading}
+                                onClick={() => setConfirmAction({ tipo: 'resolvido', itemId: item.id })}
+                              >
+                                Validar e concluir
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                disabled={!!actionLoading}
+                                onClick={() => setConfirmAction({ tipo: 'excecao', itemId: item.id })}
+                              >
+                                Encaminhar para análise
+                              </Button>
+                            </div>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -338,19 +375,34 @@ export function CicloDetailPage() {
       {confirmAction && (
         <Modal title="Confirmar acao" onClose={() => setConfirmAction(null)}>
           <p>
-            Tem certeza que deseja marcar este item como{' '}
-            <strong>{confirmAction.tipo === 'resolvido' ? 'resolvido' : 'cancelado'}</strong>?
+            {confirmAction.tipo === 'excecao'
+              ? 'Tem certeza que deseja encaminhar este item para análise (exceção)?'
+              : `Tem certeza que deseja marcar este item como ${
+                  confirmAction.tipo === 'resolvido' ? 'resolvido' : 'cancelado'
+                }?`}
           </p>
+          {confirmAction.tipo === 'excecao' && (
+            <div className="form-group">
+              <label htmlFor="motivo-validacao">Motivo (opcional)</label>
+              <textarea
+                id="motivo-validacao"
+                rows={3}
+                value={motivoValidacao}
+                onChange={(e) => setMotivoValidacao(e.target.value)}
+                placeholder="Ex.: documento não atende ao solicitado"
+              />
+            </div>
+          )}
           <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
             <Button variant="secondary" size="sm" onClick={() => setConfirmAction(null)}>
               Voltar
             </Button>
             <Button
               size="sm"
-              variant={confirmAction.tipo === 'resolvido' ? 'primary' : 'danger'}
+              variant={confirmAction.tipo === 'cancelado' ? 'danger' : 'primary'}
               data-autofocus
               loading={!!actionLoading}
-              onClick={() => handleDecidir(confirmAction.itemId, confirmAction.tipo)}
+              onClick={() => handleDecidir(confirmAction.itemId, confirmAction.tipo, motivoValidacao)}
             >
               {actionLoading ? 'Processando...' : 'Confirmar'}
             </Button>
