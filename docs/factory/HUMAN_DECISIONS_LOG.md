@@ -307,3 +307,20 @@ A mensagem original de aprovação (04/09/2026) chegou truncada após o texto do
 | HG-PR-SEC | Hardening de segurança P0.3 (senha + rate-limit) | **APROVADO (2026-09-06)** — P0.3-A/B liberadas |
 | HG-UX-M0 | Fundação Visual M0 (Fase 2 UX/UI) | **APROVADO (2026-09-08)** — M0 autorizado; M1..M5 NÃO |
 | HG-UX-M1 | Dashboard / M1 (Fase 2 UX/UI) | aguardando conclusão do M0 (QA + Visual QA + verify + Selenium + merge) |
+
+## Reconciliação do estado real do GitHub (2026-09-12)
+
+> Adendo factual da auditoria `FACTORY_V2_GITHUB_RECONCILIATION_2026-09` — NÃO cria/alterar decisões; registra **ausência de registros** e aponta evidências objetivas. Relatório completo: [`docs/reports/FACTORY_V2_GITHUB_RECONCILIATION_2026-09.md`](../reports/FACTORY_V2_GITHUB_RECONCILIATION_2026-09.md).
+
+Evidência objetiva (GitHub/git, `rnsilveira22/servium-ia`):
+
+| ID | Situação detectada | Evidência no GitHub/git | Linha acima (data da sessão) | Ação necessária |
+|---|---|---|---|---|
+| HG-UX-M0_ACCEPTANCE | **Não registrado formalmente**; M0 foi mergeado | PR #96 MERGED `95c8160` (09/09), `mergedBy: rnsilveira22`, sem reviews | "**Sem merge antes da decisão humana**" (08/09) + estado `AWAITING_HUMAN_DECISION` | Registrar decisão de aceite (APROVADO/outra) retroativamente — `AWAITING_DECISION` |
+| HG-UX-M1 (plano) | Aprovação do plano M1 PARALELO (09/09) citada como existente **apenas** no backlog executável não commitado (`FACTORY_V2_M1_EXECUTABLE_BACKLOG.md`, blob efêmero) | Sem commit; sem entrada no log | "aguardando conclusão do M0" | Registrar aprovação do plano (Data/contexto) ou marcar decisão como ausente — `AWAITING_DECISION` |
+| Merge Wave B1 (PR #98) | Merge executado pelo owner (10/09) **sem registro de decisão no log** | PR #98 MERGED `dfb75c0` (10/09), `mergedBy: rnsilveira22`; commits `e6a2a1f`+`f0ca3f7`; CI exit 0 | — | Não inventar nota; a decisão de merge é fato registrado no GitHub; falta registrar no log — `AWAITING_DECISION` |
+
+Decisões deste adendo:
+
+- Nenhuma decisão foi **criada** nesta auditoria (nenhum gate foi aprovado/rejeitado).
+- Estado de todas as lacunas acima: **`AWAITING_DECISION`** — formalização depende do Owner/`rnsilveira22`.
