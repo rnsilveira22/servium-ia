@@ -216,8 +216,9 @@ Detalhe de infraestrutura do harness (`run-e2e.sh` roda apenas API+Web, sem work
 ## 13. Regressão e flakiness
 
 - **Causa de flakiness encontrada e resolvida:** a suíte **API** e a suíte **Selenium** compartilham o mesmo Postgres local; ciclos `aberto` deixados pelo tenant de seed `dev-corp` (E2E) poluíam a contagem determinística do `scheduler.test.ts` (`jobs/tenants`). Corrigido no teste (`UPDATE ciclos SET estado='encerrado'` para tenants fora do fixture) — comportamento de produção **inalterado**.
+- **Flakiness no CI (Selenium #73):** falha pré-existente de `StaleElementReferenceError` ao ler o badge de status logo após o cancelamento (re-render do React invalidava o elemento entre `findElement` e `getText`). Corrigido tornando `statusLabel(esperado?)` robusto: polling que **re-consulta** o locator por estado (texto esperado) antes de retornar. B-1 não depende deste teste, mas o PR precisa do CI Selenium verde.
 - Bônus de higiene: tenant ids dos testes B-1 agora **únicos** (`f5b1…`/`f5b2…`), eliminando colisão com `scheduler/auditoria/correlacao`.
-- Resultado pós-fix: **147 API passed / 2 skipped**, runtime 3/3, Selenium 33/33, `verify` completo verde.
+- Resultado pós-fix: **147 API passed / 2 skipped**, runtime 3/3, Selenium 33/33 (local) e **CI Selenium verde**, `verify` completo verde.
 
 ---
 
@@ -279,6 +280,6 @@ Detalhe de infraestrutura do harness (`run-e2e.sh` roda apenas API+Web, sem work
 | `apps/api/test/scheduler.test.ts` | alterado | robustez contra aberto fora do fixture (flakiness E2E) |
 | `apps/web/src/pages/CicloDetailPage.tsx` | alterado | ações Validar/Encaminhar, modal com motivo, avisos, refetch |
 | `apps/runtime-e2e/src/runtime-e2e.test.ts` | alterado | jornada normal até `encerrado` + jornada de exceção; helpers por ciclo |
-| `apps/e2e/src/pages/CicloDetailPage.ts` | alterado | interações B-1 (badge, botões, modal, motivo) |
+| `apps/e2e/src/pages/CicloDetailPage.ts` | alterado | interações B-1 (badge, botões, modal, motivo) + `statusLabel` robusto a re-render |
 | `apps/e2e/src/tests/b1-recebido-validation.test.ts` | criado | 2 cenários Selenium B-1 |
 | `docs/reports/B1_IMPLEMENTATION_REPORT_2026-09.md` | criado | este relatório (§1–§18) |

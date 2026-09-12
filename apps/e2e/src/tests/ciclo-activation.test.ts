@@ -111,13 +111,13 @@ const clienteStatus = await apiFetch('/clientes', 'POST', { nome: clienteNome, e
     await ciclosPage.open();
     await cicloDetailPage.openByRow(clienteNome, descricao);
 
-    expect(await cicloDetailPage.statusLabel()).toBe('Aberto');
+    expect(await cicloDetailPage.statusLabel('Aberto')).toBe('Aberto');
     expect(await cicloDetailPage.hasCancelarCicloButton()).toBe(true);
 
     await cicloDetailPage.cancelarCiclo('ativado por engano (E2E)');
     await takeScreenshot(driver, `ciclo-cancelado-${sufixo}`);
 
-    expect(await cicloDetailPage.statusLabel()).toBe('Cancelado');
+    expect(await cicloDetailPage.statusLabel('Cancelado')).toBe('Cancelado');
     expect(await cicloDetailPage.hasCancelarCicloButton()).toBe(false);
   }, 60_000);
 });

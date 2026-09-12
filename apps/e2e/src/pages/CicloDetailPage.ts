@@ -69,10 +69,22 @@ export class CicloDetailPage {
     await this.driver.wait(until.elementLocated(By.css('.alert-success')), 8000);
   }
 
-  /** #73 · Label do status exibido no badge. */
-  async statusLabel(): Promise<string> {
-    const el = await this.driver.findElement(By.css('table .badge'));
-    return el.getText();
+  /** #73 · Label do status exibido no badge (robusto a re-render pós-ação). */
+  async statusLabel(esperado?: string): Promise<string> {
+    const badge = By.css('table .badge');
+    await this.driver.wait(
+      async () => {
+        try {
+          const texto = await this.driver.findElement(badge).getText();
+          return esperado ? texto.includes(esperado) : texto.length > 0;
+        } catch {
+          return false;
+        }
+      },
+      8000,
+      `status do ciclo deve conter ${esperado ?? '(qualquer)'}`
+    );
+    return (await this.driver.findElement(badge)).getText();
   }
 
   /** B-1 · Aguarda um item exibir o badge de estado esperado e devolve o texto. */
