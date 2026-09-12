@@ -68,6 +68,13 @@ beforeAll(async () => {
   for (const [id] of [[TEN_A, SLUG_A], [TEN_F, SLUG_F]] as const) {
     await limpar(id);
   }
+  // Neutraliza ciclos 'aberto' fora deste banco de teste (ex.: tenant dev-corp
+  // deixado pela suíte E2E) para que a contagem de tenants seja determinística.
+  await admin.query(
+    `UPDATE ciclos SET estado='encerrado'
+      WHERE tenant_id NOT IN ($1,$2) AND estado='aberto'`,
+    [TEN_A, TEN_F]
+  );
   await preparaTenant(TEN_A, SLUG_A, 'aberto');
   await preparaTenant(TEN_F, SLUG_F, 'encerrado');
   relogio = { agora: new Date('2026-08-30T12:00:00.000Z') };
