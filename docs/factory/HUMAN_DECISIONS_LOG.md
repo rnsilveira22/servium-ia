@@ -297,6 +297,56 @@ A mensagem original de aprovação (04/09/2026) chegou truncada após o texto do
 
 ---
 
+## HG-B1-2026-09 — MVP-01 · B-1 — Fluxo `recebido → resolvido` (Alternativa A)
+
+```text
+[AUTONOMY] L3 | decisão de produto/domínio | detalhada em: docs/reports/B1_RECEBIDO_RESOLVIDO_ANALISE_DECISAO_2026-09.md (2026-09-12)
+```
+
+- **Tema**: `MVP-01 — B-1 — Fluxo recebido → resolvido`.
+- **Decisão**: **APROVADO — 2026-09-12** pelo decisor (Rodrigo, owner) — **Alternativa A: validação humana do item `recebido`** no MVP-01. A resposta correlacionada **não** deve ser considerada automaticamente como resolução da pendência.
+- **Decisor**: Rodrigo — Product Owner · **Data**: 2026-09-12
+- **Regra de negócio aprovada**:
+
+```text
+Cliente responde
+      ↓
+Resposta correlacionada
+      ↓
+AGUARDANDO → RECEBIDO
+      ↓
+Validação humana
+      ├── atende ao solicitado → RESOLVIDO
+      │
+      └── não atende / dúvida → EXCEÇÃO
+                                  ↓
+                            decisão humana
+```
+
+- **Regra 1**: uma resposta correlacionada válida leva o item a `recebido`;
+- **Regra 2**: um usuário autorizado valida o item;
+- **Regra 3**: o usuário pode concluir como `resolvido` (quando atende ao solicitado) ou encaminhar para `excecao` (não atende / dúvida);
+- **Regra 4**: a Estagiária Digital registra o recebimento e disponibiliza o item para validação humana.
+- **Justificativa**: o MVP ainda não possui validação objetiva do conteúdo recebido (upload/validação de conteúdo é `POST_M1`, `DE-02`); resolução automática no estado atual poderia produzir falso positivo (`resolvido` sem evidência). A validação humana preserva determinismo (ADR-010), auditabilidade ("resultado de validação: critério + veredito" — `OPERATIONAL_FLOW.md`) e a operação assistida do piloto.
+- **Escopo**: válido para o **MVP-01 / piloto assistido**. Autoriza **somente** a regra de negócio acima. NÃO autoriza: resolução automática; uso de LLM para decidir documento; validação automática de conteúdo; upload de documentos fora do escopo aprovado; alteração de arquitetura; novo framework de agentes; M2–M5; alterações de Gmail além das necessárias a posteriori para P0-2; dark mode; recursos de produto não relacionados ao B-1.
+- **Evolução futura**: resolução automática poderá ser reavaliada posteriormente quando existirem critérios determinísticos de validação de conteúdo (ex.: entrega de DE-02/upload).
+- **Status**: **APPROVED** — decisão de produto aprovada; **implementação NÃO autorizada nesta atividade** (aguarda nova autorização de execução; ver bloco `NEXT_ACTIVITY_AUTHORIZATION` em `B1_RECEBIDO_RESOLVIDO_ANALISE_DECISAO_2026-09.md` e no relatório `B1_HUMAN_DECISION_FORMALIZATION_2026-09.md`).
+- **Referências**: análise técnica [`docs/reports/B1_RECEBIDO_RESOLVIDO_ANALISE_DECISAO_2026-09.md`](../reports/B1_RECEBIDO_RESOLVIDO_ANALISE_DECISAO_2026-09.md); critérios de aceite AC-B1-01..11 do relatório de decisão.
+
+### HG-B1-2026-09_EXEC — Autorização de execução (2026-09-12)
+
+```text
+[AUTONOMY] L3 | autorização de execução | detalhada em: docs/reports/B1_IMPLEMENTATION_REPORT_2026-09.md (2026-09-12)
+```
+
+- **Decisão**: **AUTORIZADO — 2026-09-12** pelo decisor (Rodrigo, owner): executar a **Alternativa A** do `HG-B1-2026-09` no MVP-01 — implementar a validação humana do item `recebido` (transições `recebido → resolvido` e `recebido → excecao`), reaproveitando `POST /ciclos/itens/:itemId/decidir`, conforme escopo, testes (AC-B1-01..12), Runtime E2E, Selenium, regressão e relatório final.
+- **Decisor**: Rodrigo — Product Owner · **Data**: 2026-09-12
+- **Decisão de produto anexa (pós-revisão independente)** : **comportamento de encerramento aceito** — o motor pode encerrar o ciclo enquanto houver itens em `excecao` (até com exceção aberta), pois `excecao` **não** integra o conjunto bloqueante de encerramento em `handlers.ts` (`NOT IN ('resolvido','cancelado','excecao')`). AC-B1-08 foi ajustado para refletir essa regra (ver implementação report §7). Nenhuma mudança de código decorrente desta decisão.
+- **Escopo de execução autorizado**: exatamente o contido no PR #99 (branch `feat/mvp01-b1-recebido-resolvido`): `decidir-item.ts`, `ciclos.controller.ts`, `CicloDetailPage.tsx`, testes API/Runtime/Selenium B-1 + robustez de testes E2E. NÃO autoriza qualquer alteração a mais.
+- **Status**: **EXECUTION_AUTHORIZED** — implementação registrada como autorizada para merge após revisão humana (Pleno + PO).
+
+---
+
 ## Pendências
 
 | ID | Assunto | Estado |
@@ -307,3 +357,21 @@ A mensagem original de aprovação (04/09/2026) chegou truncada após o texto do
 | HG-PR-SEC | Hardening de segurança P0.3 (senha + rate-limit) | **APROVADO (2026-09-06)** — P0.3-A/B liberadas |
 | HG-UX-M0 | Fundação Visual M0 (Fase 2 UX/UI) | **APROVADO (2026-09-08)** — M0 autorizado; M1..M5 NÃO |
 | HG-UX-M1 | Dashboard / M1 (Fase 2 UX/UI) | aguardando conclusão do M0 (QA + Visual QA + verify + Selenium + merge) |
+| **HG-B1-2026-09** | **MVP-01 — B-1 — fluxo `recebido → resolvido`** | **APROVADO (2026-09-12)** — Alternativa A (validação humana); **execução AUTORIZADA (HG-B1-2026-09_EXEC)** — ver merge em PR #99 |
+
+## Reconciliação do estado real do GitHub (2026-09-12)
+
+> Adendo factual da auditoria `FACTORY_V2_GITHUB_RECONCILIATION_2026-09` — NÃO cria/alterar decisões; registra **ausência de registros** e aponta evidências objetivas. Relatório completo: [`docs/reports/FACTORY_V2_GITHUB_RECONCILIATION_2026-09.md`](../reports/FACTORY_V2_GITHUB_RECONCILIATION_2026-09.md).
+
+Evidência objetiva (GitHub/git, `rnsilveira22/servium-ia`):
+
+| ID | Situação detectada | Evidência no GitHub/git | Linha acima (data da sessão) | Ação necessária |
+|---|---|---|---|---|
+| HG-UX-M0_ACCEPTANCE | **Não registrado formalmente**; M0 foi mergeado | PR #96 MERGED `95c8160` (09/09), `mergedBy: rnsilveira22`, sem reviews | "**Sem merge antes da decisão humana**" (08/09) + estado `AWAITING_HUMAN_DECISION` | Registrar decisão de aceite (APROVADO/outra) retroativamente — `AWAITING_DECISION` |
+| HG-UX-M1 (plano) | Aprovação do plano M1 PARALELO (09/09) citada como existente **apenas** no backlog executável não commitado (`FACTORY_V2_M1_EXECUTABLE_BACKLOG.md`, blob efêmero) | Sem commit; sem entrada no log | "aguardando conclusão do M0" | Registrar aprovação do plano (Data/contexto) ou marcar decisão como ausente — `AWAITING_DECISION` |
+| Merge Wave B1 (PR #98) | Merge executado pelo owner (10/09) **sem registro de decisão no log** | PR #98 MERGED `dfb75c0` (10/09), `mergedBy: rnsilveira22`; commits `e6a2a1f`+`f0ca3f7`; CI exit 0 | — | Não inventar nota; a decisão de merge é fato registrado no GitHub; falta registrar no log — `AWAITING_DECISION` |
+
+Decisões deste adendo:
+
+- Nenhuma decisão foi **criada** nesta auditoria (nenhum gate foi aprovado/rejeitado).
+- Estado de todas as lacunas acima: **`AWAITING_DECISION`** — formalização depende do Owner/`rnsilveira22`.
