@@ -243,8 +243,8 @@ Detalhe de infraestrutura do harness (`run-e2e.sh` roda apenas API+Web, sem work
 
 | Stakeholder | Papel | Status |
 |---|---|---|
-| Rodrigo / Product Owner | Decisor do `HG-B1-2026-09` | **AGUARDANDO HUMAN REVIEW** do relatório e da PR |
-| Pleno/Sênior (QA independente) | Revisão de código/testes | **PENDENTE** — necessário para `QA_APPROVED` definitivo |
+| Rodrigo / Product Owner | Decisor do `HG-B1-2026-09` | ✅ **PO_ACCEPTED + MERGED** (PR #99, `04329db`, 2026-09-13) |
+| Pleno/Sênior (QA independente) | Revisão de código/testes | ✅ **Revisão independente read-only: PASS COM RESSALVAS** (ressalvas tratadas) — merge habilitado |
 | Motor/engine | Determinismo preservado | ✅ inalterado |
 | Usuário operador | **Sem** ação em `recebido` | ✅ coerente com RBAC |
 
@@ -256,19 +256,20 @@ Detalhe de infraestrutura do harness (`run-e2e.sh` roda apenas API+Web, sem work
 - O item `recebido` **deixou de ser terminal-preso**: a jornada termina em `encerrado`, as 4 métricas de resolução ganham fonte (eventos `decidir`), e o GO/NO-GO Piloto desbloqueia o critério "jornada end-to-end".
 - O **risco de falso `resolvido` foi eliminado por construção**: nenhuma transição é automática (declarações §4).
 - Planos/honestidade: nenhum item do MVP foi concluído por inferência; B-1 apenas implementa sua responsabilidade.
+- **Entregue via PR #99 (MERGE `04329db`, 2026-09-13)** após revisão independente read-only e `PO_ACCEPTED`.
 
 ### Declaração final
 
-> **B-1 (MVP-01): IMPLEMENTADO · QA_APPROVED (sintético + revisão independente) · EXECUTION_AUTHORIZED (HG-B1-2026-09_EXEC) · AGUARDANDO HUMAN REVIEW (Pleno + PO) para merge**
+> **B-1 (MVP-01): IMPLEMENTADO · QA_APPROVED (sintético + revisão independente PASS COM RESSALVAS, tratadas) · EXECUTION_AUTHORIZED (HG-B1-2026-09_EXEC) · PO_ACCEPTED · MERGED (PR #99, squash `04329db`, 2026-09-13)**
 > Resolução automática: **NÃO IMPLEMENTADA** · LLM: **NÃO IMPLEMENTADO** · Novos estados: **NENHUM** · Upload: **NÃO IMPLEMENTADO** · M2+: **NÃO IMPLEMENTADO** · Gmail/P0-2: **NÃO ALTERADO**
 
 ---
 
 ## 17. Próximos passos
 
-1. Revisão humana (Pleno + PO) do relatório e da PR de implementação.
-2. Merge da PR de implementação após `QA_APPROVED` + `PO_ACCEPTED` (DoD do autorizador).
-3. Atualização do `FACTORY_STATUS` ao confirmar o merge (não antecipado neste relatório).
+1. ✅ ~~Revisão humana (Pleno + PO) do relatório e da PR de implementação~~ — **concluído**: revisão independente read-only PASS COM RESSALVAS (tratadas) + `PO_ACCEPTED`.
+2. ✅ ~~Merge da PR de implementação após QA_APPROVED + PO_ACCEPTED~~ — **concluído**: PR #99 merged (`04329db`, squash, 2026-09-13).
+3. **FACTORY_STATUS atualizado** (2026-09-13) — B-1 MERGED; GO/NO-GO Piloto critério "jornada end-to-end" desbloqueado (decisão de gate fica para o humano).
 4. Backlog: DE-02 (upload/validação de conteúdo) e M2 (dashboard) permanecem abertos para o Próximo Ciclo.
 
 ---

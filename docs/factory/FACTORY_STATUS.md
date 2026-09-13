@@ -4,9 +4,11 @@
 
 ## Última atualização
 
-2026-09-12 · **RECONCILIAÇÃO OFICIAL** do estado real do GitHub (ver `docs/reports/FACTORY_V2_GITHUB_RECONCILIATION_2026-09.md`). Snapshots anteriores: 2026-09-08 · P0.3-D (#57 ASVS) MERGED (PR #90, rebase L3, `a8c057a`, `Closes #57`) · Blueprint UX/UI Fase 2 MERGED (PR #92, squash L3, `731c009`) · P0.3-C (#56) e #73 merged via L2 · PRM-P0.3-A (#54, PR #80 `6313cab`) e PRM-P0.3-B (#55, PR #81 `69e0950`) DONE+MERGED · **M0 UX IMPLEMENTADO + VALIDADO (PR #96)** · Factory V2 operacional (Orchestrator + estados V2).
+2026-09-13 · **MVP-01 · B-1 MERGED** — fluxo `recebido → resolvido | excecao` (validação humana, Alternativa A / `HG-B1-2026-09`) implementado, revisão independente read-only **PASS COM RESSALVAS** (ressalvas tratadas), CI 4/4 verde, **PR #99 squash merge `04329db` (13/09)** — autorização de execução registrada (**HG-B1-2026-09_EXEC**); detalhes no relatório `docs/reports/B1_IMPLEMENTATION_REPORT_2026-09.md`. Snapshot anterior: 2026-09-12 · **RECONCILIAÇÃO OFICIAL** do estado real do GitHub (ver `docs/reports/FACTORY_V2_GITHUB_RECONCILIATION_2026-09.md`). Snapshots prévios: 2026-09-08 · P0.3-D (#57 ASVS) MERGED (PR #90, rebase L3, `a8c057a`, `Closes #57`) · Blueprint UX/UI Fase 2 MERGED (PR #92, squash L3, `731c009`) · P0.3-C (#56) e #73 merged via L2 · PRM-P0.3-A (#54, PR #80 `6313cab`) e PRM-P0.3-B (#55, PR #81 `69e0950`) DONE+MERGED · **M0 UX IMPLEMENTADO + VALIDADO (PR #96)** · Factory V2 operacional (Orchestrator + estados V2).
 
 Mudanças desde o último snapshot (evidência objetiva em GitHub/git):
+
+- **PR #99 (MVP-01 · B-1 — validação humana do `recebido`) MERGED (13-09, commit `04329db`, squash, PO `PO_ACCEPTED`)** — `post /decidir` estendido para `recebido` (`resolvido`/`excecao`), `excecoes(tipo='validacao_recebido')`, enqueue `ciclo.tick{ciclo_id}` pós-decisão, UI de validação em `CicloDetailPage` (admin), testes AC-B1-01..12 + Runtime E2E + Selenium; decisão de produto anexa (encerramento com exceção aberta **aceito** — AC-B1-08 ajustado). Revisão independente read-only → **PASS COM RESSALVAS**; ressalvas tratadas antes do merge.
 
 - **PR #96 (M0 UX — Fundação Visual) MERGED (09-09, commit `95c8160`, squash, branch `feat/web-ux-m0-foundation`)** — a `main` local/remota contém o M0. O documento anterior registrava `AWAITING_HUMAN_DECISION` e "sem merge antes da decisão"; o merge foi executado por `rnsilveira22`, mas **sem registro formal do `HUMAN_GATE_UX_M0_ACCEPTANCE` no `HUMAN_DECISIONS_LOG`** → `AWAITING_DECISION` (formalizar; a única evidência é o próprio merge).
 - **PR #98 (M1 Wave B1 backend) MERGED (09-10, commit `dfb75c0`, squash, merge humano `rnsilveira22`)** — entrega **M1-OPS-01** (`template_id` em `POST /obrigacoes`), **M1-OPS-03** (`motor-erro.test.ts`, evidências + retry), **M1-OPS-04A** (e-mail obrigatório/validado em `POST /clientes` — DD-08, `email-validation.ts`), **M1-OPS-05** (`GET/PUT /configuracoes`, `ConfiguracoesController`, migração `0011_emails.sql`), **M1-OPS-07** (`actor_nome` na auditoria — DA-02). **M1-OPS-04B** segue `AWAITING_DECISION` (legados sem e-mail intocados). Verificações do PR: `npm run verify` exit 0 (API 138/2, Web 43, Runtime E2E 2, lint/build/typecheck verdes).
@@ -37,8 +39,8 @@ Mudanças desde o último snapshot (evidência objetiva em GitHub/git):
 
 | Dimensão | Estado |
 |---|---|
-| Branch de trabalho | `main` sincronizada (`49fa677`) |
-| Estado do MVP-01 | **P0.1–P0.3 resolvido** (PRs #61–#66, #76/#77/#78, #80/#81, #89, #90, #91, #95) + **P0.3 restante: 0** · **M0 UX MERGED (PR #96, `95c8160`, 09/09)** — atualizado → M0 `DONE` · **M1 Backend Wave B1 MERGED (PR #98, `dfb75c0`, 09/10 — OPS-01/03/04A/05/07; OPS-04B `AWAITING_DECISION`)** · **M1 UX (Frente A, M1-UI-01/05) IMPLEMENTED em branch, SEM PR** (`feat/m1-frente-a-pleno`, 3 commits) · M0/M1 UX formalização de gates: `AWAITING_DECISION` |
+| Branch de trabalho | `main` sincronizada (`04329db`) |
+| Estado do MVP-01 | **P0.1–P0.3 resolvido** (PRs #61–#66, #76/#77/#78, #80/#81, #89, #90, #91, #95) + **P0.3 restante: 0** · **M0 UX MERGED (PR #96, `95c8160`, 09/09)** — atualizado → M0 `DONE` · **M1 Backend Wave B1 MERGED (PR #98, `dfb75c0`, 09/10 — OPS-01/03/04A/05/07; OPS-04B `AWAITING_DECISION`)** · **B-1 \`recebido→resolvido\|excecao\` MERGED (PR #99, \`04329db\`, 13/09 — GO/NO-GO critério de jornada end-to-end desbloqueado)** · **M1 UX (Frente A, M1-UI-01/05) IMPLEMENTED em branch, SEM PR** (`feat/m1-frente-a-pleno`, 3 commits) · M0/M1 UX formalização de gates: `AWAITING_DECISION` |
 | Software Factory | **V2 OPERACIONAL** — Orchestrator + estados V2 aprovados (HG-F2-01/02/03) |
 | Meta canônica | [`../product/MVP_01_VERTICAL_SLICE.md`](../product/MVP_01_VERTICAL_SLICE.md) — primeiro Funcionário Digital em operação assistida no piloto |
 | ADRs 001..011 | `Accepted` (HG-002); ADR-008 `CommunicationChannel` preservado (HG-008) |
@@ -64,6 +66,7 @@ Mudanças desde o último snapshot (evidência objetiva em GitHub/git):
 | HG-REC-01 | Reconciliação (fechamento #45–#49 + docs) | ✅ APROVADO (2026-09-04) |
 | **HG-RETENÇÃO** | **Retenção de eventos de auditoria** | ⏳ DEFERRED — prazo numérico a definir antes de PILOT_READY |
 | **HG-PR-SEC** | **Hardening de segurança P0.3 (senha + rate-limit)** | ✅ APROVADO (2026-09-06) — valores propostos; P0.3-A/B liberadas |
+| **HG-B1-2026-09** | **MVP-01 · B-1 — fluxo `recebido → resolvido` (validação humana)** | ✅ APROVADO (2026-09-12) + **EXECUTION_AUTHORIZED (`HG-B1-2026-09_EXEC`)** + **MERGED (PR #99, `04329db`, 13/09)** |
 
 Registro formal: [`HUMAN_DECISIONS_LOG.md`](HUMAN_DECISIONS_LOG.md).
 
@@ -83,8 +86,9 @@ Registro formal: [`HUMAN_DECISIONS_LOG.md`](HUMAN_DECISIONS_LOG.md).
 | 07/09/2026 | merge PR normal squash | #94 (P1 — correções UX/UI auditoria) | [PR #95](https://github.com/rnsilveira22/servium/pull/95) `30744fa` | ok |
 | 09/09/2026 | merge PR (humano `rnsilveira22`) | #96 (M0 UX — Fundação Visual) | [PR #96](https://github.com/rnsilveira22/servium/pull/96) `95c8160` — **sem registro formal de `HUMAN_GATE_UX_M0_ACCEPTANCE` no `HUMAN_DECISIONS_LOG`** (única evidência: o merge) | ok (evidência = merge) |
 | 10/09/2026 | merge PR (humano `rnsilveira22`) | PR #98 (M1 Wave B1 — OPS-01/03/04A/05/07) | [PR #98](https://github.com/rnsilveira22/servium/pull/98) `dfb75c0` — commits `e6a2a1f` + `f0ca3f7`; **sem reviews registrados**; sem registro no `HUMAN_DECISIONS_LOG` | ok (evidência = merge + CI) |
+| 13/09/2026 | merge PR squash (PO aprovou) | MVP-01 · B-1 (`recebido→resolvido`, HG-B1-2026-09) | [PR #99](https://github.com/rnsilveira22/servium/pull/99) `04329db` — revisão independente read-only PASS COM RESSALVAS (tratadas) · CI 4/4 · `HG-B1-2026-09_EXEC` | ok |
 
-> **L2 merges**: #76/#77/#78, #84, #81, #89, #91, #93, #95. **Merges L3 humanos (2026-09-08)**: PR #90 (ASVS #57, rebase `a8c057a`) e PR #92 (Blueprint Fase 2, squash `731c009`). **Merges humanos (09/09–10/09)**: PR #96 (`95c8160`) e PR #98 (`dfb75c0`). **PRs abertos (09/12)**: **#97 (dependabot/development) — fila NÃO zerada**; **sem PR para `feat/m1-frente-a-pleno`** (M1 UX implementada, aguarda decisão).
+> **L2 merges**: #76/#77/#78, #84, #81, #89, #91, #93, #95. **Merges L3 humanos (2026-09-08)**: PR #90 (ASVS #57, rebase `a8c057a`) e PR #92 (Blueprint Fase 2, squash `731c009`). **Merges humanos (09/09–10/09)**: PR #96 (`95c8160`) e PR #98 (`dfb75c0`). **Merge B-1 (13/09)**: PR #99 (`04329db`, PO aprovou). **PRs abertos (09/12)**: **#97 (dependabot/development) — fila NÃO zerada**; **sem PR para `feat/m1-frente-a-pleno`** (M1 UX implementada, aguarda decisão).
 
 ## Fila efetiva (Project `Servium IA Development`)
 

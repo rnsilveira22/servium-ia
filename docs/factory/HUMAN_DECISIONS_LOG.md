@@ -343,7 +343,7 @@ Validação humana
 - **Decisor**: Rodrigo — Product Owner · **Data**: 2026-09-12
 - **Decisão de produto anexa (pós-revisão independente)** : **comportamento de encerramento aceito** — o motor pode encerrar o ciclo enquanto houver itens em `excecao` (até com exceção aberta), pois `excecao` **não** integra o conjunto bloqueante de encerramento em `handlers.ts` (`NOT IN ('resolvido','cancelado','excecao')`). AC-B1-08 foi ajustado para refletir essa regra (ver implementação report §7). Nenhuma mudança de código decorrente desta decisão.
 - **Escopo de execução autorizado**: exatamente o contido no PR #99 (branch `feat/mvp01-b1-recebido-resolvido`): `decidir-item.ts`, `ciclos.controller.ts`, `CicloDetailPage.tsx`, testes API/Runtime/Selenium B-1 + robustez de testes E2E. NÃO autoriza qualquer alteração a mais.
-- **Status**: **EXECUTION_AUTHORIZED** — implementação registrada como autorizada para merge após revisão humana (Pleno + PO).
+- **Status**: **EXECUTION_AUTHORIZED** — implementação registrada como autorizada para merge após revisão humana (Pleno + PO). **MERGED (2026-09-13) — PR #99, squash commit `04329db`, `PO_ACCEPTED` + revisão independente read-only PASS COM RESSALVAS (tratadas); CI 4/4 verde**.
 
 ---
 
@@ -357,7 +357,7 @@ Validação humana
 | HG-PR-SEC | Hardening de segurança P0.3 (senha + rate-limit) | **APROVADO (2026-09-06)** — P0.3-A/B liberadas |
 | HG-UX-M0 | Fundação Visual M0 (Fase 2 UX/UI) | **APROVADO (2026-09-08)** — M0 autorizado; M1..M5 NÃO |
 | HG-UX-M1 | Dashboard / M1 (Fase 2 UX/UI) | aguardando conclusão do M0 (QA + Visual QA + verify + Selenium + merge) |
-| **HG-B1-2026-09** | **MVP-01 — B-1 — fluxo `recebido → resolvido`** | **APROVADO (2026-09-12)** — Alternativa A (validação humana); **execução AUTORIZADA (HG-B1-2026-09_EXEC)** — ver merge em PR #99 |
+| **HG-B1-2026-09** | **MVP-01 — B-1 — fluxo `recebido → resolvido`** | **APROVADO (2026-09-12) · EXECUTION_AUTHORIZED (`HG-B1-2026-09_EXEC`) · MERGED (PR #99 `04329db`, 2026-09-13, PO_ACCEPTED)** |
 
 ## Reconciliação do estado real do GitHub (2026-09-12)
 
