@@ -375,3 +375,25 @@ Decisões deste adendo:
 
 - Nenhuma decisão foi **criada** nesta auditoria (nenhum gate foi aprovado/rejeitado).
 - Estado de todas as lacunas acima: **`AWAITING_DECISION`** — formalização depende do Owner/`rnsilveira22`.
+
+---
+
+## HG-B2-2026-09 — MVP-01 · B-2 — e-mail por tenant (desacoplar o RECEIVE do Mailpit) — implementação
+
+```text
+[AUTONOMY] L2/L3 | decisão requerida: implementar o B-2 conforme a análise
+B2_CUSTOMER_EMAIL_PROVIDER_TECHNICAL_READINESS_2026-09.md e registrar o estado.
+```
+
+- **Decisão**: **EXECUTADO (implementação autorizada e concluída)** — branch `feat/mvp01-b2-email-provider`, base `origin/main` (`458b8ef`).
+- **Decisor**: Rodrigo (owner) — direcionamento de sessão (2026-09-13) · **Data**: 2026-09-13
+- **Decisões de desenho aplicadas** (registro factual desta implementação):
+  1. **G2** — canal **por tenant** via `EmailProviderResolver` (provider resolvido no handler de cada job), com fallback global Mailpit para tenants sem integração.
+  2. **G4** — token de correlação aceito no **corpo** (`Identificador: t:<item>:r<n>`) **e** no cabeçalho `X-Correlation-Token`.
+  3. **R3** — integração persistida em `tenant_email_integration` (RLS FORCE) + `GET/PUT /configuracoes/integracao-email` (admin).
+- **Evidência**: relatório de implementação [`docs/reports/B2_EMAIL_PROVIDER_IMPLEMENTATION_REPORT_2026-09.md`](../reports/B2_EMAIL_PROVIDER_IMPLEMENTATION_REPORT_2026-09.md) · migração `0012_email_integration.sql` aplicada · suíte API verde (`171+ passed/173`, flakiness `rate-limit` pré-existente) · Runtime E2E **3/3 green** · build + ESLint ok.
+- **Condições vinculantes**:
+  1. **Gmail real fora de CI/permanece AWAITING_DECISION** — o único bloqueio restante é **HG-007** (credenciais Google Cloud + redirect + conta autorizada); sem ele, nenhuma execução real de Gmail.
+  2. **Política "Gmail nunca em CI" preservada** (`channel.ts`); `GMAIL_*` nunca commitados.
+  3. Rito real (AC-B2-13) é aceite manual pós-merge, com registro de evidência (message id + auditoria).
+- **Resultado**: **IMPLEMENTADO / QA_VERDE / E2E_RUNTIME_APROVADO / AGUARDANDO_HUMAN_REVIEW**.

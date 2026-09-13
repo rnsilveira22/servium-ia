@@ -14,11 +14,13 @@ import {
   type EstadoItem,
   type LimitesConfig,
 } from './engine';
-import type { CommunicationChannel } from './channel';
+import type { CommunicationChannel, ProviderResolver } from './channel';
 
 export interface MotorDeps {
   channel: CommunicationChannel;
   remetentePadrao?: string;
+  /** B-2 R2 · resolução opcional de canal/remetente por tenant (fallback global). */
+  resolver?: ProviderResolver | null;
   /** Identidade de serviço do Funcionário Digital (PRM-P0.3-C). */
   serviceId?: string;
 }
@@ -178,7 +180,19 @@ export const cobrarItem =
     // cliente responder citando o "Identificador", o runtime vincula a resposta.
     const tokenCorrelacao = `t:${itemId}:r${item.tentativas + 1}`;
 
-    const resultado = await deps.channel.enviar({
+    // B-2 R2 · resolve canal + remetente por tenant (ex.: Tenant A → Gmail);
+    // falha na resolução propaga (retry SRV-8) — nunca envia pelo canal errado.
+    let canal: CommunicationChannel = deps.channel;
+    let remetente = deps.remetentePadrao ?? 'assistente@servium.local';
+    if (deps.resolver) {
+      const resolvido = await deps.resolver.resolverCanal(job.tenant_id, ctx);
+      if (resolvido) {
+        canal = resolvido.canal;
+        remetente = resolvido.remetente;
+      }
+    }
+
+    const resultado = await canal.enviar({
       destinatario: item.email,
       assunto: `Pendência documental: ${item.descricao}`,
       corpo: `Olá ${item.cliente_nome}, precisamos de: ${item.descricao}.\n\nIdentificador: ${tokenCorrelacao}`,
@@ -214,7 +228,7 @@ export const cobrarItem =
           job.tenant_id,
           itemId,
           item.email,
-          deps.remetentePadrao ?? 'assistente@servium.local',
+          remetente,
           resultado.messageId ?? null,
           chave,
           tokenCorrelacao,

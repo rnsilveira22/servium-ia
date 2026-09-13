@@ -381,7 +381,7 @@ describe('M1-OPS-03 · recebimento/correlação — sucesso, idempotência por m
     const { itemId } = await cicloComItemAguardando();
     const token = `t:${itemId}:r1`;
     const res = await correlacionarRecebidas([
-      { messageId: '<recv-1@mailpit>', remetente: 'cliente-err@local', corpo: `anexo\nIdentificador: ${token}`, tokenCorrelacao: token },
+      { provider: 'mailpit', providerMessageId: '<recv-1@mailpit>', from: 'cliente-err@local', to: [], subject: '', bodyText: `anexo\nIdentificador: ${token}`, receivedAt: new Date(), correlationToken: token },
     ]);
     expect(res.processadas).toBe(1);
     const { rows: est } = await admin.query('SELECT estado FROM itens_ciclo WHERE id=$1', [itemId]);
@@ -401,7 +401,7 @@ describe('M1-OPS-03 · recebimento/correlação — sucesso, idempotência por m
   it('mesma message_id repetida ⇒ idempotente (0 novas processadas, sem re-marcar)', async () => {
     const { itemId } = await cicloComItemAguardando();
     const token = `t:${itemId}:r1`;
-    const msg = { messageId: '<recv-dup@mailpit>', remetente: 'cliente-err@local', corpo: `Identificador: ${token}`, tokenCorrelacao: token };
+    const msg = { provider: 'mailpit', providerMessageId: '<recv-dup@mailpit>', from: 'cliente-err@local', to: [], subject: '', bodyText: `Identificador: ${token}`, receivedAt: new Date(), correlationToken: token };
     await correlacionarRecebidas([msg]);
     const res2 = await correlacionarRecebidas([msg]);
     expect(res2.processadas).toBe(0);
@@ -414,7 +414,7 @@ describe('M1-OPS-03 · recebimento/correlação — sucesso, idempotência por m
 
   it('sem token: semToken>0 e item permanece aguardando', async () => {
     const { itemId } = await cicloComItemAguardando();
-    const res = await correlacionarRecebidas([{ messageId: '<raw>', remetente: 'x@y', corpo: 'oi' }]);
+    const res = await correlacionarRecebidas([{ provider: 'mailpit', providerMessageId: '<raw>', from: 'x@y', to: [], subject: '', bodyText: 'oi', receivedAt: new Date() }]);
     expect(res.semToken).toBe(1);
     expect(res.processadas).toBe(0);
     const { rows: est } = await admin.query('SELECT estado FROM itens_ciclo WHERE id=$1', [itemId]);
