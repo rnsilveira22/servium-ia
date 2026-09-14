@@ -7,9 +7,12 @@
 import { PollWorker, type JobHandler } from '@servium-ia/db';
 
 import { registrarMotorHandlers, type MotorDeps } from '../motor/handlers';
+import type { ProviderResolver } from '../motor/channel';
 
 export interface MotorWorkerOptions {
   channel: MotorDeps['channel'];
+  /** B-2 R2 · resolução opcional de canal/remetente por tenant (fallback global). */
+  resolver?: ProviderResolver;
   pollMs?: number;
   batch?: number;
   reapIntervalMs?: number;
@@ -26,6 +29,7 @@ export function createMotorWorker(opts: MotorWorkerOptions): PollWorker {
     channel: opts.channel,
     remetentePadrao: process.env.MAIL_FROM ?? 'assistente@servium.local',
     serviceId: opts.serviceId,
+    resolver: opts.resolver,
   };
   const worker = new PollWorker({
     pollMs: opts.pollMs,

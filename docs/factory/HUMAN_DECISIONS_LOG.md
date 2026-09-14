@@ -358,6 +358,7 @@ Validação humana
 | HG-UX-M0 | Fundação Visual M0 (Fase 2 UX/UI) | **APROVADO (2026-09-08)** — M0 autorizado; M1..M5 NÃO |
 | HG-UX-M1 | Dashboard / M1 (Fase 2 UX/UI) | aguardando conclusão do M0 (QA + Visual QA + verify + Selenium + merge) |
 | **HG-B1-2026-09** | **MVP-01 — B-1 — fluxo `recebido → resolvido`** | **APROVADO (2026-09-12) · EXECUTION_AUTHORIZED (`HG-B1-2026-09_EXEC`) · MERGED (PR #99 `04329db`, 2026-09-13, PO_ACCEPTED)** |
+| **HG-B2-2026-09** | **MVP-01 — B-2 — e-mail por tenant (RECEIVE desacoplado do Mailpit)** | **IMPLEMENTADO (13-09) · QA_APPROVED_WITH_RESERVATIONS + PO_ACCEPTED (`HG-B2-2026-09_PO_ACCEPT`, 14-09) · merge do PR #103 PENDENTE (rede GitHub indisponível); HG-007 permanece AWAITING_DECISION** |
 
 ## Reconciliação do estado real do GitHub (2026-09-12)
 
@@ -375,3 +376,42 @@ Decisões deste adendo:
 
 - Nenhuma decisão foi **criada** nesta auditoria (nenhum gate foi aprovado/rejeitado).
 - Estado de todas as lacunas acima: **`AWAITING_DECISION`** — formalização depende do Owner/`rnsilveira22`.
+
+---
+
+## HG-B2-2026-09 — MVP-01 · B-2 — e-mail por tenant (desacoplar o RECEIVE do Mailpit) — implementação
+
+```text
+[AUTONOMY] L2/L3 | decisão requerida: implementar o B-2 conforme a análise
+B2_CUSTOMER_EMAIL_PROVIDER_TECHNICAL_READINESS_2026-09.md e registrar o estado.
+```
+
+- **Decisão**: **EXECUTADO (implementação autorizada e concluída)** — branch `feat/mvp01-b2-email-provider`, base `origin/main` (`458b8ef`).
+- **Decisor**: Rodrigo (owner) — direcionamento de sessão (2026-09-13) · **Data**: 2026-09-13
+- **Decisões de desenho aplicadas** (registro factual desta implementação):
+  1. **G2** — canal **por tenant** via `EmailProviderResolver` (provider resolvido no handler de cada job), com fallback global Mailpit para tenants sem integração.
+  2. **G4** — token de correlação aceito no **corpo** (`Identificador: t:<item>:r<n>`) **e** no cabeçalho `X-Correlation-Token`.
+  3. **R3** — integração persistida em `tenant_email_integration` (RLS FORCE) + `GET/PUT /configuracoes/integracao-email` (admin).
+- **Evidência**: relatório de implementação [`docs/reports/B2_EMAIL_PROVIDER_IMPLEMENTATION_REPORT_2026-09.md`](../reports/B2_EMAIL_PROVIDER_IMPLEMENTATION_REPORT_2026-09.md) · migração `0012_email_integration.sql` aplicada · suíte API verde (`171+ passed/173`, flakiness `rate-limit` pré-existente) · Runtime E2E **3/3 green** · build + ESLint ok.
+- **Condições vinculantes**:
+  1. **Gmail real fora de CI/permanece AWAITING_DECISION** — o único bloqueio restante é **HG-007** (credenciais Google Cloud + redirect + conta autorizada); sem ele, nenhuma execução real de Gmail.
+  2. **Política "Gmail nunca em CI" preservada** (`channel.ts`); `GMAIL_*` nunca commitados.
+  3. Rito real (AC-B2-13) é aceite manual pós-merge, com registro de evidência (message id + auditoria).
+- **Resultado**: **IMPLEMENTADO / QA_VERDE / E2E_RUNTIME_APROVADO / AGUARDANDO_HUMAN_REVIEW**.
+
+---
+
+## HG-B2-2026-09_PO_ACCEPT — MVP-01 · B-2 — Human Review + PO Acceptance
+
+```text
+[AUTONOMY] L2/L3 | decisão humana: aceite do B-2 (Human Review + merge do PR #103) | determinada por: Rodrigo (owner) em 2026-09-14 | evidência de QA: docs/reports/B2_QA_HUMAN_REVIEW_REPORT_2026-09.md
+```
+
+- **Decisão**: **PO_ACCEPTED** — o decisor (**Rodrigo / `rnsilveira22`**, 2026-09-14) **aceita a implementação B-2** com as reservations e follow-ups documentados pelo QA independente e **autoriza o merge do PR #103**.
+- **QA de referência**: **`QA_APPROVED_WITH_RESERVATIONS`** — Blockers **0**, High **0**; MEDIUM **F-1** (idempotência do envio Gmail) e **F-2** (OAuth `state` — pré-existente); Reservations **R-1** (tokens OAuth em repouso), **R-2** (naming do ledger `mensagens_gmail`), **R-3** (política de provider primário); Follow-ups **L-1..L-3, FU-1..FU-5** — registro formal em [`docs/factory/B2_FOLLOW_UPS.md`](../factory/B2_FOLLOW_UPS.md).
+- **Condições vinculantes**:
+  1. **HG-007 NÃO aprovado** — permanece `AWAITING_DECISION` (credenciais Google/Gmail reais em ambiente protegido); ausência de credencial ≠ código errado.
+  2. **NÃO autoriza `PILOT_GO`** — gates operacionais do piloto continuam pendentes (definidos separadamente).
+  3. O aceite cobre **apenas a implementação B-2** (código + documentos do PR #103); não autoriza nova frente de implementação.
+- **Execução (local)**: governança registrada nesta entrada + [`docs/factory/B2_FOLLOW_UPS.md`](../factory/B2_FOLLOW_UPS.md) + [`docs/factory/FACTORY_STATUS.md`](FACTORY_STATUS.md) + relatório [`docs/reports/B2_HUMAN_REVIEW_MERGE_REPORT_2026-09.md`](../reports/B2_HUMAN_REVIEW_MERGE_REPORT_2026-09.md), em commit docs-only no branch `feat/mvp01-b2-email-provider`.
+- **Status do merge**: **PENDENTE** — no momento da execução, `github.com`/`api.github.com:443` estavam **inacessíveis** (fetch suspenso); portanto **push, CI remoto e merge do PR #103 NÃO foram executados e nenhum status/hash do GitHub foi inventado**. Concluir quando a rede permitir: push → atualizar PR #103 (QA `APPROVED_WITH_RESERVATIONS`, PO `ACCEPTED`, `MERGE: AUTHORIZED`) → CI verde (réplica local já verde) → merge (squash) → reconciliação da `main` → declarar B-2 `DONE`.

@@ -74,3 +74,24 @@ export interface ChecklistTemplateDTO {
 export interface TenantConfigDTO {
   email_escritorio: string | null;
 }
+
+// ===== B-2 R3 · Integração de e-mail por tenant (provider-agnóstico) =====
+
+export const EMAIL_PROVIDERS = ['gmail', 'mailpit'] as const;
+export type EmailProvider = (typeof EMAIL_PROVIDERS)[number];
+
+export const EMAIL_AUTH_TYPES = ['none', 'oauth2'] as const;
+export type EmailAuthType = (typeof EMAIL_AUTH_TYPES)[number];
+
+/** Configuração de integração de e-mail do tenant (sem segredos; apenas a
+ *  referência à credencial). Compatível com a tabela tenant_email_integration. */
+export interface TenantEmailIntegrationDTO {
+  provider: EmailProvider;
+  sender_email: string | null;
+  mailbox_email: string | null;
+  auth_type: EmailAuthType;
+  credential_reference: string | null;
+  send_enabled: boolean;
+  receive_enabled: boolean;
+  status: string;
+}

@@ -91,11 +91,14 @@ describe('PRM-P0.1-E · correlação resposta ↔ item do ciclo', () => {
     const token = parseToken(`t:${itemId}:r1`)!;
     const res = await correlacionarRecebidas([
       {
-        messageId: '<m1@mailpit>',
-        remetente: 'cliente-corr@local',
-        assunto: 'Re: Pendência',
-        corpo: `anexo\nIdentificador: ${token.token}`,
-        tokenCorrelacao: token.token,
+        provider: 'mailpit',
+        providerMessageId: '<m1@mailpit>',
+        from: 'cliente-corr@local',
+        to: ['assistente@servium.local'],
+        subject: 'Re: Pendência',
+        bodyText: `anexo\nIdentificador: ${token.token}`,
+        receivedAt: new Date(),
+        correlationToken: token.token,
       },
     ]);
     expect(res.processadas).toBe(1);
@@ -127,11 +130,14 @@ describe('PRM-P0.1-E · correlação resposta ↔ item do ciclo', () => {
     const token = parseToken(`t:${itemId}:r1`)!;
     const res = await correlacionarRecebidas([
       {
-        messageId: '<m1@mailpit>',
-        remetente: 'cliente-corr@local',
-        assunto: 'Re: Pendência',
-        corpo: `Identificador: ${token.token}`,
-        tokenCorrelacao: token.token,
+        provider: 'mailpit',
+        providerMessageId: '<m1@mailpit>',
+        from: 'cliente-corr@local',
+        to: ['assistente@servium.local'],
+        subject: 'Re: Pendência',
+        bodyText: `Identificador: ${token.token}`,
+        receivedAt: new Date(),
+        correlationToken: token.token,
       },
     ]);
     expect(res.processadas).toBe(0);
@@ -148,7 +154,9 @@ describe('PRM-P0.1-E · correlação resposta ↔ item do ciclo', () => {
   });
 
   it('mensagem sem token é ignorada sem efeitos', async () => {
-    const res = await correlacionarRecebidas([{ messageId: '<raw>', remetente: 'x@y', corpo: 'oi' }]);
+    const res = await correlacionarRecebidas([
+      { provider: 'mailpit', providerMessageId: '<raw>', from: 'x@y', to: [], subject: '', bodyText: 'oi', receivedAt: new Date() },
+    ]);
     expect(res.semToken).toBe(1);
     expect(res.processadas).toBe(0);
   });
@@ -175,7 +183,7 @@ describe('PRM-P0.1-E · correlação resposta ↔ item do ciclo', () => {
     try {
       const msgs = await buscarMensagensDoMailpit(`http://127.0.0.1:${addr.port}`, 'assistente@servium.local');
       expect(msgs).toHaveLength(1);
-      expect(msgs[0]!).toMatchObject({ messageId: `<${MSG_ID}>`, remetente: 'cliente-corr@local', tokenCorrelacao: token });
+      expect(msgs[0]!).toMatchObject({ messageId: `<${MSG_ID}>`, from: 'cliente-corr@local', correlationToken: token });
     } finally {
       server.close();
     }

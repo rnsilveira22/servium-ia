@@ -3,16 +3,22 @@
  *
  * O motor envia cobranças embutindo o "Identificador: t:<item>:r<rodada>".
  * Quando o cliente responde citando o identificador, este módulo:
- *   1. lê as mensagens (Mailpit REST em dev/CI; Gmail API no piloto #54);
- *   2. extrai o token de correlação do corpo da resposta;
- *   3. vincula ao item (aguardando → recebido), idempotente por message_id;
+ *   1. coleta mensagens via contrato genérico `Recebedor` (B-2 R1) — o
+ *      runtime NUNCA chama uma função de provider diretamente;
+ *   2. extrai o token de correlação (corpo e/ou header já normalizado pelo
+ *      adapter → `MensagemRecebida.correlationToken`);
+ *   3. vincula ao item (aguardando → recebido), idempotente por
+ *      `provider_message_id`;
  *   4. registra mensagens_comunicacao + mensagens_gmail + auditoria 'receber'.
+ *
+ * B-2: Mailpit segue como provider de dev/teste via `MailpitRecebedor`;
+ * Gmail/SMTP/etc. entram pelo mesmo contrato sem tocar neste módulo.
  * Toda escrita usa conexão contextual por tenant (RLS), nunca bypass.
  */
 import { app, admin, setTenant } from '@servium-ia/db';
 import type pg from 'pg';
 
-import type { MensagemRecebida } from '../motor/channel';
+import type { MensagemRecebida, Recebedor, ReceiveContext } from '../motor/channel';
 
 const TOKEN_RE = /Identificador:\s*(t:[0-9a-f-]{36}:r\d+)/i;
 
@@ -39,18 +45,22 @@ export function parseToken(token: string): TokenCorrelacao | null {
 interface MailpitEnvelope {
   messages?: Array<{
     ID: string;
-    MessageID: string;
-    From: { Address: string };
+    MessageID?: string;
+    Created?: string;
+    From?: { Address: string };
     To?: Array<{ Address: string }>;
-    Subject: string;
+    Subject?: string;
   }>;
 }
 
 interface MailpitDetalhe {
   MessageID?: string;
   From?: { Address?: string };
+  To?: Array<{ Address?: string }>;
   Subject?: string;
   Text?: string;
+  HTML?: string;
+  Created?: string;
   Snippet?: string;
 }
 
@@ -79,15 +89,36 @@ export async function buscarMensagensDoMailpit(apiUrl: string, caixa?: string): 
     const d = (await det.json()) as MailpitDetalhe;
     const corpo = d.Text ?? d.Snippet ?? '';
     const token = extrairToken(corpo);
+    const providerMessageId = d.MessageID ?? m.MessageID ?? String(m.ID);
     saidas.push({
-      messageId: d.MessageID ?? m.MessageID ?? String(m.ID),
-      remetente: (d.From?.Address ?? remetenteEnvelope) ?? '',
-      assunto: d.Subject ?? m.Subject,
-      corpo,
-      tokenCorrelacao: token,
+      provider: 'mailpit',
+      providerMessageId,
+      messageId: providerMessageId,
+      from: (d.From?.Address ?? remetenteEnvelope) ?? '',
+      to: (d.To ?? []).map((t) => t.Address ?? '').filter(Boolean),
+      subject: d.Subject ?? m.Subject ?? '',
+      bodyText: corpo,
+      bodyHtml: d.HTML ?? undefined,
+      receivedAt: new Date(d.Created ?? m.Created ?? Date.now()),
+      correlationToken: token,
     });
   }
   return saidas;
+}
+
+/** B-2 R1 · facade `Recebedor` do Mailpit — dev/CI/E2E pelo mesmo contrato. */
+export interface MailpitRecebedorOptions {
+  apiUrl: string;
+  caixa?: string;
+}
+
+export class MailpitRecebedor implements Recebedor {
+  constructor(private opts: MailpitRecebedorOptions) {}
+
+  async receber(context: ReceiveContext): Promise<MensagemRecebida[]> {
+    void context;
+    return buscarMensagensDoMailpit(this.opts.apiUrl, this.opts.caixa);
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -115,7 +146,7 @@ async function auditar(
   );
 }
 
-/** Vincula uma resposta já tokenizada ao item (idempotente por message_id).
+/** Vincula uma resposta já tokenizada ao item (idempotente por provider_message_id).
  *  Toda a sequência roda em transação: ou grava item + mensagens + auditoria,
  *  ou nada — nunca deixa estado parcial (item 'recebido' sem rastro da resposta). */
 async function vincularResposta(
@@ -129,7 +160,7 @@ async function vincularResposta(
   try {
     const dupe = await ctx.query('SELECT 1 FROM mensagens_gmail WHERE tenant_id=$1 AND gmail_message_id=$2', [
       tenantId,
-      msg.messageId,
+      msg.providerMessageId,
     ]);
     if (dupe.rowCount) {
       await ctx.query('ROLLBACK');
@@ -150,18 +181,19 @@ async function vincularResposta(
       `INSERT INTO mensagens_comunicacao
          (tenant_id, item_ciclo_id, direcao, canal, remetente, message_id, idempotency_key, token_correlacao, status)
        VALUES ($1,$2,'recebimento','email',$3,$4,'recv:' || $5,$6,'processado')`,
-      [tenantId, token.itemId, msg.remetente, msg.messageId, msg.messageId, token.token]
+      [tenantId, token.itemId, msg.from, msg.providerMessageId, msg.providerMessageId, token.token]
     );
     await ctx.query(
       `INSERT INTO mensagens_gmail
          (tenant_id, gmail_message_id, item_ciclo_id, direcao, subject, destinatario, token_correlacao)
        VALUES ($1,$2,$3,'recebimento',$4,$5,$6)`,
-      [tenantId, msg.messageId, token.itemId, msg.assunto ?? null, msg.remetente, token.token]
+      [tenantId, msg.providerMessageId, token.itemId, msg.subject ?? null, msg.from, token.token]
     );
     await auditar(ctx, tenantId, 'item_ciclo', token.itemId, 'receber', {
+      provider: msg.provider,
       rodada: token.rodada,
       token: token.token,
-      message_id: msg.messageId,
+      message_id: msg.providerMessageId,
     }, serviceId);
 
     await ctx.query('COMMIT');
@@ -183,11 +215,11 @@ export async function correlacionarRecebidas(
   await infra.connect();
   try {
     for (const msg of mensagens) {
-      if (!msg.tokenCorrelacao) {
+      if (!msg.correlationToken) {
         semToken++;
         continue;
       }
-      const token = parseToken(msg.tokenCorrelacao);
+      const token = parseToken(msg.correlationToken);
       if (!token) {
         semToken++;
         continue;
@@ -208,71 +240,4 @@ export async function correlacionarRecebidas(
     void infra.end();
   }
   return { processadas, semToken };
-}
-
-/* ------------------------------------------------------------------ */
-/* Recebedor periódico composto no runtime.                            */
-/* ------------------------------------------------------------------ */
-
-export interface RecebedorOptions {
-  apiUrl: string;
-  caixa: string;
-  receberIntervalMs: number;
-  /** Identidade de serviço do Funcionário Digital (PRM-P0.3-C): os eventos
-   *  de 'receber' são gravados com actor_type='servico' + actor_id=serviceId. */
-  serviceId?: string;
-  log?: (level: 'info' | 'warn' | 'error', msg: string, extra?: Record<string, unknown>) => void;
-}
-
-export class RecebedorPeriodico {
-  private running = false;
-  private timer: NodeJS.Timeout | null = null;
-  private rodadaPromise: Promise<RecebimentoResultado> | null = null;
-
-  constructor(private opts: RecebedorOptions) {}
-
-  start(): void {
-    if (this.running) return;
-    this.running = true;
-    void this.rodada().catch(() => undefined);
-    this.timer = setInterval(() => void this.rodada().catch(() => undefined), Math.max(1_000, this.opts.receberIntervalMs));
-    this.timer.unref();
-  }
-
-  async stop(): Promise<void> {
-    if (!this.running) return;
-    this.running = false;
-    if (this.timer) {
-      clearInterval(this.timer);
-      this.timer = null;
-    }
-    await this.rodadaPromise;
-    this.rodadaPromise = null;
-  }
-
-  async rodada(): Promise<RecebimentoResultado> {
-    if (this.rodadaPromise) return this.rodadaPromise;
-    this.rodadaPromise = this.executa();
-    try {
-      return await this.rodadaPromise;
-    } finally {
-      this.rodadaPromise = null;
-    }
-  }
-
-  private async executa(): Promise<RecebimentoResultado> {
-    try {
-      const mensagens = await buscarMensagensDoMailpit(this.opts.apiUrl, this.opts.caixa);
-      const res = await correlacionarRecebidas(mensagens, this.opts.serviceId);
-      if (res.processadas > 0) {
-        this.opts.log?.('info', 'respostas correlacionadas', { processadas: res.processadas, semToken: res.semToken });
-      }
-      return res;
-    } catch (err) {
-      this.opts.log?.('warn', 'falha ao buscar correlacionar respostas', {
-        erro: String((err as Error)?.message ?? err),
-      });
-      throw err;
-    }
-  }
 }
