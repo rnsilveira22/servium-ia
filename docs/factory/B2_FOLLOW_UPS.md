@@ -19,7 +19,7 @@
 | **L-2** | `credential_reference` aceita texto livre no `PUT /configuracoes/integracao-email` (sem validação de formato) | LOW | a criar (GitHub indisponível no registro) | **OPEN** → backlog |
 | **L-3** | `GMAIL_REDIRECT_URI` default `http://localhost:...` em prod sem env ⇒ falha do Google (config — exigir env em prod) | LOW | a criar (GitHub indisponível no registro) | **OPEN** → backlog |
 | **FU-1** | `demo/` untracked no working tree quebra `npm run lint` local (9 erros) — fora do PR; remover/gitignore antes do merge | — | a criar (GitHub indisponível no registro) | **OPEN** → higiene local |
-| **FU-2** | Status do CI remoto do PR #103 não verificado (rede indisponível); réplica local do pipeline verde | — | — | **PENDENTE** → confirmar quando a rede permitir |
+| **FU-2** | Status do CI remoto do PR #103 não verificado (rede indisponível); réplica local do pipeline verde | — | — | **RESOLVIDO (14-09)** — PR #103 CI 4/4 verde no merge (`0266322`) |
 | **FU-3** | Flakiness pré-existente de `rate-limit` (429 vs 200/401) — passou isolado e na suíte nesta rodada; acompanhar | — | — | **Acompanhar** |
 | **FU-4** | AC-B2-10 (observabilidade refresh/quota/`/metrics`) parcial — refresh automático OK; métricas/alertas de quota pendentes | — | a criar (GitHub indisponível no registro) | **OPEN** → backlog |
 | **FU-5** | Rito manual real (AC-B2-13) depende de **HG-007** (credenciais reais) para liberar o piloto | — | — | **Bloqueado por HG-007** |
