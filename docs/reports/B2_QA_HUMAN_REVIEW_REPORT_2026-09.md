@@ -180,9 +180,11 @@ Auditoria no `apps/api/src/motor` (Core) e suas dependências:
 ## 9. Findings
 
 ### 🟥 BLOCKER
+
 - **Nenhum.**
 
 ### 🟧 HIGH
+
 - **Nenhum.**
 
 ### 🟨 MEDIUM

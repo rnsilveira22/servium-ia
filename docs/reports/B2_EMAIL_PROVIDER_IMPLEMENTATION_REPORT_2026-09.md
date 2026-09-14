@@ -32,9 +32,11 @@
 ## 3. Escopo implementado
 
 ### 3.1 Contrato genérico (`apps/api/src/motor/channel.ts`)
+
 - `MensagemRecebida`, `AnexoRecebido`, `ReceiveContext`, `Recebedor`, `EmailIntegration`, `EmailProvider`, `CanalResolvido`, `ProviderResolver`; `FakeChannel` com `receberRespostas`.
 
 ### 3.2 Resolução por tenant e RECEIVE (`apps/api/src/runtime/`)
+
 - `provider-resolver.ts` (novo): `EmailProviderResolver.obterIntegracao` / `resolverCanal` / `resolverRecebedor` — integração `receive_enabled` → adapter Gmail (auto-detect para credenciais) ou Mailpit; fallback dev/CI = Mailpit (`MAILPIT_API_URL` + ciclo aberto); `tentarAdapterGmail`, `mailpitRecebedor`.
 - `receive-handler.ts` (novo): handler `email.receber` — resolve fonte por tenant, não toca provider direto, correlaciona; sem fonte ⇒ conclui sem efeito (sem retry).
 - `receive-scheduler.ts` (novo): `ReceiveScheduler` — varredura por janela, chave idempotente `recv:<tenant>:<provider>:<windowKey>`, alvos = integrações `receive_enabled` + fallback dev, `reapStuck`.
@@ -43,11 +45,13 @@
 - `worker.ts` / `motor/handlers.ts`: `MotorDeps.resolver` opcional — `cobrarItem` resolve canal/remetente por tenant com fallback global; auditoria/`mensagens_comunicacao` mantidas.
 
 ### 3.3 GmailAdapter (`apps/api/src/email/gmail-adapter.ts`)
+
 - `buildGmailConfigFromEnv` + `GetGmailClient` injetável; `GmailAdapter implements CommunicationChannel + Recebedor`.
 - `receber(context, query)` normaliza → `MensagemRecebida` (NÃO persiste); `from` via `parseAddresses`; `correlationToken` = header `X-Correlation-Token` **ou** corpo (`TOKEN_RE`).
 - Retry 429/5xx com backoff + timeout de rede; refresh de access token expirado; `enviar` persiste `message_id` (`ON CONFLICT DO NOTHING`) antes do retorno.
 
 ### 3.4 Persistência e API
+
 - `packages/db/migrations/0012_email_integration.sql` (aplicada): `tenant_email_integration` — `provider`, `auth_type`, `emails[]`, `sender_email`, `receive_enabled`, `credential_reference`, RLS `tenant_isolation` FORCE, `UNIQUE(tenant_id, provider)`.
 - `packages/shared-types/src/index.ts`: `EMAIL_PROVIDERS`, `EmailProvider`, `EMAIL_AUTH_TYPES`, `EmailAuthType`, `TenantEmailIntegrationDTO`.
 - `apps/api/src/cadastro/configuracoes.controller.ts`: `GET/PUT /configuracoes/integracao-email` (admin-only, validação, upsert ON CONFLICT; resposta `{ integracao: DTO|null }` — Nest 11 não serializa `null`).
@@ -57,6 +61,7 @@
 ## 4. Testes
 
 ### 4.1 Novos (24 testes)
+
 | Arquivo | Prova |
 |---|---|
 | `test/provider-resolver.test.ts` | Gmail→adapter, Mailpit→integração, fallback/`receive_enabled`, tenant sem alvo |
@@ -67,6 +72,7 @@
 | `test/correlacao.test.ts`, `test/motor-erro.test.ts` | atualizados para o novo contrato |
 
 ### 4.2 Resultados
+
 | Verificação | Resultado |
 |---|---|
 | `npm run build -w @servium-ia/api` | OK |

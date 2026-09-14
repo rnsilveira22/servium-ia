@@ -141,7 +141,7 @@ pré-requisitos satisfeitos: QA_APPROVED_WITH_RESERVATIONS ✓ · PO_ACCEPTED �
 
 ---
 
-## Identification
+## Identificação
 
 ```text
 Agent:   opencode (executor do rito de encerramento e governança)
