@@ -45,7 +45,7 @@ export class LoginRateLimitInterceptor implements NestInterceptor {
     const ip = clienteIp(req);
 
     if (this.rate.contaBloqueada(slug, email) || this.rate.ipBloqueado(ip)) {
-      throw new HttpException('Too Many Requests', HttpStatus.TOO_MANY_REQUESTS);
+      throw this.respostaBloqueio(slug, email, ip);
     }
 
     return next.handle().pipe(
@@ -61,6 +61,25 @@ export class LoginRateLimitInterceptor implements NestInterceptor {
         return throwError(() => err);
       }),
       tap(() => this.rate.resetConta(slug, email)),
+    );
+  }
+
+  /**
+   * Resposta 429 com feedback acionável para o cliente (mensagem amigável +
+   * tempo restante). O corpo é SEMPRE o mesmo shape (message, statusCode,
+   * retryAposSegundos), independentemente da regra que acionou — a
+   * anti-enumeração (conta vs IP) continua preservada.
+   */
+  private respostaBloqueio(slug: string, email: string, ip: string): HttpException {
+    const restanteMs = this.rate.tempoRestanteBloqueioMs(slug, email, ip);
+    const retryAposSegundos = Math.max(1, Math.ceil(restanteMs / 1000));
+    return new HttpException(
+      {
+        message: 'Muitas tentativas de login. Aguarde alguns minutos e tente novamente.',
+        statusCode: HttpStatus.TOO_MANY_REQUESTS,
+        retryAposSegundos,
+      },
+      HttpStatus.TOO_MANY_REQUESTS,
     );
   }
 

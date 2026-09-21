@@ -17,6 +17,7 @@ const handlers = registrarMotorHandlers(deps);
 
 let cicloId: string;
 let obrigId: string;
+let templateId: string;
 
 /** Evidência por rotina executada (M1-OPS-03). */
 interface ResultadoRotina {
@@ -90,6 +91,7 @@ beforeAll(async () => {
       [TEN, tpl[0]!.id, desc, tipo]
     );
   }
+  templateId = tpl[0]!.id;
   const { rows: obl } = await admin.query(
     "INSERT INTO obrigacoes (tenant_id,cliente_id,descricao,template_id) VALUES ($1,$2,'Entregar docs',$3) RETURNING id",
     [TEN, cli[0]!.id, tpl[0]!.id]
@@ -119,6 +121,7 @@ async function limpar() {
     "DELETE FROM obrigacoes WHERE tenant_id=$1",
     "DELETE FROM itens_template WHERE tenant_id=$1",
     "DELETE FROM checklist_templates WHERE tenant_id=$1",
+    "DELETE FROM email_templates WHERE tenant_id=$1",
     "DELETE FROM clientes WHERE tenant_id=$1",
     "DELETE FROM sessoes WHERE tenant_id=$1",
     "DELETE FROM operadores WHERE tenant_id=$1",
@@ -212,5 +215,36 @@ describe("SRV-15 · motor end-to-end (handlers diretos, canal fake)", () => {
     await rodarJobs();
     const { rows } = await ctx.query("SELECT estado FROM ciclos WHERE id=$1", [cicloId]);
     expect(rows[0]!.estado).toBe("encerrado");
+  });
+
+  it("e-mail padrão: checklist com modelo renderiza placeholders no cobrar", async () => {
+    // modelo de e-mail vinculado ao checklist existente (templateId)
+    const { rows: m } = await admin.query(
+      `INSERT INTO email_templates (tenant_id, nome, assunto, corpo)
+       VALUES ($1,'Abertura de Empresa','Documentação: {{item_descricao}} para {{cliente_nome}}',
+              'Olá {{cliente_nome}},\n\nenvie {{item_descricao}}.\n\nIdentificador: {{token_correlacao}}')
+       RETURNING id`,
+      [TEN]
+    );
+    await admin.query("UPDATE checklist_templates SET email_template_id=$1 WHERE id=$2", [m[0]!.id, templateId]);
+
+    // novo ciclo a partir da mesma obrigação
+    const novoCiclo = randomUUID();
+    await ctx.query("INSERT INTO ciclos (id,tenant_id,obrigacao_id) VALUES ($1,$2,$3)", [novoCiclo, TEN, obrigId]);
+    await ctx.query(
+      `UPDATE ciclos SET config='{"frequencia_horas":0,"tentativas_max":3,"horario_inicio":0,"horario_fim":24}' WHERE id=$1`,
+      [novoCiclo]
+    );
+    const antes = canal.enviadas.length;
+    await enqueue(ctx, { tipo: "ciclo.ativar", payload: { ciclo_id: novoCiclo }, idempotencyKey: `ativar:${novoCiclo}` });
+    await rodarJobs();
+
+    const novas = canal.enviadas.slice(antes);
+    expect(novas.length).toBeGreaterThan(0);
+    const primeira = novas[0]!;
+    expect(primeira.assunto).toContain("Documentação: Contrato social para Cliente Motor");
+    expect(primeira.corpo).toContain("Olá Cliente Motor,");
+    expect(primeira.corpo).toContain("envie Contrato social.");
+    expect(primeira.corpo).toMatch(/Identificador: t:[^:]+:r1/);
   });
 });

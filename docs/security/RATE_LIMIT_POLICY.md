@@ -18,8 +18,28 @@ Authentication / anti-automation; NIST 800-63B confidencialidade).
 
 - Falhas contadas: credenciais inválidas (senha errada) e conta inexistente.
 - **Resposta anti-enumeração:** 401 para credenciais inválidas e 429 para
-  limite excedido, com o **mesmo formato de corpo** — nunca se expõe qual regra
+  limite excedido, com o **mesmo shape de corpo** — nunca se expõe qual regra
   (conta vs IP) acionou o bloqueio.
+
+## Feedback ao cliente no 429 (amendment 2026-09-21)
+
+O corpo do `429` ganhou feedback acionável e amigável para o operador, mantendo
+a anti-enumeração **conta vs IP**:
+
+```json
+{ "message": "Muitas tentativas de login. Aguarde alguns minutos e tente novamente.",
+  "statusCode": 429,
+  "retryAposSegundos": 47 }
+```
+
+- `message` é fixo e idêntico para ambas as regras (conta ou IP) — a UI nunca
+  sabe nem relata QUAL regra acionou o bloqueio.
+- `retryAposSegundos` informa o tempo restante da janela para a UI exibir
+  contagem regressiva. O valor **revela indiretamente a duração da janela**
+  (5 ou 15 min), um trade-off aceito para melhorar a experiência; a regra em si
+  permanece anônima no corpo e nos logs.
+- O `401` de credenciais inválidas permanece inalterado e mantém formato
+  idêntico (shape compatível), sem campos extras que diferenciem o erro.
 
 ## Comportamento da janela
 

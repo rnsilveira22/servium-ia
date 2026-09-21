@@ -333,7 +333,7 @@ export function CicloDetailPage() {
                       <td>{exc.cliente_nome}</td>
                       <td>{exc.item_descricao}</td>
                       <td>{exc.tentativas}</td>
-                      <td>{new Date(exc.criado_em).toLocaleDateString('pt-BR')}</td>
+                      <td>{formatarData(exc.criado_em)}</td>
                       {isAdmin && (
                         <td>
                           <div style={{ display: 'flex', gap: '0.5rem' }}>

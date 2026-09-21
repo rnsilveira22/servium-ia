@@ -10,6 +10,7 @@ import { CiclosPage } from './pages/CiclosPage';
 import { CicloDetailPage } from './pages/CicloDetailPage';
 import { ExcecoesPage } from './pages/ExcecoesPage';
 import { AuditoriaPage } from './pages/AuditoriaPage';
+import { ModelosEmailPage } from './pages/ModelosEmailPage';
 
 function ProtectedRoute() {
   const { sessao, loading } = useAuth();
@@ -53,6 +54,7 @@ export function App() {
                 <Route path="/ciclos" element={<CiclosPage />} />
                 <Route path="/ciclos/:id" element={<CicloDetailPage />} />
                 <Route path="/excecoes" element={<ExcecoesPage />} />
+                <Route path="/modelos-email" element={<ModelosEmailPage />} />
                 <Route path="/auditoria" element={<AuditoriaPage />} />
               </Route>
             </Route>

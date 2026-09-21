@@ -61,6 +61,11 @@ function limitesDe(raw: unknown): LimitesConfig {
   return { ...LIMITES_PADRAO, ...(typeof raw === 'object' && raw ? raw : {}) } as LimitesConfig;
 }
 
+/** Placeholders `{{nome}}` disponíveis nos modelos de e-mail padrão. */
+function renderizarTemplate(texto: string, vars: Record<string, string>): string {
+  return texto.replace(/\{\{(\w+)\}\}/g, (_, nome: string) => vars[nome] ?? `{{${nome}}}`);
+}
+
 /** CA-01 · ativação: materializa itens do checklist no ciclo (idempotente). */
 export const ativarCiclo =
   (serviceId?: string): Handler =>
@@ -113,15 +118,20 @@ export const cobrarItem =
       email: string | null;
       descricao: string;
       cliente_nome: string;
+      template_assunto: string | null;
+      template_corpo: string | null;
     }>(
       `SELECT i.id, i.estado, i.tentativas,
               (SELECT MAX(m.criado_em) FROM mensagens_comunicacao m WHERE m.item_ciclo_id=i.id AND m.direcao='envio') AS ultima_cobranca_em,
-              c.config, cli.email, it.descricao, cli.nome AS cliente_nome
+              c.config, cli.email, it.descricao, cli.nome AS cliente_nome,
+              et.assunto AS template_assunto, et.corpo AS template_corpo
          FROM itens_ciclo i
          JOIN ciclos c   ON c.id = i.ciclo_id
          JOIN obrigacoes o ON o.id = c.obrigacao_id
          LEFT JOIN itens_template it ON it.id = i.item_template_id
          JOIN clientes cli ON cli.id = o.cliente_id
+         LEFT JOIN checklist_templates ct ON ct.id = o.template_id
+         LEFT JOIN email_templates et ON et.id = ct.email_template_id
         WHERE i.id=$1 AND c.estado='aberto'`,
       [itemId]
     );
@@ -194,8 +204,16 @@ export const cobrarItem =
 
     const resultado = await canal.enviar({
       destinatario: item.email,
-      assunto: `Pendência documental: ${item.descricao}`,
-      corpo: `Olá ${item.cliente_nome}, precisamos de: ${item.descricao}.\n\nIdentificador: ${tokenCorrelacao}`,
+      assunto: item.template_assunto
+        ? renderizarTemplate(item.template_assunto, { cliente_nome: item.cliente_nome, item_descricao: item.descricao })
+        : `Pendência documental: ${item.descricao}`,
+      corpo: item.template_corpo
+        ? renderizarTemplate(item.template_corpo, {
+            cliente_nome: item.cliente_nome,
+            item_descricao: item.descricao,
+            token_correlacao: tokenCorrelacao,
+          })
+        : `Olá ${item.cliente_nome}, precisamos de: ${item.descricao}.\n\nIdentificador: ${tokenCorrelacao}`,
       idempotencyKey: chave,
       tokenCorrelacao,
     });
