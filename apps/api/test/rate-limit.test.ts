@@ -31,7 +31,7 @@ async function criarOperador(ten: string, slug: string, email: string) {
 
 describe('SRV-30 · rate limit por conta (CA-B-1) e expiração (CA-B-3)', () => {
   const ACCT_MAX = 3;
-  const ACCT_WINDOW = 1000;
+  const ACCT_WINDOW = 3000;
   let app: INestApplication;
   let req: supertest.Agent;
 
@@ -67,12 +67,14 @@ describe('SRV-30 · rate limit por conta (CA-B-1) e expiração (CA-B-3)', () =>
       const r = await req.post('/auth/login').send({ slug: SLUG_ACCT, email: EMAIL_ACCT, senha: 'errada' });
       expect(r.status).toBe(401);
     }
-    // próximo request cai no interceptor → 429 genérico, mesmo formato de 401
+    // próximo request cai no interceptor → 429 genérico, mesmo contexto do 401
     const r = await req.post('/auth/login').send({ slug: SLUG_ACCT, email: EMAIL_ACCT, senha: SENHA });
     expect(r.status).toBe(429);
     expect(r.body.statusCode).toBe(429);
-    expect(Object.keys(r.body).sort()).toEqual(['message', 'statusCode']);
+    expect(Object.keys(r.body).sort()).toEqual(['message', 'retryAposSegundos', 'statusCode']);
     expect(r.body.message).toBeTypeOf('string');
+    expect(Number.isInteger(r.body.retryAposSegundos)).toBe(true);
+    expect(r.body.retryAposSegundos).toBeGreaterThanOrEqual(0);
 
     const { rows } = await admin.query(
       `SELECT acao, count(*)::int AS n FROM eventos_auditoria
@@ -83,14 +85,12 @@ describe('SRV-30 · rate limit por conta (CA-B-1) e expiração (CA-B-3)', () =>
     expect(rows[0].n).toBeGreaterThanOrEqual(1);
   });
 
-  it('CA-B-1: limite de conta e de IP não vazam qual regra acionou o 429 (mesmo formato do 401)', async () => {
-    // 401 de credenciais inválidas mantém o mesmo formato de corpo do 429
-    const invalida = await req.post('/auth/login').send({ slug: SLUG_ACCT, email: EMAIL_ACCT, senha: 'x' });
-    // ainda bloqueado por conta— mesmo no caso de conta válida bloqueada, o corpo é genérico
+  it('CA-B-1: limite de conta e de IP não vazam qual regra acionou o 429 (mesmo shape do 401)', async () => {
+    // mesmo shape do 429, independente da regra — nunca nomeia conta vs IP
     const bloqueada = await req.post('/auth/login').send({ slug: SLUG_ACCT, email: EMAIL_ACCT, senha: 'x' });
-    expect(invalida.status).toBe(429); // bloqueio persistente dentro da janela
     expect(bloqueada.status).toBe(429);
-    expect(Object.keys(bloqueada.body).sort()).toEqual(['message', 'statusCode']);
+    expect(Object.keys(bloqueada.body).sort()).toEqual(['message', 'retryAposSegundos', 'statusCode']);
+    expect(bloqueada.body.message).toBe('Muitas tentativas de login. Aguarde alguns minutos e tente novamente.');
   });
 
   it('CA-B-3: janela expira e login legítimo volta a funcionar', async () => {
@@ -108,7 +108,7 @@ describe('SRV-30 · rate limit por conta (CA-B-1) e expiração (CA-B-3)', () =>
 
 describe('SRV-30 · rate limit por IP (CA-B-2)', () => {
   const IP_MAX = 3;
-  const IP_WINDOW = 2000;
+  const IP_WINDOW = 5000;
   let app: INestApplication;
   let req: supertest.Agent;
 
@@ -145,8 +145,9 @@ describe('SRV-30 · rate limit por IP (CA-B-2)', () => {
     }
     const r = await req.post('/auth/login').send({ slug: SLUG_IP, email: EMAIL_IP, senha: SENHA });
     expect(r.status).toBe(429);
-    // corpo no mesmo formato do 401 — não revela se foi conta ou IP
-    expect(Object.keys(r.body).sort()).toEqual(['message', 'statusCode']);
+    // shape no mesmo contexto do 401 — não revela se foi conta ou IP
+    expect(Object.keys(r.body).sort()).toEqual(['message', 'retryAposSegundos', 'statusCode']);
+    expect(r.body.retryAposSegundos).toBeGreaterThan(0);
   });
 });
 

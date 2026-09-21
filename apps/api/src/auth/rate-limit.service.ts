@@ -81,6 +81,21 @@ export class LoginRateLimitService {
     return this.estaBloqueado(this.ips, ip, ipRegra);
   }
 
+  /** Tempo restante de bloqueio da conta (ms); 0 quando não está bloqueada. */
+  contaRestanteMs(slug: string, email: string): number {
+    return this.restanteBloqueio(this.contas, chaveConta(slug, email), this.config().conta);
+  }
+
+  /** Tempo restante de bloqueio do IP (ms); 0 quando não está bloqueado. */
+  ipRestanteMs(ip: string): number {
+    return this.restanteBloqueio(this.ips, ip, this.config().ip);
+  }
+
+  /** Maior tempo restante entre conta e IP — nunca expõe QUAL regra acionou. */
+  tempoRestanteBloqueioMs(slug: string, email: string, ip: string): number {
+    return Math.max(this.contaRestanteMs(slug, email), this.ipRestanteMs(ip));
+  }
+
   /** Registra falha da conta e devolve true quando a janela cruza o limite. */
   registrarFalhaConta(slug: string, email: string): boolean {
     const conta = this.config().conta;
@@ -112,6 +127,14 @@ export class LoginRateLimitService {
     const j = mapa.get(chave);
     if (!j || j.bucket !== bucket) return false;
     return j.contagem >= regra.max;
+  }
+
+  private restanteBloqueio(mapa: Map<string, Janela>, chave: string, regra: Regra): number {
+    const now = Date.now();
+    const bucket = Math.floor(now / regra.janelaMs);
+    const j = mapa.get(chave);
+    if (!j || j.bucket !== bucket || j.contagem < regra.max) return 0;
+    return Math.max(0, (bucket + 1) * regra.janelaMs - now);
   }
 
   private tocar(mapa: Map<string, Janela>, chave: string, regra: Regra): Janela {

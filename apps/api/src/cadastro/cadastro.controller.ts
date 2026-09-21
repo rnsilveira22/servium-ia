@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, NotFoundException, Post, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { Client } from 'pg';
 
 import type {
@@ -19,21 +19,7 @@ function texto(v: unknown): v is string {
   return typeof v === 'string' && v.trim().length > 0;
 }
 
-async function auditar(
-  client: Client,
-  tenantId: string,
-  actorId: string,
-  entidade: string,
-  entidadeId: string,
-  acao: string,
-  detalhes: Record<string, unknown> = {}
-): Promise<void> {
-  await client.query(
-    `INSERT INTO eventos_auditoria (tenant_id, actor_type, actor_id, entidade, entidade_id, acao, detalhes)
-     VALUES ($1,'operador',$2,$3,$4,$5,$6)`,
-    [tenantId, actorId, entidade, entidadeId, acao, JSON.stringify(detalhes)]
-  );
-}
+import { auditar } from './audit';
 
 @Controller()
 @UseGuards(RequireAuth)
@@ -149,13 +135,23 @@ export class CadastroController {
 
     const client = this.pg(req);
     const tenantId = req.sessao!.tenantId;
+    // Modelo de e-mail padrão — precisa existir NESTE tenant (RLS não cobre FK).
+    let emailTemplateId: string | null = null;
+    if (body.email_template_id !== undefined && body.email_template_id !== null && texto(body.email_template_id)) {
+      const m = await client.query('SELECT 1 FROM email_templates WHERE id=$1', [body.email_template_id]);
+      if (m.rowCount === 0) {
+        throw new BadRequestException('modelo de e-mail não encontrado neste tenant');
+      }
+      emailTemplateId = body.email_template_id;
+    }
     // Atômico: template + itens em UMA transação; erro em qualquer item desfaz tudo
     await client.query('BEGIN');
     try {
       const tpl = (
-        await client.query<{ id: string; nome: string; canal: string }>(
-          'INSERT INTO checklist_templates (tenant_id, nome, canal) VALUES ($1,$2,$3) RETURNING id, nome, canal',
-          [tenantId, body.nome.trim(), canal]
+        await client.query<{ id: string; nome: string; canal: string; email_template_id: string | null }>(
+          `INSERT INTO checklist_templates (tenant_id, nome, canal, email_template_id)
+           VALUES ($1,$2,$3,$4) RETURNING id, nome, canal, email_template_id`,
+          [tenantId, body.nome.trim(), canal, emailTemplateId]
         )
       ).rows[0];
       if (!tpl) throw new Error('insert sem retorno');
@@ -185,24 +181,84 @@ export class CadastroController {
         if (!inserido) throw new Error('insert sem retorno');
         itens.push(inserido);
       }
+      let emailTemplateNome: string | null = null;
+      if (tpl.email_template_id) {
+        const m = await client.query<{ nome: string }>('SELECT nome FROM email_templates WHERE id=$1', [tpl.email_template_id]);
+        emailTemplateNome = m.rows[0]?.nome ?? null;
+      }
       await client.query('COMMIT');
       await auditar(client, tenantId, req.sessao!.operadorId, 'checklist_template', tpl.id, 'criar', {
         nome: tpl.nome,
         itens: itens.length,
+        email_template_id: tpl.email_template_id,
       });
-      return { ...tpl, itens };
+      return { ...tpl, email_template_nome: emailTemplateNome, itens };
     } catch (err) {
       await client.query('ROLLBACK');
       throw err;
     }
   }
 
+  @Put('checklist-templates/:id/vincular-email-template')
+  async vincularEmailTemplate(
+    @Req() req: AuthedRequest,
+    @Param('id') id: string,
+    @Body() body: { email_template_id?: string | null }
+  ): Promise<ChecklistTemplateDTO> {
+    const client = this.pg(req);
+    const tenantId = req.sessao!.tenantId;
+
+    const existe = await client.query('SELECT 1 FROM checklist_templates WHERE id=$1', [id]);
+    if (existe.rowCount === 0) throw new NotFoundException('checklist não encontrado');
+
+    let emailTemplateId: string | null = null;
+    if (body?.email_template_id !== undefined && body.email_template_id !== null && texto(body.email_template_id)) {
+      const m = await client.query('SELECT 1 FROM email_templates WHERE id=$1', [body.email_template_id]);
+      if (m.rowCount === 0) throw new BadRequestException('modelo de e-mail não encontrado neste tenant');
+      emailTemplateId = body.email_template_id;
+    }
+
+    await client.query(
+      'UPDATE checklist_templates SET email_template_id=$2 WHERE id=$1',
+      [id, emailTemplateId]
+    );
+    await auditar(client, tenantId, req.sessao!.operadorId, 'checklist_template', id, 'vincular_email_template', {
+      email_template_id: emailTemplateId,
+    });
+
+    const { rows: tpls } = await client.query<{
+      id: string;
+      nome: string;
+      canal: string;
+      email_template_id: string | null;
+      email_template_nome: string | null;
+    }>(
+      `SELECT t.id, t.nome, t.canal, t.email_template_id, e.nome AS email_template_nome
+         FROM checklist_templates t
+         LEFT JOIN email_templates e ON e.id = t.email_template_id
+        WHERE t.id=$1`,
+      [id]
+    );
+    const tpl = tpls[0];
+    if (!tpl) throw new NotFoundException('checklist não encontrado');
+    const itens = (
+      await client.query<{ id: string; descricao: string; tipo_esperado: TipoEsperado; tamanho_max_bytes: number | null; ordem: number }>(
+        'SELECT id, descricao, tipo_esperado, tamanho_max_bytes, ordem FROM itens_template WHERE template_id=$1 ORDER BY ordem',
+        [id]
+      )
+    ).rows;
+    return { ...tpl, itens };
+  }
+
   @Get('checklist-templates')
   async listarTemplates(@Req() req: AuthedRequest): Promise<ChecklistTemplateDTO[]> {
     const client = this.pg(req);
     const templates = (
-      await client.query<{ id: string; nome: string; canal: string }>(
-        'SELECT id, nome, canal FROM checklist_templates ORDER BY criado_em DESC'
+      await client.query<{ id: string; nome: string; canal: string; email_template_id: string | null; email_template_nome: string | null }>(
+        `SELECT t.id, t.nome, t.canal, t.email_template_id, e.nome AS email_template_nome
+           FROM checklist_templates t
+           LEFT JOIN email_templates e ON e.id = t.email_template_id
+          ORDER BY t.criado_em DESC`
       )
     ).rows;
     const itens = (

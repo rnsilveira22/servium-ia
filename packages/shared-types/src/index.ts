@@ -54,12 +54,17 @@ export interface CriarChecklistTemplateInput {
   nome: string;
   canal?: string;
   itens: ItemTemplateInput[];
+  /** ID do modelo de e-mail padrão (mesmo tenant). Opcional. */
+  email_template_id?: string;
 }
 
 export interface ChecklistTemplateDTO {
   id: string;
   nome: string;
   canal: string;
+  /** Modelo de e-mail padrão vinculado (null = texto embutido fixo do motor). */
+  email_template_id: string | null;
+  email_template_nome: string | null;
   itens: Array<{
     id: string;
     descricao: string;
@@ -67,6 +72,29 @@ export interface ChecklistTemplateDTO {
     tamanho_max_bytes: number | null;
     ordem: number;
   }>;
+}
+
+// ===== Modelos de e-mail padrão =====
+
+/** Placeholders suportados em `assunto`/`corpo` — renderizados pelo motor. */
+export const EMAIL_TEMPLATE_PLACEHOLDERS = [
+  { chave: '{{cliente_nome}}', descricao: 'Nome do cliente' },
+  { chave: '{{item_descricao}}', descricao: 'Descrição do documento/pendência' },
+  { chave: '{{token_correlacao}}', descricao: 'Identificador de correlação (nunca remova do corpo)' },
+] as const;
+
+export interface CriarEmailTemplateInput {
+  nome: string;
+  assunto: string;
+  corpo: string;
+}
+
+export interface EmailTemplateDTO {
+  id: string;
+  nome: string;
+  assunto: string;
+  corpo: string;
+  criado_em: string;
 }
 
 // ===== M1-OPS-05 · Configurações do tenant (e-mail do escritório) =====

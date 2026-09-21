@@ -1,6 +1,9 @@
+import { existsSync } from 'node:fs';
 import pg from 'pg';
 import { hash } from '@node-rs/argon2';
 import { validarPoliticaSenha, mensagemPoliticaSenha } from '../packages/db/src/security/password-policy.ts';
+
+if (existsSync('.env')) process.loadEnvFile('.env');
 
 const DATABASE_URL =
   process.env.DATABASE_URL ?? 'postgres://servium:servium_dev@localhost:5432/servium';

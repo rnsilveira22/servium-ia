@@ -6,6 +6,7 @@
  * do ambiente real (ADR-006): sem trigger artificial. Encerramento gracioso em
  * SIGINT/SIGTERM.
  */
+import '../common/load-env';
 import { buildChannelFromEnv, registerChannelProvider } from './channel';
 import { MailpitProvider } from './mailpit';
 import { requireServiceId } from './service-id';

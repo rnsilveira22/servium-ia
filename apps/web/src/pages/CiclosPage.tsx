@@ -125,7 +125,7 @@ export function CiclosPage() {
                 <td>{c.itens}</td>
                 <td>{c.resolvidos}</td>
                 <td>{c.excecoes > 0 ? <span className="badge badge-alert">{c.excecoes}</span> : '0'}</td>
-                <td>{new Date(c.criado_em).toLocaleDateString('pt-BR')}</td>
+                <td>{new Date(c.criado_em).toLocaleString('pt-BR')}</td>
                 <td><Link to={`/ciclos/${c.id}`} className="link">Detalhes</Link></td>
               </tr>
             ))}

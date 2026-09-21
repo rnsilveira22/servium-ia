@@ -1,3 +1,4 @@
+import './common/load-env';
 import 'reflect-metadata';
 import { buildApp } from './app.factory';
 async function bootstrap(): Promise<void> {

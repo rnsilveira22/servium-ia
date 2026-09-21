@@ -51,3 +51,17 @@ Este projeto ainda não possui releases publicadas.
   - RBAC; IA determinístico-first com LLM assistivo isolado; PaaS de
   entrada sem Kubernetes); limites de uso de IA; arquitetura de segurança;
   revisão arquitetural (red team) da própria proposta.
+- Login: feedback amigável para o cliente — o `429` (rate limit) agora retorna
+  mensagem em PT-BR e `retryAposSegundos` para a UI exibir contagem regressiva,
+  e o formulário de login da SPA traduz 401/429 com mensagens claras e
+  desabilita o botão durante o bloqueio. Anti-enumeração (conta vs IP)
+  preservada; trade-off documentado em `docs/security/RATE_LIMIT_POLICY.md`.
+- API/runtime/seed carregam `.env` automaticamente via `process.loadEnvFile()`
+  (busca no diretório de trabalho e ascendentes) — limites de rate limit de dev
+  configuráveis localmente via `.env`.
+- Modelos de e-mail padrão: nova tabela `email_templates` (tenant-scoped + RLS),
+  CRUD em `/email-templates`, vínculo opcional `checklist_templates.email_template_id`
+  (1 modelo por checklist). O motor passa a renderizar **assunto/corpo** a partir
+  do modelo com placeholders `{{cliente_nome}}`, `{{item_descricao}}`,
+  `{{token_correlacao}}`; sem modelo, mantém o texto fixo anterior (retrocompatível).
+  UI: página "Modelos de Email" (criar/editar/excluir + vincular a checklist).

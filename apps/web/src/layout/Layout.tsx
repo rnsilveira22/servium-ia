@@ -9,6 +9,7 @@ const NAV = [
   { to: '/obrigacoes', label: 'Obrigacoes' },
   { to: '/ciclos', label: 'Ciclos' },
   { to: '/excecoes', label: 'Excecoes' },
+  { to: '/modelos-email', label: 'Modelos de Email' },
   { to: '/auditoria', label: 'Auditoria' },
 ];
 
