@@ -1,7 +1,7 @@
 # Backlog — Valor Percebido pelo Escritório (VP)
 
-> **Proposta de backlog (2026-10-26) — aguarda aprovação do titular (Rodrigo).**
-> Não substitui [`INITIAL_BACKLOG.md`](INITIAL_BACKLOG.md) (canônico). Nada daqui vira Issue sem a aprovação prevista no fluxo da factory; histórias que tocam escopo/arquitetura exigem ADR e Human Gate.
+> **Backlog aprovado pelo titular (Rodrigo) em 2026-10-26.** VP-01 materializada como Issue #108 (PR #107); as demais histórias seguem como planejadas e só viram Issue quando forem refinadas.
+> Não substitui [`INITIAL_BACKLOG.md`](INITIAL_BACKLOG.md) (canônico). Histórias que tocam escopo/arquitetura (VP-05, VP-06) continuam exigindo ADR e Human Gate.
 
 ## Diagnóstico
 
@@ -18,7 +18,7 @@ O MVP-01 já executa o ciclo de pendências documentais de ponta a ponta (cobran
 
 | ID | História | Prioridade | Estado | Depende de |
 |---|---|---|---|---|
-| VP-01 | Painel por cliente com semáforo | P1 | **Implementada** (aguarda revisão) | — |
+| VP-01 | Painel por cliente com semáforo | P1 | **Implementada** — Issue #108, PR #107 (em revisão) | — |
 | VP-02 | Resumo diário por e-mail ao responsável | P1 | Proposta | VP-01 (reusa a classificação) |
 | VP-03 | Indicadores de valor no painel e no fechamento de ciclo | P1 | Proposta | — |
 | VP-04 | Prévia e aprovação da cobrança antes do envio | P1 | Proposta | — |
