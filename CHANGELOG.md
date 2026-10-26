@@ -7,6 +7,9 @@ Este projeto ainda não possui releases publicadas.
 
 ### Added
 
+- Painel por cliente com semáforo (VP-01): `GET /ciclos/painel` (API) e seção "Clientes" no Painel (web),
+  com regras puras e testadas em `apps/api/src/cadastro/semaforo.ts`; backlog VP-01..VP-06 em
+  `docs/product/BACKLOG_VALOR_PERCEBIDO.md`.
 - Fase inicial F0/F1 — auditoria da Software Factory V1 + design e plano executável da **Factory V2**:
   `docs/reports/FACTORY_V2_FASE0_AUDITORIA_DESIGN.md` e `docs/reports/FACTORY_V2_FASE1_IMPLEMENTATION_PLAN.md`.
 - Factory V2 aprovada por human gates (HG-F2-01/02/03 + HG-REC-01 · 2026-09-04): agente

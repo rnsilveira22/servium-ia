@@ -66,6 +66,7 @@ README.md
 │   ├── Plano de validação .... docs/product/VALIDATION_PLAN.md
 │   ├── Backlog macro ......... docs/product/BACKLOG_OVERVIEW.md
 │   ├── Backlog inicial (canônico) docs/product/INITIAL_BACKLOG.md
+│   ├── Backlog valor percebido  docs/product/BACKLOG_VALOR_PERCEBIDO.md
 │   └── Demo Factory .......... docs/product/DEMO_FACTORY_STORY.md
 │
 └── Roadmap ................... docs/roadmap/README.md

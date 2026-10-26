@@ -18,6 +18,7 @@
 | [`RISKS_AND_HYPOTHESES.md`](RISKS_AND_HYPOTHESES.md) | Hipóteses (HYP-xxx) e riscos (RSK-xxx). |
 | [`VALIDATION_PLAN.md`](VALIDATION_PLAN.md) | Plano de validação com escritórios contábeis. |
 | [`BACKLOG_OVERVIEW.md`](BACKLOG_OVERVIEW.md) | Backlog macro por épicos. |
+| [`BACKLOG_VALOR_PERCEBIDO.md`](BACKLOG_VALOR_PERCEBIDO.md) | Proposta de histórias VP-01..VP-06 para aumentar o valor percebido pelo escritório (painel, resumo diário, indicadores, CND). |
 
 Documentos de fundação relacionados: [visão](../PROJECT_VISION.md), [princípios](../PRODUCT_PRINCIPLES.md), [glossário](../GLOSSARY.md), [roadmap](../roadmap/README.md).
 
