@@ -5,6 +5,7 @@ import { enqueue } from '@servium-ia/db';
 import { RequireAuth, Roles, type AuthedRequest } from '../auth/auth.guard';
 import { cancelarCiclo as cancelarCicloTxn, type ResultadoCancelar } from './cancelar-ciclo';
 import { decidirItem as decidirItemTxn, type DesfechoItem } from './decidir-item';
+import { montarPainel, type ResumoClienteBruto } from './semaforo';
 
 @Controller('ciclos')
 @UseGuards(RequireAuth)
@@ -62,6 +63,40 @@ export class CiclosController {
         ORDER BY c.criado_em DESC`
     );
     return rows;
+  }
+
+  /**
+   * Painel por cliente com semáforo (verde/amarelo/vermelho): "o que preciso olhar hoje".
+   * Declarado ANTES de `:cicloId` para não ser capturado como id de ciclo.
+   */
+  @Get('painel')
+  @Roles('admin', 'operador')
+  async painel(@Req() req: AuthedRequest) {
+    const { rows } = await this.pg(req).query<ResumoClienteBruto>(
+      `WITH por_ciclo AS (
+         SELECT c.id, o.cliente_id, o.prazo,
+                count(i.id)::int AS itens,
+                count(i.id) FILTER (WHERE i.estado IN ('pendente','cobrado','aguardando','recebido'))::int AS pendentes,
+                count(i.id) FILTER (WHERE i.estado='excecao')::int AS excecoes,
+                count(i.id) FILTER (WHERE i.estado='resolvido')::int AS resolvidos
+           FROM ciclos c
+           JOIN obrigacoes o ON o.id=c.obrigacao_id
+           LEFT JOIN itens_ciclo i ON i.ciclo_id=c.id
+          WHERE c.estado='aberto'
+          GROUP BY c.id, o.cliente_id, o.prazo
+       )
+       SELECT cli.id AS cliente_id, cli.nome AS cliente,
+              count(pc.id)::int AS ciclos_abertos,
+              coalesce(sum(pc.itens),0)::int AS itens,
+              coalesce(sum(pc.resolvidos),0)::int AS resolvidos,
+              coalesce(sum(pc.pendentes),0)::int AS pendentes,
+              coalesce(sum(pc.excecoes),0)::int AS excecoes,
+              (min(pc.prazo) FILTER (WHERE pc.pendentes + pc.excecoes > 0))::text AS prazo_proximo
+         FROM clientes cli
+         JOIN por_ciclo pc ON pc.cliente_id=cli.id
+        GROUP BY cli.id, cli.nome`
+    );
+    return montarPainel(rows);
   }
 
   /** Detalhe de um ciclo em linguagem de negócio (acompanhamento do Funcionário Digital). */

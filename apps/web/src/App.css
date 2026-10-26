@@ -318,6 +318,45 @@ body {
   color: var(--ink-600);
 }
 
+/* ===== Semáforo por cliente ===== */
+.semaforo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0.6rem;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  border-radius: 999px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.semaforo-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.semaforo-vermelho {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.semaforo-amarelo {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.semaforo-verde {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.painel-clientes-motivo {
+  color: var(--color-text-muted);
+}
+
 /* ===== Forms ===== */
 .form-group {
   margin-bottom: 1rem;
