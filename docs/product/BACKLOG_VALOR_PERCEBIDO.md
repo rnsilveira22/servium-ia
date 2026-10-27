@@ -19,7 +19,7 @@ O MVP-01 já executa o ciclo de pendências documentais de ponta a ponta (cobran
 | ID | História | Prioridade | Estado | Depende de |
 |---|---|---|---|---|
 | VP-01 | Painel por cliente com semáforo | P1 | **Implementada** — Issue #108, PR #107 (em revisão) | — |
-| VP-02 | Resumo diário por e-mail ao responsável | P1 | Proposta | VP-01 (reusa a classificação) |
+| VP-02 | Resumo diário por e-mail ao responsável | P1 | **Implementada** — aguarda revisão (empilhada sobre o PR #107) | VP-01 (reusa a classificação) |
 | VP-03 | Indicadores de valor no painel e no fechamento de ciclo | P1 | Proposta | — |
 | VP-04 | Prévia e aprovação da cobrança antes do envio | P1 | Proposta | — |
 | VP-05 | Radar de CND (Serpro), somente leitura | P2 | **Bloqueada por gate** | ADR + Human Gate |
@@ -55,12 +55,15 @@ O MVP-01 já executa o ciclo de pendências documentais de ponta a ponta (cobran
 
 **Critérios de aceite**
 
-- Job agendado (fila existente, `idempotency_key` por tenant + data) envia um e-mail por responsável às 08:00 (fuso do escritório, configurável);
-- Conteúdo: clientes vermelhos e amarelos com motivo e prazo, exceções aguardando decisão, itens recebidos nas últimas 24 h;
-- Dia sem nada relevante: e-mail curto "tudo em dia" (configurável para não enviar);
-- Reaproveita `montarPainel` (VP-01) e o canal já configurado (Gmail API em produção, Mailpit em dev/CI);
-- Envio registrado na trilha de auditoria; falha de envio vira exceção, não perda silenciosa;
-- Respeita a restrição de MVP: mensagens identificadas como do Servium, **nunca** enviadas ao cliente final — apenas ao responsável.
+- [x] Job `resumo.diario` na fila existente, com `idempotency_key` por tenant + dia; o `ResumoScheduler` enfileira 1 job/dia/tenant a partir da hora configurada (padrão 08:00 de Brasília) e recupera o dia se o runtime voltar depois da hora;
+- [x] Destinatários: admins ativos do tenant (operadores e inativos não recebem); idempotência extra por destinatário/dia, então o retry após falha parcial não reenvia a quem já recebeu;
+- [x] Conteúdo: clientes vermelhos ("Precisam de você hoje") e amarelos ("Para acompanhar") com motivo e prazo, cobranças enviadas e respostas recebidas nas últimas 24 h;
+- [x] Dia sem nada urgente: não envia (ação `resumo_diario_dispensado` auditada); `enviar_vazio` liga o e-mail "tudo em dia";
+- [x] Reaproveita `consultarPainel`/`montarPainel` (VP-01) e o canal resolvido por tenant (Gmail em produção, Mailpit em dev/CI);
+- [x] Auditoria: `resumo_diario_enviado`, `resumo_diario_falha`, `resumo_diario_dispensado`, `resumo_diario_sem_destinatario` e `configurar_resumo_diario`; falha de envio propaga para o retry/backoff da fila — nunca perda silenciosa;
+- [x] Opt-in: padrão **desligado**; `GET/PUT /configuracoes/resumo-diario` (admin; hora 0–23, `ativo`, `enviar_vazio`);
+- [x] Enviado **somente** ao responsável, nunca ao cliente final (restrição do MVP);
+- [ ] Tela de configuração no web (hoje só via API) — pendente.
 
 **Gate:** nenhum (mesmo canal já aprovado em HG-008).
 
