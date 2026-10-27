@@ -10,6 +10,7 @@ import { CiclosPage } from './pages/CiclosPage';
 import { CicloDetailPage } from './pages/CicloDetailPage';
 import { ExcecoesPage } from './pages/ExcecoesPage';
 import { AuditoriaPage } from './pages/AuditoriaPage';
+import { ConfiguracoesPage } from './pages/ConfiguracoesPage';
 
 function ProtectedRoute() {
   const { sessao, loading } = useAuth();
@@ -54,6 +55,7 @@ export function App() {
                 <Route path="/ciclos/:id" element={<CicloDetailPage />} />
                 <Route path="/excecoes" element={<ExcecoesPage />} />
                 <Route path="/auditoria" element={<AuditoriaPage />} />
+                <Route path="/configuracoes" element={<ConfiguracoesPage />} />
               </Route>
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />

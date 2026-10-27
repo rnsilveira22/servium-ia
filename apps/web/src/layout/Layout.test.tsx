@@ -4,9 +4,11 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Layout } from './Layout';
 
+let papel: 'admin' | 'operador' = 'admin';
+
 vi.mock('../auth/AuthContext', () => ({
   useAuth: () => ({
-    sessao: { operadorId: 'op-1', tenantId: 't-1', papel: 'admin' },
+    sessao: { operadorId: 'op-1', tenantId: 't-1', papel },
     logout: vi.fn(),
   }),
 }));
@@ -65,5 +67,24 @@ describe('Layout · menu mobile (#94)', () => {
     expect(backdrop).not.toBeNull();
     fireEvent.click(backdrop!);
     await waitFor(() => expect(container.querySelector('aside.sidebar.open')).toBeNull());
+  });
+});
+
+describe('Layout · link de Configurações (VP-02 CA-07)', () => {
+  afterEach(() => {
+    cleanup();
+    papel = 'admin';
+  });
+
+  it('administrador vê o link para /configuracoes', () => {
+    renderizarLayout();
+    const link = screen.getByRole('link', { name: 'Configurações' });
+    expect(link.getAttribute('href')).toBe('/configuracoes');
+  });
+
+  it('operador não vê o link', () => {
+    papel = 'operador';
+    renderizarLayout();
+    expect(screen.queryByRole('link', { name: 'Configurações' })).toBeNull();
   });
 });

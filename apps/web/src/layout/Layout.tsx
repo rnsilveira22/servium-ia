@@ -12,6 +12,9 @@ const NAV = [
   { to: '/auditoria', label: 'Auditoria' },
 ];
 
+/** Configurações do escritório: somente administradores (a API também exige papel admin). */
+const NAV_ADMIN = [{ to: '/configuracoes', label: 'Configurações' }];
+
 export function Layout() {
   const { sessao, logout } = useAuth();
   const nav = useNavigate();
@@ -46,7 +49,7 @@ export function Layout() {
           />
         </div>
         <nav id="sidebar-nav" className="sidebar-nav" aria-label="Principal">
-          {NAV.map((n) => (
+          {[...NAV, ...(sessao?.papel === 'admin' ? NAV_ADMIN : [])].map((n) => (
             <NavLink
               key={n.to}
               to={n.to}
