@@ -75,6 +75,17 @@ export interface TenantConfigDTO {
   email_escritorio: string | null;
 }
 
+// ===== VP-02 · Resumo diário por e-mail ao responsável =====
+
+export interface ResumoDiarioConfigDTO {
+  /** Opt-in: padrão false (nenhum e-mail sem o admin ativar). */
+  ativo: boolean;
+  /** Hora de envio (0–23), horário de Brasília. */
+  hora: number;
+  /** Enviar mesmo quando está tudo em dia. */
+  enviar_vazio: boolean;
+}
+
 // ===== B-2 R3 · Integração de e-mail por tenant (provider-agnóstico) =====
 
 export const EMAIL_PROVIDERS = ['gmail', 'mailpit'] as const;

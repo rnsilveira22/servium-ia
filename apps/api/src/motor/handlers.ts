@@ -33,7 +33,7 @@ type Handler = (job: Job, ctx: Client) => Promise<void>;
  * é atribuído a `actor_type='servico'` + `actor_id=serviceId`, distinguindo do
  * `sistema` (infra). Sem `serviceId`, mantém `actor_type='sistema'` (default).
  */
-async function auditar(
+export async function auditar(
   ctx: Client,
   tenantId: string,
   entidade: string,

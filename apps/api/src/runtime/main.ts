@@ -14,6 +14,8 @@ import { MotorScheduler } from './scheduler';
 import { EmailProviderResolver } from './provider-resolver';
 import { ReceiveScheduler } from './receive-scheduler';
 import { createReceiveHandler } from './receive-handler';
+import { createResumoDiarioHandler } from './resumo-diario';
+import { ResumoScheduler } from './resumo-scheduler';
 
 async function main(): Promise<void> {
   registerChannelProvider('mailpit', new MailpitProvider());
@@ -39,6 +41,16 @@ async function main(): Promise<void> {
     reapOlderThanMinutes: Number(process.env.WORKER_REAP_OLDER_THAN_MIN ?? 15),
   });
   worker.register('email.receber', createReceiveHandler({ resolver, serviceId }));
+  // VP-02 · resumo diário ao responsável (opt-in por tenant; handler idempotente por dia).
+  worker.register(
+    'resumo.diario',
+    createResumoDiarioHandler({
+      channel,
+      resolver,
+      serviceId,
+      remetentePadrao: process.env.MAIL_FROM ?? 'assistente@servium.local',
+    })
+  );
   const scheduler = new MotorScheduler({
     tickIntervalMs: Number(process.env.SCHEDULER_TICK_INTERVAL_MS ?? 60_000),
     windowMs: Number(process.env.SCHEDULER_WINDOW_MS ?? 60_000),
@@ -55,9 +67,15 @@ async function main(): Promise<void> {
     reapOlderThanMinutes: Number(process.env.SCHEDULER_REAP_OLDER_THAN_MIN ?? 15),
   });
 
+  const resumoScheduler = new ResumoScheduler({
+    tickIntervalMs: Number(process.env.RESUMO_TICK_INTERVAL_MS ?? 60_000),
+    startNow: process.env.RESUMO_START_NOW !== 'false',
+  });
+
   await worker.start();
   scheduler.start();
   receiveScheduler.start();
+  resumoScheduler.start();
 
   let encerrando = false;
   for (const sig of ['SIGINT', 'SIGTERM'] as const) {
@@ -65,6 +83,7 @@ async function main(): Promise<void> {
       if (encerrando) return;
       encerrando = true;
       void (async () => {
+        await resumoScheduler.stop();
         await receiveScheduler.stop();
         await scheduler.stop();
         await worker.stop();
