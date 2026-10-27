@@ -63,7 +63,7 @@ O MVP-01 já executa o ciclo de pendências documentais de ponta a ponta (cobran
 - [x] Auditoria: `resumo_diario_enviado`, `resumo_diario_falha`, `resumo_diario_dispensado`, `resumo_diario_sem_destinatario` e `configurar_resumo_diario`; falha de envio propaga para o retry/backoff da fila — nunca perda silenciosa;
 - [x] Opt-in: padrão **desligado**; `GET/PUT /configuracoes/resumo-diario` (admin; hora 0–23, `ativo`, `enviar_vazio`);
 - [x] Enviado **somente** ao responsável, nunca ao cliente final (restrição do MVP);
-- [ ] Tela de configuração no web (hoje só via API) — pendente.
+- [x] Tela **Configurações** no web (somente admin): liga/desliga, escolhe a hora (Brasília) e `enviar_vazio`; operador não vê o link e, pela URL direta, recebe aviso sem chamar a API.
 
 **Gate:** nenhum (mesmo canal já aprovado em HG-008).
 
