@@ -7,6 +7,9 @@ Este projeto ainda não possui releases publicadas.
 
 ### Added
 
+- Resumo diário por e-mail ao responsável (VP-02): job `resumo.diario` idempotente por tenant/dia/destinatário,
+  `ResumoScheduler`, `GET/PUT /configuracoes/resumo-diario` (admin, opt-in, padrão desligado) e migração
+  `0013_resumo_diario.sql`, mais a tela **Configurações** no web (admin). Reaproveita o semáforo da VP-01 e o canal de e-mail já resolvido por tenant.
 - Painel por cliente com semáforo (VP-01): `GET /ciclos/painel` (API) e seção "Clientes" no Painel (web),
   com regras puras e testadas em `apps/api/src/cadastro/semaforo.ts`; backlog VP-01..VP-06 em
   `docs/product/BACKLOG_VALOR_PERCEBIDO.md`.

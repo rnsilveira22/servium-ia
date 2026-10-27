@@ -8,6 +8,10 @@
  *  - VERDE: nada pendente, ou pendências com prazo confortável / sem prazo definido.
  */
 
+import { hojeNoFuso } from '../common/fuso';
+
+export { hojeNoFuso };
+
 export type Semaforo = 'vermelho' | 'amarelo' | 'verde';
 
 export const LIMITE_VERMELHO_DIAS = 2;
@@ -34,16 +38,6 @@ export interface ResumoCliente extends ResumoClienteBruto {
 }
 
 const ORDEM: Record<Semaforo, number> = { vermelho: 0, amarelo: 1, verde: 2 };
-
-/** Data de hoje (YYYY-MM-DD) no fuso do escritório — evita erro de "um dia" perto da meia-noite. */
-export function hojeNoFuso(agora: Date = new Date(), fuso = 'America/Sao_Paulo'): string {
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: fuso,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(agora);
-}
 
 export function diasEntre(hoje: string, prazo: string): number {
   const a = Date.UTC(+hoje.slice(0, 4), +hoje.slice(5, 7) - 1, +hoje.slice(8, 10));
